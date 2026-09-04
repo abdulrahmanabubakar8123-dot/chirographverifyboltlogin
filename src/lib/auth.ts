@@ -23,7 +23,7 @@ export async function signup(
 ): Promise<SignupResponse> {
   return apiRequest<SignupResponse>('/api/auth/signup', {
     method: 'POST',
-    body: JSON.stringify({ email, password, name }),
+    body: JSON.stringify({ email, password, password_confirmation: password, name }),
   });
 }
 
