@@ -32,6 +32,10 @@ jobs:
 
       - name: Build
         run: npm run build
+        env:
+          # Public, non-secret production API base consumed by Vite
+          # (import.meta.env.VITE_API_URL) at build time.
+          VITE_API_URL: https://chirograph-verify-production.up.railway.app
 
       # SPA fallback: GitHub Pages serves 404.html for unknown paths,
       # so a copy of index.html lets BrowserRouter handle deep links
