@@ -8,6 +8,9 @@ export default defineConfig(({ mode }) => {
   const apiTarget = env.VITE_API_URL || 'https://app.chirographverify.com';
 
   return {
+    // GitHub Pages serves the site from the repository sub-path
+    // https://<user>.github.io/chirographverifyboltlogin/
+    base: '/chirographverifyboltlogin/',
     plugins: [react()],
     resolve: {
       alias: {
