@@ -31,7 +31,7 @@ export default defineConfig(({ mode }) => {
   return {
     // GitHub Pages serves the site from the repository sub-path
     // https://<user>.github.io/chirographverifyboltlogin/
-    base: '/chirographverifyboltlogin/',
+    base: '/',
     plugins: [react(), githubPagesSpaFallback()],
     resolve: {
       alias: {
