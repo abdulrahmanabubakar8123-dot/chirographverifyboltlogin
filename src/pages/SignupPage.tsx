@@ -2,13 +2,12 @@ import { useState, type FormEvent } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { Mail, Lock, Eye, EyeOff, User } from 'lucide-react';
 import AuthLayout from '@/layouts/AuthLayout';
-import { useAuth } from '@/context/AuthContext';
+import { useSignUp } from '@clerk/react';
 import { ErrorBanner } from '@/components/Feedback';
 import Spinner from '@/components/Spinner';
-import { ApiError } from '@/lib/apiClient';
 
 export default function SignupPage() {
-  const { signup } = useAuth();
+  const { signUp } = useSignUp();
   const navigate = useNavigate();
 
   const [name, setName] = useState('');
@@ -20,6 +19,11 @@ export default function SignupPage() {
   const [error, setError] = useState('');
   const [success, setSuccess] = useState(false);
   const [fieldErrors, setFieldErrors] = useState<{ name?: string; email?: string; password?: string; confirm?: string }>({});
+  const [verificationCode, setVerificationCode] = useState('');
+  const [verifying, setVerifying] = useState(false);
+  const [resending, setResending] = useState(false);
+  const [verifyError, setVerifyError] = useState('');
+  const [resendMessage, setResendMessage] = useState('');
 
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
@@ -43,13 +47,91 @@ export default function SignupPage() {
     if (Object.keys(errs).length > 0) return;
     setLoading(true);
     try {
-      await signup(emailValue, passwordValue, nameValue || undefined);
-      setSuccess(true);
+      const result = await signUp.password({
+        emailAddress: emailValue,
+        password: passwordValue,
+        ...(nameValue ? { firstName: nameValue } : {}),
+      });
+      if (result.error) {
+        setError(result.error.longMessage || result.error.message || 'Something went wrong. Please try again.');
+      } else {
+        await signUp.verifications.sendEmailCode();
+        setSuccess(true);
+      }
     } catch (err) {
-      const msg = err instanceof ApiError ? err.message : 'Something went wrong. Please try again.';
-      setError(msg);
+      setError(err instanceof Error ? err.message : 'Something went wrong. Please try again.');
     } finally {
       setLoading(false);
+    }
+  };
+
+  const handleVerifyCode = async (e: FormEvent) => {
+    e.preventDefault();
+    if (verifying) return;
+    setVerifyError('');
+    setResendMessage('');
+    const code = verificationCode.trim();
+    if (!code) {
+      setVerifyError('Please enter the verification code we sent you.');
+      return;
+    }
+    setVerifying(true);
+    try {
+      const result = await signUp.verifications.verifyEmailCode({ code });
+      if (result.error) {
+        setVerifyError(
+          result.error.longMessage ||
+            result.error.message ||
+            'That verification code is invalid or has expired. Please try again or request a new code.'
+        );
+        return;
+      }
+      if (signUp.status === 'complete') {
+        const finalizeResult = await signUp.finalize();
+        if (finalizeResult.error) {
+          setVerifyError(
+            finalizeResult.error.longMessage ||
+              finalizeResult.error.message ||
+              'Something went wrong while finishing your account. Please try again.'
+          );
+          return;
+        }
+        navigate('/dashboard', { replace: true });
+      } else {
+        setVerifyError(
+          'Your email could not be verified. Please check the code or request a new one.'
+        );
+      }
+    } catch (err) {
+      setVerifyError(
+        err instanceof Error ? err.message : 'Something went wrong while verifying your code. Please try again.'
+      );
+    } finally {
+      setVerifying(false);
+    }
+  };
+
+  const handleResendCode = async () => {
+    if (resending) return;
+    setVerifyError('');
+    setResendMessage('');
+    setVerificationCode('');
+    setResending(true);
+    try {
+      const result = await signUp.verifications.sendEmailCode();
+      if (result.error) {
+        setVerifyError(
+          result.error.longMessage || result.error.message || 'We couldn\u2019t resend the code. Please try again.'
+        );
+      } else {
+        setResendMessage('A new verification code has been sent to your email.');
+      }
+    } catch (err) {
+      setVerifyError(
+        err instanceof Error ? err.message : 'We couldn\u2019t resend the code. Please try again.'
+      );
+    } finally {
+      setResending(false);
     }
   };
 
@@ -57,7 +139,7 @@ export default function SignupPage() {
     return (
       <AuthLayout
         title="Check your email"
-        subtitle="We've sent a verification link to your inbox"
+        subtitle="We've sent a verification code to your inbox"
         footer={
           <>
             Already verified?{' '}
@@ -67,16 +149,51 @@ export default function SignupPage() {
           </>
         }
       >
-        <div className="text-center">
+        <div className="w-full max-w-sm text-center">
           <div className="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-full bg-brand-50">
             <Mail size={28} className="text-brand-600" />
           </div>
           <p className="text-sm text-slate-600">
-            Click the link in the email to verify your account, then sign in to continue.
+            We've sent a verification code to <span className="font-medium text-slate-800">{email}</span>. Enter it below to verify your account and finish signing up.
           </p>
-          <button onClick={() => navigate('/login')} className="btn-primary mt-6 w-full">
-            Continue to Sign In
+
+          <div className="mt-5">
+            {verifyError && <ErrorBanner message={verifyError} />}
+            {resendMessage && <p className="text-sm text-green-600">{resendMessage}</p>}
+          </div>
+
+          <form onSubmit={handleVerifyCode} noValidate className="mt-4 space-y-4">
+            <input
+              id="verification-code"
+              type="text"
+              inputMode="numeric"
+              autoComplete="one-time-code"
+              autoFocus
+              value={verificationCode}
+              onChange={(e) => setVerificationCode(e.target.value.replace(/[^\d]/g, '').slice(0, 6))}
+              className="input-field text-center tracking-[0.35em]"
+              placeholder="123456"
+              maxLength={6}
+              aria-label="Email verification code"
+              aria-invalid={!!verifyError}
+            />
+            <button type="submit" disabled={verifying} className="btn-primary w-full">
+              {verifying ? <Spinner size={18} /> : 'Verify Email'}
+            </button>
+          </form>
+
+          <button
+            type="button"
+            onClick={handleResendCode}
+            disabled={resending}
+            className="mt-4 text-sm font-semibold text-brand-600 hover:text-brand-700 disabled:opacity-60"
+          >
+            {resending ? 'Resending…' : 'Resend code'}
           </button>
+
+          <p className="mt-4 text-xs text-slate-400">
+            Didn't get a code? Check your spam folder.
+          </p>
         </div>
       </AuthLayout>
     );

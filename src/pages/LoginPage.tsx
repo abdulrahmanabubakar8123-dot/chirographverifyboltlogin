@@ -1,14 +1,14 @@
 import { useState, type FormEvent } from 'react';
-import { Link, useNavigate, useLocation } from 'react-router-dom';
+import { Link, Navigate, useNavigate, useLocation } from 'react-router-dom';
 import { Mail, Lock, Eye, EyeOff } from 'lucide-react';
 import AuthLayout from '@/layouts/AuthLayout';
-import { useAuth } from '@/context/AuthContext';
+import { useSignIn, useAuth } from '@clerk/react';
 import { ErrorBanner } from '@/components/Feedback';
 import Spinner from '@/components/Spinner';
-import { ApiError } from '@/lib/apiClient';
 
 export default function LoginPage() {
-  const { login } = useAuth();
+  const { signIn } = useSignIn();
+  const { isLoaded: isClerkLoaded, isSignedIn } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
   const from = (location.state as { from?: string })?.from || '/dashboard';
@@ -19,6 +19,15 @@ export default function LoginPage() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const [fieldErrors, setFieldErrors] = useState<{ email?: string; password?: string }>({});
+
+  // If Clerk has loaded and confirms an active session, the user is already
+  // authenticated. Send them straight to the dashboard instead of showing the
+  // login form (which would otherwise surface Clerk's "already signed in" error).
+  // Never redirect while Clerk auth state is still loading.
+  if (isClerkLoaded && isSignedIn) {
+    return <Navigate to="/dashboard" replace />;
+  }
+
 
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
@@ -36,11 +45,20 @@ export default function LoginPage() {
     if (Object.keys(errs).length > 0) return;
     setLoading(true);
     try {
-      await login(emailValue, passwordValue);
-      navigate(from, { replace: true });
+      const result = await signIn.password({
+        identifier: emailValue,
+        password: passwordValue,
+      });
+      if (result.error) {
+        setError(result.error.longMessage || result.error.message || 'Something went wrong. Please try again.');
+      } else if (signIn.status === 'complete') {
+        await signIn.finalize();
+        navigate(from, { replace: true });
+      } else {
+        setError(`Clerk sign-in is not complete. Status: ${signIn.status}`);
+      }
     } catch (err) {
-      const msg = err instanceof ApiError ? err.message : 'Something went wrong. Please try again.';
-      setError(msg);
+      setError(err instanceof Error ? err.message : 'Something went wrong. Please try again.');
     } finally {
       setLoading(false);
     }
