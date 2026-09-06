@@ -36,6 +36,12 @@ jobs:
           # Public, non-secret production API base consumed by Vite
           # (import.meta.env.VITE_API_URL) at build time.
           VITE_API_URL: https://chirograph-verify-production.up.railway.app
+          # Clerk publishable key (public by design, safe to embed in the
+          # client bundle). Without it Clerk never finishes loading
+          # (isomorphicClerk.loaded stays false forever) and the app hangs on
+          # the loading spinner. Sourced from a repository secret so it is not
+          # hardcoded in the repo.
+          VITE_CLERK_PUBLISHABLE_KEY: ${{ secrets.VITE_CLERK_PUBLISHABLE_KEY }}
 
       # SPA fallback: GitHub Pages serves 404.html for unknown paths,
       # so a copy of index.html lets BrowserRouter handle deep links
