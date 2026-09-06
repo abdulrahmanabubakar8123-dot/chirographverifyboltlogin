@@ -34,8 +34,10 @@ jobs:
         run: npm run build
         env:
           # Public, non-secret production API base consumed by Vite
-          # (import.meta.env.VITE_API_URL) at build time.
-          VITE_API_URL: https://chirograph-verify-production.up.railway.app
+          # (import.meta.env.VITE_API_URL) at build time. Uses the backend's
+          # custom domain (same registrable domain as the frontend) so the
+          # backend session cookie is first-party.
+          VITE_API_URL: https://app.chirographverify.com
           # Clerk publishable key (public by design, safe to embed in the
           # client bundle). Without it Clerk never finishes loading
           # (isomorphicClerk.loaded stays false forever) and the app hangs on
