@@ -7,12 +7,14 @@ import {
   type ReactNode,
 } from 'react';
 import { useAuth as useClerkAuth, useUser } from '@clerk/react';
-import { apiRequest, setCsrfToken, clearCsrfToken } from '@/lib/apiClient';
+import { ApiError, apiRequest, setCsrfToken, clearCsrfToken } from '@/lib/apiClient';
 import type { User } from '@/lib/types';
 
 interface AuthContextValue {
   user: User | null;
   loading: boolean;
+  /** Set when the backend session exchange fails, so the UI can surface it. */
+  authError: string | null;
   login: (email: string, password: string) => Promise<void>;
   signup: (email: string, password: string, name?: string) => Promise<void>;
   logout: () => Promise<void>;
@@ -27,14 +29,22 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
+  const [authError, setAuthError] = useState<string | null>(null);
 
   const establishBackendSession = useCallback(async () => {
     if (!clerkUser) {
       clearCsrfToken();
       setUser(null);
+      setAuthError(null);
       setLoading(false);
       return;
     }
+
+    // The backend session exchange is in flight. Marking loading here (not
+    // only clearing it afterwards) lets ProtectedRoute distinguish "still
+    // establishing" from "established" and from "failed".
+    setLoading(true);
+    setAuthError(null);
 
     try {
       const token = await getToken();
@@ -42,6 +52,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       if (!token) {
         clearCsrfToken();
         setUser(null);
+        setAuthError('Your session could not be verified. Please try again.');
         setLoading(false);
         return;
       }
@@ -68,9 +79,22 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       }>('/api/auth/session');
 
       setUser(session.authenticated ? (session.user ?? null) : null);
-    } catch {
+
+      if (!session.authenticated) {
+        setAuthError(
+          'We could not link your account to an application session. Please try again or sign in.'
+        );
+      }
+    } catch (err) {
       clearCsrfToken();
       setUser(null);
+      // Surface the actual failure (backend rejected the session exchange,
+      // network error, etc.) instead of swallowing it and spinning forever.
+      setAuthError(
+        err instanceof ApiError
+          ? err.message
+          : 'Unable to establish your session. Please check your connection and try again.'
+      );
     } finally {
       setLoading(false);
     }
@@ -104,6 +128,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     } finally {
       clearCsrfToken();
       setUser(null);
+      setAuthError(null);
       await signOut();
     }
   }, [signOut]);
@@ -113,6 +138,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       value={{
         user,
         loading,
+        authError,
         login,
         signup,
         logout,
