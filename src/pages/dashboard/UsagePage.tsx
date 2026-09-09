@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import { Activity, AlertCircle } from 'lucide-react';
 import { DashboardPageHeader } from '@/layouts/DashboardLayout';
 import { LoadingState, EmptyState } from '@/components/Feedback';
-import { getUsage } from '@/lib/dashboard';
+import { getUsage, extractUsageValue } from '@/lib/dashboard';
 import { ApiError } from '@/lib/apiClient';
 import type { Usage as UsageType } from '@/lib/types';
 
@@ -35,7 +35,7 @@ export default function UsagePage() {
     );
   }
 
-  const usage = data?.usage ?? data?.monthlyCount ?? data?.verificationCount ?? 0;
+  const usage = extractUsageValue(data);
   const limit = data?.usageLimit ?? data?.monthlyAllowance ?? 0;
   const remaining = data?.remaining ?? (limit > 0 ? Math.max(0, limit - usage) : 0);
   const pct = limit > 0 ? Math.min(100, Math.round((usage / limit) * 100)) : 0;

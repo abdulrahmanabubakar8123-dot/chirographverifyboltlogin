@@ -16,6 +16,22 @@ export async function getUsage(): Promise<Usage> {
   return apiRequest<Usage>('/api/dashboard/usage');
 }
 
+/**
+ * Extracts a numeric usage value from the API response. The backend may
+ * return `usage` as a direct number or as a nested object (e.g. { count: N }).
+ * Calling .toLocaleString() on an object yields "[object Object]", so we
+ * normalize to a number here.
+ */
+export function extractUsageValue(data: Usage | undefined): number {
+  const raw = data?.usage;
+  if (typeof raw === 'number') return raw;
+  if (raw && typeof raw === 'object') {
+    const obj = raw as Record<string, unknown>;
+    return Number(obj.count ?? obj.total ?? obj.value ?? 0);
+  }
+  return data?.monthlyCount ?? data?.verificationCount ?? 0;
+}
+
 export async function regenerateApiKey(): Promise<ApiKey> {
   const res = await apiRequest<{
     api_key?: string;
