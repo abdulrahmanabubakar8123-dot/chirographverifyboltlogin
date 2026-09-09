@@ -125,7 +125,12 @@ export default function BillingPage() {
 
           <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5">
             {plans.map((plan) => {
-              const isCurrent = currentPlanName.toLowerCase() === plan.name.toLowerCase();
+              const planName = (plan.name || '').toLowerCase();
+              const current = (currentPlanName || '').toLowerCase();
+              // Guard against a plan missing its `name` field (backend may omit it
+              // or send it under a different key like tier/title) so the comparison
+              // degrades gracefully instead of throwing on .toLowerCase().
+              const isCurrent = current !== '' && planName === current;
               return (
                 <div
                   key={plan.id}
@@ -136,14 +141,14 @@ export default function BillingPage() {
                       Most Popular
                     </span>
                   )}
-                  <h3 className="text-sm font-semibold text-slate-900">{plan.name}</h3>
+                  <h3 className="text-sm font-semibold text-slate-900">{plan.name || plan.id || 'Plan'}</h3>
                   <p className="mt-2 text-3xl font-bold text-slate-900">
                     {plan.custom ? 'Custom' : `$${plan.price}`}
                     {!plan.custom && <span className="text-sm font-normal text-slate-400">/mo</span>}
                   </p>
-                  <p className="mt-1 text-xs text-slate-500">{plan.verifications}</p>
+                  <p className="mt-1 text-xs text-slate-500">{plan.verifications || ''}</p>
                   <ul className="mt-4 flex-1 space-y-2">
-                    {plan.features.map((f) => (
+                    {(plan.features || []).map((f) => (
                       <li key={f} className="flex items-start gap-2 text-xs text-slate-600">
                         <Check size={14} className="mt-0.5 shrink-0 text-green-500" />
                         {f}
@@ -165,7 +170,7 @@ export default function BillingPage() {
                         disabled={busy === plan.id}
                         className={`w-full ${plan.popular ? 'btn-primary' : 'btn-secondary'}`}
                       >
-                        {busy === plan.id ? <Spinner size={16} /> : isCurrent ? 'Current Plan' : `Choose ${plan.name}`}
+                        {busy === plan.id ? <Spinner size={16} /> : isCurrent ? 'Current Plan' : `Choose ${plan.name || plan.id || 'this plan'}`}
                       </button>
                     )}
                   </div>
