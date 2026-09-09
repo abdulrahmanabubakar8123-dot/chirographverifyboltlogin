@@ -17,9 +17,21 @@ export async function getUsage(): Promise<Usage> {
 }
 
 export async function regenerateApiKey(): Promise<ApiKey> {
-  return apiRequest<ApiKey>('/api/dashboard/api-key/regenerate', {
+  const res = await apiRequest<{
+    api_key?: string;
+    key?: string;
+    prefix?: string;
+  }>('/api/dashboard/api-key/regenerate', {
     method: 'POST',
   });
+
+  // The backend returns the plaintext key as `api_key` (snake_case).
+  // Map it to the frontend's expected `key` field so the component can
+  // display it directly.
+  return {
+    key: res.api_key || res.key,
+    prefix: res.prefix,
+  };
 }
 
 export async function getWebhooks(): Promise<WebhooksResponse> {
