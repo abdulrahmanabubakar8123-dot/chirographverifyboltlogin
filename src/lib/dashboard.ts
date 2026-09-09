@@ -22,7 +22,7 @@ export async function getUsage(): Promise<Usage> {
  * Calling .toLocaleString() on an object yields "[object Object]", so we
  * normalize to a number here.
  */
-export function extractUsageValue(data: Usage | undefined): number {
+export function extractUsageValue(data: Usage | null | undefined): number {
   const raw = data?.usage;
   if (typeof raw === 'number') return raw;
   if (raw && typeof raw === 'object') {
