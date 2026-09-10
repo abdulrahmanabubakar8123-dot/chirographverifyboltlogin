@@ -12,7 +12,7 @@ const FALLBACK_PLANS: BillingPlan[] = [
   { id: 'developer', name: 'Developer', price: 29, verifications: '10,000 verifications/month', features: ['10,000 verifications/month', 'Full device intelligence', 'Webhooks', 'Email support'], custom: false },
   { id: 'growth', name: 'Growth', price: 99, verifications: '50,000 verifications/month', features: ['50,000 verifications/month', 'Advanced analytics', 'Priority webhooks', 'Priority support'], popular: true, custom: false },
   { id: 'scale', name: 'Scale', price: 299, verifications: '250,000 verifications/month', features: ['250,000 verifications/month', 'Custom rules', 'SLA', 'Dedicated support'], custom: false },
-  { id: 'enterprise', name: 'Enterprise', price: 0, verifications: 'Configurable', features: ['Configurable volume', 'Custom SLA', 'On-premise option', 'Dedicated engineer'], custom: true },
+  { id: 'enterprise', name: 'Enterprise', price: null, verifications: 'Configurable', features: ['Configurable volume', 'Custom SLA', 'On-premise option', 'Dedicated engineer'], custom: true },
 ];
 
 export default function BillingPage() {
@@ -135,9 +135,14 @@ export default function BillingPage() {
               // degrades gracefully instead of throwing on .toLowerCase().
               const isCurrent = current !== '' && planName === current;
               // Backend contract: plan.name is the card title, plan.price is the
-              // display price. null price means custom/quote pricing (Enterprise)
-              // -> render "Custom", never $undefined or $null.
-              const isCustom = plan.custom === true || plan.self_serve === false || plan.price === null;
+              // display price. Only an unknown price (null/undefined) means
+              // custom/quote pricing (Enterprise) -> render "Custom".
+              // self_serve must NOT feed this check: Free has self_serve false
+              // but a real price of 0, so it must render $0/mo, not "Custom".
+              // self_serve still controls button behavior below (canSelfServe).
+              // typeof check covers both null and undefined without a TS
+              // no-overlap complaint (price is typed `number | null`).
+              const isCustom = typeof plan.price !== 'number';
               const planKey = (plan.tier || plan.id || '').toLowerCase();
               const isEnterprise = planKey === 'enterprise';
               const isFree = planKey === 'free';
