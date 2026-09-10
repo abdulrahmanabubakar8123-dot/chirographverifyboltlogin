@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useRef, useState, type FormEvent } from 'react';
+import { useCallback, useEffect, useState, type FormEvent } from 'react';
 import { Link, useNavigate, useSearchParams } from 'react-router-dom';
 import { ArrowLeft, Mail, Lock, Eye, EyeOff } from 'lucide-react';
 import AuthLayout from '@/layouts/AuthLayout';
@@ -18,6 +18,13 @@ import Spinner from '@/components/Spinner';
  * then finalize() activates the session (same pattern as LoginPage).
  * The user therefore ends this flow signed in with their new password set.
  */
+
+// Module-level guard that survives component remounts. A useRef would reset to
+// false on every remount, causing the mount effect to fire requestCode again
+// and mail a brand-new code — invalidating the code the user had just typed.
+// Keyed by email so a fresh identifier always gets exactly one code.
+const codeSentByEmail = new Set<string>();
+
 export default function ResetPasswordPage() {
   const { signIn } = useSignIn();
   const [searchParams] = useSearchParams();
@@ -48,7 +55,6 @@ export default function ResetPasswordPage() {
   //   submitPassword({ password, signOutOfOtherSessions }) -> sets the new
   //       password; signIn.status -> 'complete'
   const [codeSent, setCodeSent] = useState(false);
-  const attemptStartedRef = useRef(false);
 
   const requestCode = useCallback(
     async (identifier: string) => {
@@ -79,10 +85,12 @@ export default function ResetPasswordPage() {
   );
 
   // Deep-link / bookmark support: send exactly one code when the page mounts
-  // with an email, before the user has typed anything.
+  // with an email, before the user has typed anything. The module-level
+  // codeSentByEmail Set guarantees this fires once per email even if the
+  // component unmounts and remounts (a useRef guard would not survive that).
   useEffect(() => {
-    if (prefillEmail && !attemptStartedRef.current) {
-      attemptStartedRef.current = true;
+    if (prefillEmail && !codeSentByEmail.has(prefillEmail)) {
+      codeSentByEmail.add(prefillEmail);
       void requestCode(prefillEmail);
     }
   }, [prefillEmail, requestCode]);
@@ -92,6 +100,7 @@ export default function ResetPasswordPage() {
   const handleResendCode = () => {
     setCode('');
     setCodeSent(false);
+    codeSentByEmail.delete(email);
     void requestCode(email);
   };
 
@@ -103,6 +112,7 @@ export default function ResetPasswordPage() {
       setEmail(val);
       setCode('');
       setCodeSent(false);
+      codeSentByEmail.delete(email);
     }
   };
 
