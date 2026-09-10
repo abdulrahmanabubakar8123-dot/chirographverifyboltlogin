@@ -1,4 +1,4 @@
-import { useEffect, useState, type FormEvent } from 'react';
+import { useCallback, useEffect, useRef, useState, type FormEvent } from 'react';
 import { Link, useNavigate, useSearchParams } from 'react-router-dom';
 import { ArrowLeft, Mail, Lock, Eye, EyeOff } from 'lucide-react';
 import AuthLayout from '@/layouts/AuthLayout';
@@ -34,9 +34,77 @@ export default function ResetPasswordPage() {
   const [error, setError] = useState('');
   const [fieldErrors, setFieldErrors] = useState<{ email?: string; code?: string; password?: string; confirm?: string }>({});
 
-  useEffect(() => {
+    useEffect(() => {
     if (prefillEmail) setEmail(prefillEmail);
   }, [prefillEmail]);
+
+  // create() + resetPasswordEmailCode.sendCode() must run ONLY ONCE per
+  // sign-in attempt. Running them again on every submit would mail a brand-new
+  // reset code, invalidating the code the user had just typed — the infinite
+  // "Invalid code" / "a new code was sent" loop reported by users. Confirmed
+  // against the installed @clerk/shared types (signInFuture.d.ts):
+  //   sendCode() -> emails a reset code
+  //   verifyCode({ code }) -> verifies it; signIn.status -> 'needs_new_password'
+  //   submitPassword({ password, signOutOfOtherSessions }) -> sets the new
+  //       password; signIn.status -> 'complete'
+  const [codeSent, setCodeSent] = useState(false);
+  const attemptStartedRef = useRef(false);
+
+  const requestCode = useCallback(
+    async (identifier: string) => {
+      if (!identifier) return false;
+      setError('');
+      setLoading(true);
+      try {
+        const createResult = await signIn.create({ identifier });
+        if (createResult.error) {
+          setError(createResult.error.longMessage || createResult.error.message || 'Something went wrong. Please try again.');
+          return false;
+        }
+        const sendResult = await signIn.resetPasswordEmailCode.sendCode();
+        if (sendResult.error) {
+          setError(sendResult.error.longMessage || sendResult.error.message || 'Something went wrong. Please try again.');
+          return false;
+        }
+        setCodeSent(true);
+        return true;
+      } catch (err) {
+        setError(err instanceof Error ? err.message : 'Something went wrong. Please try again.');
+        return false;
+      } finally {
+        setLoading(false);
+      }
+    },
+    [signIn],
+  );
+
+  // Deep-link / bookmark support: send exactly one code when the page mounts
+  // with an email, before the user has typed anything.
+  useEffect(() => {
+    if (prefillEmail && !attemptStartedRef.current) {
+      attemptStartedRef.current = true;
+      void requestCode(prefillEmail);
+    }
+  }, [prefillEmail, requestCode]);
+
+  // Deliberate, separate action: request a new code for the currently entered
+  // email. NOT triggered by the Verify submit.
+  const handleResendCode = () => {
+    setCode('');
+    setCodeSent(false);
+    void requestCode(email);
+  };
+
+  const handleEmailChange = (e: { target: { value: string } }) => {
+    const val = e.target.value;
+    // A different identifier invalidates any code already sent for another
+    // address, so the user must request a fresh code before verifying.
+    if (val !== email) {
+      setEmail(val);
+      setCode('');
+      setCodeSent(false);
+    }
+  };
 
   const handleVerifyCode = async (e: FormEvent) => {
     e.preventDefault();
@@ -49,22 +117,10 @@ export default function ResetPasswordPage() {
     if (Object.keys(errs).length > 0) return;
     setLoading(true);
     try {
-      // Start a fresh sign-in attempt for this identifier, then send the
-      // reset code (resending here is harmless and covers arriving directly
-      // via a deep link without having requested a code in this session).
-      const createResult = await signIn.create({ identifier: email });
-      if (createResult.error) {
-        setError(createResult.error.longMessage || createResult.error.message || 'Something went wrong. Please try again.');
-        return;
-      }
-      const sendResult = await signIn.resetPasswordEmailCode.sendCode();
-      if (sendResult.error) {
-        setError(sendResult.error.longMessage || sendResult.error.message || 'Something went wrong. Please try again.');
-        return;
-      }
-      // Verify the emailed reset code. On success signIn.status becomes
-      // 'needs_new_password' (per the resetPasswordEmailCode.verifyCode docs
-      // on the installed type) and we advance to the password step.
+      // Verify ONLY. create() + sendCode() are run once in requestCode() — on
+      // mount for deep links, or via the "Resend code" button — never here.
+      // Re-sending on submit would mail a new code and invalidate the one
+      // just typed (the infinite "Invalid code" loop).
       const verifyResult = await signIn.resetPasswordEmailCode.verifyCode({ code: code.trim() });
       if (verifyResult.error) {
         setError(verifyResult.error.longMessage || verifyResult.error.message || 'Invalid code. Please check the email and try again.');
@@ -198,7 +254,7 @@ export default function ResetPasswordPage() {
               type="email"
               autoComplete="email"
               value={email}
-              onChange={(e) => setEmail(e.target.value)}
+              onChange={handleEmailChange}
               className="input-field pl-10"
               placeholder="you@company.com"
               aria-invalid={!!fieldErrors.email}
@@ -226,12 +282,24 @@ export default function ResetPasswordPage() {
           {fieldErrors.code && <p id="code-error" className="mt-1.5 text-sm text-red-600">{fieldErrors.code}</p>}
         </div>
 
-        <button type="submit" disabled={loading} className="btn-primary w-full">
-          {loading ? <Spinner size={18} /> : 'Verify Code'}
-        </button>
-        <p className="text-center text-xs text-slate-400">
-          Next you'll choose a new password.
-        </p>
+        <div className="flex flex-col items-center gap-3">
+          <button type="submit" disabled={loading || !code} className="btn-primary w-full">
+            {loading ? <Spinner size={18} /> : 'Verify Code'}
+          </button>
+          {/* Deliberate, separate action: request another reset code for the
+              currently-entered email. NOT a side effect of verifying. */}
+          <button
+            type="button"
+            onClick={handleResendCode}
+            disabled={loading || !email}
+            className="text-sm font-medium text-brand-600 hover:text-brand-700 disabled:opacity-50 disabled:cursor-not-allowed"
+          >
+            {codeSent ? 'Resend code' : 'Send code'}
+          </button>
+          <p className="text-center text-xs text-slate-400">
+            Next you'll choose a new password.
+          </p>
+        </div>
       </form>
     </AuthLayout>
   );
