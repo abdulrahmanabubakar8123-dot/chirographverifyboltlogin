@@ -35,21 +35,17 @@ export default function ForgotPasswordPage() {
     }
     setLoading(true);
     try {
-      // Step 1 of Clerk's forgot-password flow: create a sign-in attempt for
-      // this identifier, then send the reset code to the user's email.
-      // Verified against installed @clerk/shared SignInFutureResource types:
-      // - create() takes SignInFutureCreateParams (identifier supported).
-      // - emailCode.sendCode() is the available email-code sender on this
-      //   resource; its send params (SignInFutureEmailCodeSendParams) accept
-      //   emailAddress (optional — the create() identifier is reused when
-      //   omitted). No strategy arg exists on either method here, so none is
-      //   passed; the reset-password context comes from the sign-in attempt.
+      // Step 1 of Clerk's forgot-password flow. Verified against the installed
+      // @clerk/shared SignInFutureResource types (signInFuture.d.ts):
+      // - create({ identifier }) starts a sign-in attempt for this email.
+      // - resetPasswordEmailCode.sendCode() sends the reset code to the
+      //   account's first email address (takes no params).
       const createResult = await signIn.create({ identifier: email });
       if (createResult.error) {
         setError(createResult.error.longMessage || createResult.error.message || 'Something went wrong. Please try again.');
         return;
       }
-      const sendResult = await signIn.emailCode.sendCode({ emailAddress: email });
+      const sendResult = await signIn.resetPasswordEmailCode.sendCode();
       if (sendResult.error) {
         setError(sendResult.error.longMessage || sendResult.error.message || 'Something went wrong. Please try again.');
         return;
