@@ -83,9 +83,12 @@ export async function getBilling(): Promise<Billing> {
 }
 
 export async function upgradePlan(planId: string): Promise<void> {
+  // The backend validates the `tier` field strictly: it 400s when the field is
+  // missing, is "enterprise", or is sent under any other key (e.g. `plan`).
+  // Send exactly { tier: "<plan-id>" } for self-serve tiers (developer/growth/scale).
   await apiRequest('/api/dashboard/billing/upgrade', {
     method: 'POST',
-    body: JSON.stringify({ plan: planId }),
+    body: JSON.stringify({ tier: planId }),
   });
 }
 

@@ -87,8 +87,19 @@ export interface WebhooksResponse {
 
 export interface BillingPlan {
   id: string;
+  /** Backend tier key — identical to `id` (e.g. "developer"). Sent as `tier` in upgrade requests. */
+  tier?: string;
   name: string;
-  price: number;
+  /** Display price in major units. `null` means custom/quote pricing (Enterprise). */
+  price: number | null;
+  /** Backend minor-unit price (cents), e.g. 2900. Informational only. */
+  price_minor?: number;
+  /** Backend preformatted label, e.g. "USD 29.00". Informational only. */
+  price_label?: string;
+  /** Backend monthly verification allowance (e.g. 10000). */
+  monthly_limit?: number;
+  /** Whether this plan can be purchased via the self-serve upgrade endpoint. */
+  self_serve?: boolean;
   verifications: string;
   features: string[];
   popular?: boolean;

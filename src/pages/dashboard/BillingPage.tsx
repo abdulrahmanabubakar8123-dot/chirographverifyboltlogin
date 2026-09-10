@@ -38,6 +38,10 @@ export default function BillingPage() {
   }, []);
 
   const handleUpgrade = async (planId: string) => {
+    const key = planId.toLowerCase();
+    // Never hit the self-serve upgrade endpoint for non-self-serve tiers.
+    // The backend 400s on "enterprise", and Free is the default/no-cost tier.
+    if (key === 'enterprise' || key === 'free') return;
     setActionError('');
     setBusy(planId);
     try {
@@ -127,10 +131,18 @@ export default function BillingPage() {
             {plans.map((plan) => {
               const planName = (plan.name || '').toLowerCase();
               const current = (currentPlanName || '').toLowerCase();
-              // Guard against a plan missing its `name` field (backend may omit it
-              // or send it under a different key like tier/title) so the comparison
+              // Guard against a plan missing its `name` field so the comparison
               // degrades gracefully instead of throwing on .toLowerCase().
               const isCurrent = current !== '' && planName === current;
+              // Backend contract: plan.name is the card title, plan.price is the
+              // display price. null price means custom/quote pricing (Enterprise)
+              // -> render "Custom", never $undefined or $null.
+              const isCustom = plan.custom === true || plan.self_serve === false || plan.price === null;
+              const planKey = (plan.tier || plan.id || '').toLowerCase();
+              const isEnterprise = planKey === 'enterprise';
+              const isFree = planKey === 'free';
+              // Only self-serve tiers may attempt the upgrade endpoint.
+              const canSelfServe = !isEnterprise && !isFree && plan.self_serve !== false;
               return (
                 <div
                   key={plan.id}
@@ -141,12 +153,14 @@ export default function BillingPage() {
                       Most Popular
                     </span>
                   )}
-                  <h3 className="text-sm font-semibold text-slate-900">{plan.name || plan.id || 'Plan'}</h3>
+                  <h3 className="text-sm font-semibold text-slate-900">{plan.name || plan.tier || plan.id || 'Plan'}</h3>
                   <p className="mt-2 text-3xl font-bold text-slate-900">
-                    {plan.custom ? 'Custom' : `$${plan.price}`}
-                    {!plan.custom && <span className="text-sm font-normal text-slate-400">/mo</span>}
+                    {isCustom ? 'Custom' : `$${plan.price}`}
+                    {!isCustom && <span className="text-sm font-normal text-slate-400">/mo</span>}
                   </p>
-                  <p className="mt-1 text-xs text-slate-500">{plan.verifications || ''}</p>
+                  <p className="mt-1 text-xs text-slate-500">
+                    {plan.verifications || (typeof plan.monthly_limit === 'number' ? `${plan.monthly_limit.toLocaleString()} verifications/month` : '')}
+                  </p>
                   <ul className="mt-4 flex-1 space-y-2">
                     {(plan.features || []).map((f) => (
                       <li key={f} className="flex items-start gap-2 text-xs text-slate-600">
@@ -156,21 +170,29 @@ export default function BillingPage() {
                     ))}
                   </ul>
                   <div className="mt-5">
-                    {isCurrent ? (
+                    {isCurrent || (isFree && current === '') ? (
                       <button disabled className="btn-secondary w-full cursor-default opacity-60">
                         Current Plan
                       </button>
-                    ) : plan.custom ? (
+                    ) : isFree ? (
+                      // Free is the default/no-cost tier: never an upgrade action,
+                      // never a sales action. Users move back to Free via Cancel.
+                      <button disabled className="btn-secondary w-full cursor-default opacity-60">
+                        Free Plan
+                      </button>
+                    ) : isEnterprise || isCustom || !canSelfServe ? (
+                      // Enterprise / non-self-serve tiers must never attempt the
+                      // self-serve upgrade endpoint (self_serve: false on backend).
                       <a href="mailto:sales@chirographverify.com" className="btn-secondary w-full">
                         Contact Sales
                       </a>
                     ) : (
                       <button
-                        onClick={() => handleUpgrade(plan.id)}
+                        onClick={() => handleUpgrade(plan.tier || plan.id)}
                         disabled={busy === plan.id}
                         className={`w-full ${plan.popular ? 'btn-primary' : 'btn-secondary'}`}
                       >
-                        {busy === plan.id ? <Spinner size={16} /> : isCurrent ? 'Current Plan' : `Choose ${plan.name || plan.id || 'this plan'}`}
+                        {busy === plan.id ? <Spinner size={16} /> : isCurrent ? 'Current Plan' : `Choose ${plan.name || plan.tier || plan.id || 'this plan'}`}
                       </button>
                     )}
                   </div>
