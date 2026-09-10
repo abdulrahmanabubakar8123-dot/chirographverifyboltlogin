@@ -168,7 +168,7 @@ export default function SignupPage() {
 
           <div className="mt-5">
             {verifyError && <ErrorBanner message={verifyError} />}
-            {resendMessage && <p className="text-sm text-green-600">{resendMessage}</p>}
+            {resendMessage && <p className="text-sm text-accent-600">{resendMessage}</p>}
           </div>
 
           <form onSubmit={handleVerifyCode} noValidate className="mt-4 space-y-4">

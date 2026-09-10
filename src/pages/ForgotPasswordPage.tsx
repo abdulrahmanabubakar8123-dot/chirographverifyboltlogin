@@ -71,8 +71,8 @@ export default function ForgotPasswordPage() {
         }
       >
         <div className="text-center">
-          <div className="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-full bg-green-50">
-            <CheckCircle2 size={28} className="text-green-600" />
+          <div className="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-full bg-accent-50">
+            <CheckCircle2 size={28} className="text-accent-600" />
           </div>
           <p className="text-sm text-slate-600">
             We've sent a 6-digit reset code to <strong>{email}</strong>. Enter it on the next page along with your new

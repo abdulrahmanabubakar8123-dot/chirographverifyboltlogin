@@ -10,17 +10,17 @@ interface AuthLayoutProps {
 
 export default function AuthLayout({ children, title, subtitle, footer }: AuthLayoutProps) {
   return (
-    <div className="flex min-h-screen flex-col bg-white">
+    <div className="flex min-h-screen flex-col bg-gradient-to-b from-white via-white to-slate-50">
       <header className="px-6 py-6">
         <Logo size="md" to="/" />
       </header>
       <main className="flex flex-1 items-center justify-center px-6 pb-12">
         <div className="w-full max-w-md">
           <div className="mb-8 text-center">
-            <h1 className="text-2xl font-bold tracking-tight text-slate-900">{title}</h1>
-            {subtitle && <p className="mt-2 text-sm text-slate-500">{subtitle}</p>}
+            <h1 className="text-2xl font-bold tracking-tight text-slate-900 sm:text-3xl">{title}</h1>
+            {subtitle && <p className="mt-2 text-sm leading-relaxed text-slate-500">{subtitle}</p>}
           </div>
-          <div className="card p-6 sm:p-8">{children}</div>
+          <div className="card p-6 shadow-md sm:p-8">{children}</div>
           {footer && <div className="mt-6 text-center text-sm text-slate-500">{footer}</div>}
         </div>
       </main>
