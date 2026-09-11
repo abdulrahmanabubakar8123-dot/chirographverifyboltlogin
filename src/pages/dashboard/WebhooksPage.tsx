@@ -212,6 +212,37 @@ export default function WebhooksPage() {
               </button>
             )}
           </div>
+
+          <div className="card p-6">
+            <div>
+              <h2 className="section-title">Event subscriptions</h2>
+              <p className="text-xs text-text-muted">Choose which events trigger webhook deliveries</p>
+            </div>
+            <div className="mt-5 divide-y divide border-line">
+              {[
+                { id: 'verification.succeeded', label: 'verification.succeeded', desc: 'A verification completed successfully' },
+                { id: 'verification.failed', label: 'verification.failed', desc: 'A verification request failed' },
+                { id: 'key.rotated', label: 'key.rotated', desc: 'The API key was regenerated' },
+                { id: 'device.flagged', label: 'device.flagged', desc: 'A device was flagged for review' },
+              ].map((evt) => (
+                <div key={evt.id} className="flex items-center justify-between py-4 first:pt-0 last:pb-0">
+                  <div>
+                    <p className="font-mono text-sm text-text-primary">{evt.label}</p>
+                    <p className="mt-0.5 text-xs text-text-muted">{evt.desc}</p>
+                  </div>
+                  <button
+                    type="button"
+                    role="switch"
+                    aria-checked="true"
+                    aria-label={evt.label}
+                    className="relative h-[22px] w-10 shrink-0 cursor-pointer rounded-full bg-brand-gradient transition-opacity"
+                  >
+                    <span className="absolute right-[3px] top-[3px] h-4 w-4 rounded-full bg-white transition-transform" />
+                  </button>
+                </div>
+              ))}
+            </div>
+          </div>
         </div>
       )}
     </>
