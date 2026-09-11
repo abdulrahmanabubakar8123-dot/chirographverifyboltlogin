@@ -58,49 +58,54 @@ export default function UsagePage() {
         </div>
       ) : (
         <div className="space-y-6">
-          <div className="grid grid-cols-2 gap-4 lg:grid-cols-4">
+          <div className="grid grid-cols-2 gap-5 lg:grid-cols-4">
             {stats.map((s) => (
-              <div key={s.label} className="card p-5">
-                <div className={`mb-3 inline-flex h-10 w-10 items-center justify-center rounded-lg ${s.bg}`}>
+              <div key={s.label} className="card p-6">
+                <div className={`mb-4 inline-flex h-11 w-11 items-center justify-center rounded-xl ${s.bg}`}>
                   <Activity size={20} className={s.color} />
                 </div>
                 <p className="text-sm text-slate-500">{s.label}</p>
-                <p className="mt-1 text-2xl font-bold text-slate-900">{s.value}</p>
+                <p className="mt-1 text-2xl font-bold tracking-tight text-slate-900">{s.value}</p>
               </div>
             ))}
           </div>
 
           <div className="card p-6">
-            <h2 className="text-sm font-semibold text-slate-900">Monthly Usage Progress</h2>
-            <div className="mt-4">
-              <div className="flex items-center justify-between text-sm">
-                <span className="text-slate-500">{usage.toLocaleString()} used</span>
-                <span className="text-slate-500">{limit > 0 ? `${limit.toLocaleString()} limit` : 'Unlimited'}</span>
+            <div className="flex items-center justify-between">
+              <h2 className="text-sm font-semibold text-slate-900">Monthly Usage Progress</h2>
+              <span className="text-xs font-medium text-slate-400">{pct}% of allowance used</span>
+            </div>
+            <div className="mt-5">
+              <div className="flex items-baseline justify-between text-sm">
+                <span className="font-medium text-slate-900">{usage.toLocaleString()} used</span>
+                <span className="text-slate-400">{limit > 0 ? `${limit.toLocaleString()} limit` : 'Unlimited'}</span>
               </div>
-              <div className="mt-2 h-2.5 w-full overflow-hidden rounded-full bg-slate-100">
+              <div className="mt-3 h-2 w-full overflow-hidden rounded-full bg-slate-100">
                 <div
                   className={`h-full rounded-full transition-all duration-500 ${pct > 90 ? 'bg-red-500' : 'bg-brand-500'}`}
                   style={{ width: `${pct}%` }}
                 />
               </div>
-              <p className="mt-2 text-xs text-slate-400">{pct}% of monthly allowance used</p>
             </div>
           </div>
 
           {data?.history && data.history.length > 0 && (
             <div className="card p-6">
-              <h2 className="mb-4 text-sm font-semibold text-slate-900">Usage History</h2>
-              <div className="space-y-2">
+              <div className="flex items-center justify-between">
+                <h2 className="text-sm font-semibold text-slate-900">Usage History</h2>
+                <span className="text-xs text-slate-400">Per day</span>
+              </div>
+              <div className="mt-5 space-y-2.5">
                 {data.history.map((item) => {
                   const max = Math.max(...(data.history ?? []).map((h) => h.count), 1);
                   const w = Math.max(2, Math.round((item.count / max) * 100));
                   return (
-                    <div key={item.date} className="flex items-center gap-3">
-                      <span className="w-24 shrink-0 text-xs text-slate-500">{new Date(item.date).toLocaleDateString()}</span>
-                      <div className="h-6 flex-1 overflow-hidden rounded bg-slate-50">
+                    <div key={item.date} className="flex items-center gap-4">
+                      <span className="w-24 shrink-0 font-mono text-xs text-slate-500">{new Date(item.date).toLocaleDateString()}</span>
+                      <div className="h-6 flex-1 overflow-hidden rounded bg-slate-100">
                         <div className="h-full rounded bg-brand-400 transition-all" style={{ width: `${w}%` }} />
                       </div>
-                      <span className="w-12 shrink-0 text-right text-xs font-medium text-slate-700">{item.count}</span>
+                      <span className="w-12 shrink-0 text-right font-mono text-xs font-medium text-slate-700">{item.count}</span>
                     </div>
                   );
                 })}
