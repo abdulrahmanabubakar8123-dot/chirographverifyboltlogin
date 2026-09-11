@@ -33,8 +33,8 @@ export function EmptyState({ icon, title, description, action }: EmptyStateProps
           {icon}
         </div>
       )}
-      <h3 className="text-base font-semibold tracking-tight text-slate-900">{title}</h3>
-      {description && <p className="mt-1.5 max-w-sm text-sm leading-relaxed text-slate-500">{description}</p>}
+      <h3 className="text-base font-semibold tracking-tight text-zinc-900">{title}</h3>
+      {description && <p className="mt-1.5 max-w-sm text-sm leading-relaxed text-zinc-500">{description}</p>}
       {action && <div className="mt-5">{action}</div>}
     </div>
   );
@@ -46,8 +46,8 @@ interface LoadingStateProps {
 
 export function LoadingState({ label = 'Loading...' }: LoadingStateProps) {
   return (
-    <div className="flex flex-col items-center justify-center gap-3 py-20 text-sm text-slate-400">
-      <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-slate-100">
+    <div className="flex flex-col items-center justify-center gap-3 py-20 text-sm text-zinc-400">
+      <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-zinc-100">
         <Spinner size={18} />
       </div>
       <span>{label}</span>

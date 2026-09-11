@@ -103,9 +103,9 @@ export default function BillingPage() {
                 <div className="flex items-center gap-4">
                   {data?.status && (
                     <span className={`inline-flex items-center gap-1.5 rounded-full px-3 py-1 text-xs font-medium ${
-                      data.status === 'active' ? 'bg-accent-50 text-accent-700' : 'bg-slate-100 text-slate-600'
+                      data.status === 'active' ? 'bg-accent-50 text-accent-700' : 'bg-zinc-100 text-zinc-600'
                     }`}>
-                      <span className={`h-1.5 w-1.5 rounded-full ${data.status === 'active' ? 'bg-accent-500' : 'bg-slate-400'}`} />
+                      <span className={`h-1.5 w-1.5 rounded-full ${data.status === 'active' ? 'bg-accent-500' : 'bg-zinc-400'}`} />
                       {data.status}
                     </span>
                   )}
@@ -153,17 +153,17 @@ export default function BillingPage() {
                       Most Popular
                     </span>
                   )}
-                  <h3 className="text-lg font-semibold tracking-tight text-slate-900">{plan.name || plan.tier || plan.id || 'Plan'}</h3>
-                  <p className="mt-3 font-mono text-3xl font-bold tracking-tight text-slate-900">
+                  <h3 className="text-lg font-semibold tracking-tight text-zinc-900">{plan.name || plan.tier || plan.id || 'Plan'}</h3>
+                  <p className="mt-3 font-mono text-3xl font-bold tracking-tight text-zinc-900">
                     {isCustom ? 'Custom' : `$${plan.price}`}
-                    {!isCustom && <span className="text-sm font-normal text-slate-400">/mo</span>}
+                    {!isCustom && <span className="text-sm font-normal text-zinc-400">/mo</span>}
                   </p>
-                  <p className="mt-1 text-xs text-slate-500">
+                  <p className="mt-1 text-xs text-zinc-500">
                     {plan.verifications || (typeof plan.monthly_limit === 'number' ? `${plan.monthly_limit.toLocaleString()} verifications/month` : '')}
                   </p>
                   <ul className="mt-5 flex-1 space-y-2.5">
                     {(plan.features || []).map((f) => (
-                      <li key={f} className="flex items-start gap-2.5 text-sm text-slate-600">
+                      <li key={f} className="flex items-start gap-2.5 text-sm text-zinc-600">
                         <Check size={15} className="mt-0.5 shrink-0 text-accent-500" />
                         {f}
                       </li>

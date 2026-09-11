@@ -62,7 +62,7 @@ export default function ApiKeysPage() {
           <div className="mt-6">
             {data?.key ? (
               <div className="flex items-center gap-2">
-                <div className="flex-1 overflow-hidden rounded-lg border border-slate-200/70 bg-slate-50 px-4 py-3 font-mono text-sm text-slate-700">
+                <div className="flex-1 overflow-hidden rounded-lg border border-zinc-200/70 bg-zinc-100 px-4 py-3 font-mono text-sm text-zinc-700">
                   {showKey ? data.key : `${data.key.slice(0, 8)}${'•'.repeat(20)}`}
                 </div>
                 <button onClick={() => setShowKey(!showKey)} className="btn-ghost" aria-label={showKey ? 'Hide key' : 'Show key'}>
@@ -74,10 +74,10 @@ export default function ApiKeysPage() {
               </div>
             ) : data?.prefix ? (
               <div className="flex items-center gap-2">
-                <div className="flex-1 overflow-hidden rounded-lg border border-slate-200/70 bg-slate-50 px-4 py-3 font-mono text-sm text-slate-700">
+                <div className="flex-1 overflow-hidden rounded-lg border border-zinc-200/70 bg-zinc-100 px-4 py-3 font-mono text-sm text-zinc-700">
                   {data.prefix}{'•'.repeat(16)}
                 </div>
-                <span className="text-xs text-slate-400">Key prefix only</span>
+                <span className="text-xs text-zinc-400">Key prefix only</span>
               </div>
             ) : (
               <EmptyState
@@ -92,14 +92,14 @@ export default function ApiKeysPage() {
             <div className="mt-6 grid grid-cols-1 gap-5 sm:grid-cols-2">
               {data.createdAt && (
                 <div>
-                  <p className="text-xs font-medium text-slate-500">Created</p>
-                  <p className="mt-0.5 font-mono text-sm text-slate-900">{new Date(data.createdAt).toLocaleDateString()}</p>
+                  <p className="text-xs font-medium text-zinc-500">Created</p>
+                  <p className="mt-0.5 font-mono text-sm text-zinc-900">{new Date(data.createdAt).toLocaleDateString()}</p>
                 </div>
               )}
               <div>
-                <p className="text-xs font-medium text-slate-500">Status</p>
+                <p className="text-xs font-medium text-zinc-500">Status</p>
                 <p className="mt-0.5 flex items-center gap-1.5 text-sm">
-                  <span className={`h-2 w-2 rounded-full ${data.active ? 'bg-accent-500' : 'bg-slate-300'}`} />
+                  <span className={`h-2 w-2 rounded-full ${data.active ? 'bg-accent-500' : 'bg-zinc-300'}`} />
                   {data.active ? 'Active' : 'Inactive'}
                 </p>
               </div>

@@ -122,10 +122,10 @@ export default function DashboardLayout() {
 
       {/* Main content */}
       <div className="flex min-w-0 flex-1 flex-col">
-        <header className="flex h-16 items-center justify-between border-b border-slate-200/80 bg-white px-4 lg:px-8">
+        <header className="flex h-16 items-center justify-between border-b border-zinc-200/80 bg-white px-4 lg:px-8">
           <button
             onClick={() => setMobileOpen(true)}
-            className="rounded-lg p-2 text-slate-500 hover:bg-slate-100 lg:hidden"
+            className="rounded-lg p-2 text-zinc-500 hover:bg-zinc-100 lg:hidden"
           >
             <Menu size={20} />
           </button>
@@ -133,7 +133,7 @@ export default function DashboardLayout() {
             <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-brand-600">
               <Fingerprint className="text-white" size={16} />
             </div>
-            <span className="text-sm font-bold text-slate-900">Chirograph Verify</span>
+            <span className="text-sm font-bold text-zinc-900">Chirograph Verify</span>
           </div>
           <div className="ml-auto flex items-center gap-3">
             <div className="hidden font-mono text-sm text-zinc-500 sm:block">
@@ -156,8 +156,8 @@ export function DashboardPageHeader({ title, description, action }: { title: str
   return (
     <div className="mb-8 flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
       <div>
-        <h1 className="text-3xl font-bold tracking-tight text-slate-900">{title}</h1>
-        {description && <p className="mt-1.5 text-sm leading-relaxed text-slate-500">{description}</p>}
+        <h1 className="text-3xl font-bold tracking-tight text-zinc-900">{title}</h1>
+        {description && <p className="mt-1.5 text-sm leading-relaxed text-zinc-500">{description}</p>}
       </div>
       {action && <div className="flex-shrink-0">{action}</div>}
     </div>
