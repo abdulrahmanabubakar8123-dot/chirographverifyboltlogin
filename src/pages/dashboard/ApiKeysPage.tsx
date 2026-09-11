@@ -54,20 +54,20 @@ export default function ApiKeysPage() {
         {regenError && <ErrorBanner message={regenError} />}
 
         <div className="card p-6">
-          <div className="flex items-center gap-2.5">
-            <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-brand-50">
+          <div className="flex items-center gap-3">
+            <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-brand-50">
               <Key size={20} className="text-brand-600" />
             </div>
             <div>
-              <h2 className="text-sm font-semibold text-slate-900">Your API Key</h2>
-              <p className="text-xs text-slate-500">Use this key in the <code className="rounded bg-slate-100 px-1 py-0.5 text-xs">Authorization</code> header</p>
+              <h2 className="text-base font-semibold tracking-tight text-slate-900">Your API Key</h2>
+              <p className="text-xs text-slate-500">Use this key in the <code className="rounded bg-slate-100 px-1 py-0.5 font-mono text-xs">Authorization</code> header</p>
             </div>
           </div>
 
-          <div className="mt-5">
+          <div className="mt-6">
             {data?.key ? (
               <div className="flex items-center gap-2">
-                <div className="flex-1 rounded-lg border border-slate-200 bg-slate-50 px-3.5 py-2.5 font-mono text-sm text-slate-700">
+                <div className="flex-1 overflow-hidden rounded-lg border border-slate-200/70 bg-slate-50 px-4 py-3 font-mono text-sm text-slate-700">
                   {showKey ? data.key : `${data.key.slice(0, 8)}${'•'.repeat(20)}`}
                 </div>
                 <button onClick={() => setShowKey(!showKey)} className="btn-ghost" aria-label={showKey ? 'Hide key' : 'Show key'}>
@@ -79,7 +79,7 @@ export default function ApiKeysPage() {
               </div>
             ) : data?.prefix ? (
               <div className="flex items-center gap-2">
-                <div className="flex-1 rounded-lg border border-slate-200 bg-slate-50 px-3.5 py-2.5 font-mono text-sm text-slate-700">
+                <div className="flex-1 overflow-hidden rounded-lg border border-slate-200/70 bg-slate-50 px-4 py-3 font-mono text-sm text-slate-700">
                   {data.prefix}{'•'.repeat(16)}
                 </div>
                 <span className="text-xs text-slate-400">Key prefix only</span>
@@ -94,11 +94,11 @@ export default function ApiKeysPage() {
           </div>
 
           {data && (
-            <div className="mt-5 grid grid-cols-1 gap-4 sm:grid-cols-2">
+            <div className="mt-6 grid grid-cols-1 gap-5 sm:grid-cols-2">
               {data.createdAt && (
                 <div>
                   <p className="text-xs font-medium text-slate-500">Created</p>
-                  <p className="mt-0.5 text-sm text-slate-900">{new Date(data.createdAt).toLocaleDateString()}</p>
+                  <p className="mt-0.5 font-mono text-sm text-slate-900">{new Date(data.createdAt).toLocaleDateString()}</p>
                 </div>
               )}
               <div>
