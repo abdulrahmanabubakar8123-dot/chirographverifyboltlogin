@@ -69,24 +69,24 @@ export default function OverviewPage() {
                 <h2 className="text-2xl font-extrabold tracking-tight text-white">
                   {data?.usage ?? 0} <span className="gradient-text">verifications</span> this period
                 </h2>
-                <p className="contrast-faint mt-2 font-mono text-xs">
+                <p className="text-white/60 mt-2 font-mono text-xs">
                   {data?.usageLimit ? `${usagePct}% of ${data.usageLimit} used` : 'Usage tracking live'} · {data?.planName || data?.plan || 'Current plan'}
                 </p>
               </div>
               <div className="flex shrink-0 items-center gap-6">
                 <div>
-                  <p className="contrast-faint text-xs font-semibold uppercase tracking-wide">Plan</p>
+                  <p className="text-white/60 text-xs font-semibold uppercase tracking-wide">Plan</p>
                   <p className="mt-1 text-lg font-bold text-white">{data?.planName || data?.plan || '—'}</p>
                 </div>
                 <div>
-                  <p className="contrast-faint text-xs font-semibold uppercase tracking-wide">Remaining</p>
+                  <p className="text-white/60 text-xs font-semibold uppercase tracking-wide">Remaining</p>
                   <p className="mt-1 font-mono text-lg font-bold text-white">{data?.remaining ?? '—'}</p>
                 </div>
               </div>
             </div>
-            <div className="mt-6 h-2 w-full overflow-hidden rounded-full bg-surface/10">
+            <div className="mt-6 h-2 w-full overflow-hidden rounded-full bg-white/10">
               <div
-                className="h-full rounded-full bg-gradient-to-r from-indigo-500 to-emerald-400 transition-all duration-500"
+                className="h-full rounded-full bg-brand-gradient transition-all duration-500"
                 style={{ width: `${usagePct}%` }}
               />
             </div>
@@ -111,7 +111,7 @@ export default function OverviewPage() {
                 <span className="font-mono text-2xl font-bold tabular-nums tracking-tight text-text-primary">{data?.usage ?? 0}<span className="ml-1 font-sans text-sm font-normal text-text-muted">verifications</span></span>
                 <span className="text-text-muted">{data?.usageLimit ? `${data.usageLimit} limit` : 'No limit'}</span>
               </div>
-              <div className="mt-4 h-2 w-full overflow-hidden rounded-full bg-surface-3">
+              <div className="mt-4 h-2 w-full overflow-hidden rounded-full bg-white/[0.08]">
                 <div
                   className="h-full rounded-full bg-brand-gradient transition-all duration-500"
                   style={{ width: `${usagePct}%` }}
