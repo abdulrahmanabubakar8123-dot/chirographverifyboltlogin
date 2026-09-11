@@ -1,5 +1,5 @@
 import { useEffect, useState, type FormEvent } from 'react';
-import { Webhook, AlertCircle, Plus, Trash2, CheckCircle2, Globe, Lock } from 'lucide-react';
+import { AlertCircle, Plus, Trash2, CheckCircle2, Globe } from 'lucide-react';
 import { DashboardPageHeader } from '@/layouts/DashboardLayout';
 import { LoadingState, EmptyState, ErrorBanner } from '@/components/Feedback';
 import Spinner from '@/components/Spinner';
@@ -127,14 +127,9 @@ export default function WebhooksPage() {
           )}
 
           <div className="card p-6">
-            <div className="flex items-center gap-3">
-              <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-brand-50">
-                <Webhook size={20} className="text-brand-600" />
-              </div>
-              <div>
-                <h2 className="text-base font-semibold tracking-tight text-slate-900">Webhook URL</h2>
-                <p className="text-xs text-slate-500">Where verification events will be delivered</p>
-              </div>
+            <div>
+              <h2 className="text-base font-semibold tracking-tight text-zinc-900">Webhook URL</h2>
+              <p className="text-xs text-zinc-500">Where verification events will be delivered</p>
             </div>
             <form onSubmit={handleSaveUrl} className="mt-5 flex gap-2">
               <input
@@ -154,14 +149,9 @@ export default function WebhooksPage() {
           </div>
 
           <div className="card p-6">
-            <div className="flex items-center gap-3">
-              <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-brand-50">
-                <Lock size={20} className="text-brand-600" />
-              </div>
-              <div>
-                <h2 className="text-base font-semibold tracking-tight text-slate-900">Webhook Secret</h2>
-                <p className="text-xs text-slate-500">Used to verify webhook delivery signatures</p>
-              </div>
+            <div>
+              <h2 className="text-base font-semibold tracking-tight text-zinc-900">Webhook Secret</h2>
+              <p className="text-xs text-zinc-500">Used to verify webhook delivery signatures</p>
             </div>
             <form onSubmit={handleSaveSecret} className="mt-5 flex gap-2">
               <input
@@ -181,14 +171,9 @@ export default function WebhooksPage() {
           </div>
 
           <div className="card p-6">
-            <div className="flex items-center gap-3">
-              <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-brand-50">
-                <Globe size={20} className="text-brand-600" />
-              </div>
-              <div>
-                <h2 className="text-base font-semibold tracking-tight text-slate-900">Allowed Origins</h2>
-                <p className="text-xs text-slate-500">Domains authorized to make verification requests</p>
-              </div>
+            <div>
+              <h2 className="text-base font-semibold tracking-tight text-zinc-900">Allowed Origins</h2>
+              <p className="text-xs text-zinc-500">Domains authorized to make verification requests</p>
             </div>
             <div className="mt-5 flex gap-2">
               <input
