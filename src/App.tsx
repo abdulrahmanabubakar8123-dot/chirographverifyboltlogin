@@ -15,6 +15,10 @@ import WebhooksPage from '@/pages/dashboard/WebhooksPage';
 import BillingPage from '@/pages/dashboard/BillingPage';
 import SettingsPage from '@/pages/dashboard/SettingsPage';
 import AccountPage from '@/pages/dashboard/AccountPage';
+import TeamPage from '@/pages/dashboard/TeamPage';
+import ActivityLogPage from '@/pages/dashboard/ActivityLogPage';
+import NotificationsPage from '@/pages/dashboard/NotificationsPage';
+import ApiLogsPage from '@/pages/dashboard/ApiLogsPage';
 
 function App() {
   return (
@@ -44,6 +48,10 @@ function App() {
             <Route path="billing" element={<BillingPage />} />
             <Route path="settings" element={<SettingsPage />} />
             <Route path="account" element={<AccountPage />} />
+            <Route path="team" element={<TeamPage />} />
+            <Route path="activity-log" element={<ActivityLogPage />} />
+            <Route path="notifications" element={<NotificationsPage />} />
+            <Route path="api-logs" element={<ApiLogsPage />} />
           </Route>
           <Route path="*" element={<Navigate to="/dashboard" replace />} />
         </Routes>
