@@ -18,7 +18,7 @@ export default function AccountPage() {
       <div className="max-w-2xl space-y-6">
         <div className="card p-6">
           <div className="flex items-center gap-4">
-            <div className="flex h-20 w-20 items-center justify-center rounded-full bg-indigo-50 text-2xl font-bold text-indigo-600 ring-2 ring-indigo-200 shadow-sm">
+            <div className="flex h-20 w-20 items-center justify-center rounded-full bg-gradient-to-br from-indigo-600 to-emerald-500 text-2xl font-bold text-white shadow-sm">
               {user?.email?.charAt(0).toUpperCase() || 'U'}
             </div>
             <div>
