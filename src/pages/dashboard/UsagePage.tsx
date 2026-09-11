@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { Activity, AlertCircle } from 'lucide-react';
+import { AlertCircle } from 'lucide-react';
 import { DashboardPageHeader } from '@/layouts/DashboardLayout';
 import { LoadingState, EmptyState } from '@/components/Feedback';
 import { getUsage, extractUsageValue } from '@/lib/dashboard';
@@ -43,10 +43,10 @@ export default function UsagePage() {
   const thirtyDay = data?.thirtyDayCount ?? 0;
 
   const stats = [
-    { label: 'Total Verifications', value: usage.toLocaleString(), color: 'text-brand-600', bg: 'bg-brand-50' },
-    { label: '30-Day Count', value: thirtyDay.toLocaleString(), color: 'text-slate-700', bg: 'bg-slate-100' },
-    { label: 'Flagged Devices', value: flagged.toLocaleString(), color: 'text-red-600', bg: 'bg-red-50' },
-    { label: 'Remaining', value: remaining.toLocaleString(), color: 'text-accent-600', bg: 'bg-accent-50' },
+    { label: 'Total Verifications', value: usage.toLocaleString() },
+    { label: '30-Day Count', value: thirtyDay.toLocaleString() },
+    { label: 'Flagged Devices', value: flagged.toLocaleString() },
+    { label: 'Remaining', value: remaining.toLocaleString() },
   ];
 
   return (
@@ -58,29 +58,26 @@ export default function UsagePage() {
         </div>
       ) : (
         <div className="space-y-6">
-          <div className="grid grid-cols-2 gap-5 lg:grid-cols-4">
+          <div className="grid grid-cols-2 gap-6 lg:grid-cols-4">
             {stats.map((s) => (
               <div key={s.label} className="card p-6">
-                <div className={`mb-4 inline-flex h-11 w-11 items-center justify-center rounded-xl ${s.bg}`}>
-                  <Activity size={20} className={s.color} />
-                </div>
-                <p className="text-sm text-slate-500">{s.label}</p>
-                <p className="mt-1 text-2xl font-bold tracking-tight text-slate-900">{s.value}</p>
+                <p className="stat-label">{s.label}</p>
+                <p className="mt-3 stat-value">{s.value}</p>
               </div>
             ))}
           </div>
 
           <div className="card p-6">
             <div className="flex items-center justify-between">
-              <h2 className="text-sm font-semibold text-slate-900">Monthly Usage Progress</h2>
-              <span className="text-xs font-medium text-slate-400">{pct}% of allowance used</span>
+              <h2 className="text-sm font-semibold tracking-tight text-zinc-900">Monthly Usage Progress</h2>
+              <span className="text-xs font-medium text-zinc-400">{pct}% of allowance used</span>
             </div>
             <div className="mt-5">
-              <div className="flex items-baseline justify-between text-sm">
-                <span className="font-medium text-slate-900">{usage.toLocaleString()} used</span>
-                <span className="text-slate-400">{limit > 0 ? `${limit.toLocaleString()} limit` : 'Unlimited'}</span>
+              <div className="flex items-baseline justify-between gap-3 text-sm">
+                <span className="font-mono text-2xl font-bold tracking-tight tabular-nums text-zinc-900">{usage.toLocaleString()}<span className="ml-1 text-sm font-normal text-zinc-400">used</span></span>
+                <span className="text-zinc-400">{limit > 0 ? `${limit.toLocaleString()} limit` : 'Unlimited'}</span>
               </div>
-              <div className="mt-3 h-2 w-full overflow-hidden rounded-full bg-slate-100">
+              <div className="mt-4 h-2 w-full overflow-hidden rounded-full bg-zinc-100">
                 <div
                   className={`h-full rounded-full transition-all duration-500 ${pct > 90 ? 'bg-red-500' : 'bg-brand-500'}`}
                   style={{ width: `${pct}%` }}
@@ -92,8 +89,8 @@ export default function UsagePage() {
           {data?.history && data.history.length > 0 && (
             <div className="card p-6">
               <div className="flex items-center justify-between">
-                <h2 className="text-sm font-semibold text-slate-900">Usage History</h2>
-                <span className="text-xs text-slate-400">Per day</span>
+                <h2 className="text-sm font-semibold tracking-tight text-zinc-900">Usage History</h2>
+                <span className="text-xs text-zinc-400">Per day</span>
               </div>
               <div className="mt-5 space-y-2.5">
                 {data.history.map((item) => {
@@ -101,11 +98,11 @@ export default function UsagePage() {
                   const w = Math.max(2, Math.round((item.count / max) * 100));
                   return (
                     <div key={item.date} className="flex items-center gap-4">
-                      <span className="w-24 shrink-0 font-mono text-xs text-slate-500">{new Date(item.date).toLocaleDateString()}</span>
-                      <div className="h-6 flex-1 overflow-hidden rounded bg-slate-100">
+                      <span className="w-24 shrink-0 font-mono text-xs text-zinc-400">{new Date(item.date).toLocaleDateString()}</span>
+                      <div className="h-6 flex-1 overflow-hidden rounded bg-zinc-100">
                         <div className="h-full rounded bg-brand-400 transition-all" style={{ width: `${w}%` }} />
                       </div>
-                      <span className="w-12 shrink-0 text-right font-mono text-xs font-medium text-slate-700">{item.count}</span>
+                      <span className="w-12 shrink-0 text-right font-mono text-xs font-medium text-zinc-600">{item.count}</span>
                     </div>
                   );
                 })}
