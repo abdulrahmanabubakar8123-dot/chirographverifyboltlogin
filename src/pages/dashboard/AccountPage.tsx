@@ -18,7 +18,7 @@ export default function AccountPage() {
       <div className="max-w-2xl space-y-6">
         <div className="card p-6">
           <div className="flex items-center gap-4">
-            <div className="flex h-16 w-16 items-center justify-center rounded-full bg-brand-100 text-xl font-bold text-brand-700">
+            <div className="flex h-16 w-16 items-center justify-center rounded-full bg-brand-100 text-xl font-bold text-brand-700 ring-2 ring-brand-200 shadow-sm">
               {user?.email?.charAt(0).toUpperCase() || 'U'}
             </div>
             <div>
@@ -33,7 +33,7 @@ export default function AccountPage() {
             const Icon = item.icon;
             return (
               <div key={item.label} className="flex items-center gap-3 p-4">
-                <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-slate-100">
+                <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-brand-50 text-brand-600">
                   <Icon size={18} className="text-slate-500" />
                 </div>
                 <div className="min-w-0 flex-1">
