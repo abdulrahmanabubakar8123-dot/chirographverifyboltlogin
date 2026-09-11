@@ -54,15 +54,10 @@ export default function ApiKeysPage() {
         {regenError && <ErrorBanner message={regenError} />}
 
         <div className="card p-6">
-          <div className="flex items-center gap-3">
-            <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-brand-50">
-              <Key size={20} className="text-brand-600" />
+          <div>
+              <h2 className="text-base font-semibold tracking-tight text-zinc-900">Your API Key</h2>
+              <p className="text-xs text-zinc-500">Use this key in the <code className="rounded bg-zinc-100 px-1 py-0.5 font-mono text-xs text-zinc-600">Authorization</code> header</p>
             </div>
-            <div>
-              <h2 className="text-base font-semibold tracking-tight text-slate-900">Your API Key</h2>
-              <p className="text-xs text-slate-500">Use this key in the <code className="rounded bg-slate-100 px-1 py-0.5 font-mono text-xs">Authorization</code> header</p>
-            </div>
-          </div>
 
           <div className="mt-6">
             {data?.key ? (
