@@ -108,9 +108,9 @@ export default function BillingPage() {
                 <div className="flex items-center gap-4">
                   {data?.status && (
                     <span className={`inline-flex items-center gap-1.5 rounded-full px-3 py-1 text-xs font-medium ${
-                      data.status === 'active' ? 'bg-green-50 text-green-700' : 'bg-slate-100 text-slate-600'
+                      data.status === 'active' ? 'bg-accent-50 text-accent-700' : 'bg-slate-100 text-slate-600'
                     }`}>
-                      <span className={`h-1.5 w-1.5 rounded-full ${data.status === 'active' ? 'bg-green-500' : 'bg-slate-400'}`} />
+                      <span className={`h-1.5 w-1.5 rounded-full ${data.status === 'active' ? 'bg-accent-500' : 'bg-slate-400'}`} />
                       {data.status}
                     </span>
                   )}
@@ -151,7 +151,7 @@ export default function BillingPage() {
               return (
                 <div
                   key={plan.id}
-                  className={`card relative flex flex-col p-6 ${plan.popular ? 'border-brand-300 ring-1 ring-brand-200' : ''}`}
+                  className={`card relative flex flex-col p-6 ${plan.popular ? 'border-brand-300 ring-1 ring-brand-200 shadow-md' : ''}`}
                 >
                   {plan.popular && (
                     <span className="absolute -top-3 left-1/2 -translate-x-1/2 rounded-full bg-brand-600 px-3 py-1 text-xs font-semibold text-white">
@@ -169,7 +169,7 @@ export default function BillingPage() {
                   <ul className="mt-4 flex-1 space-y-2">
                     {(plan.features || []).map((f) => (
                       <li key={f} className="flex items-start gap-2 text-xs text-slate-600">
-                        <Check size={14} className="mt-0.5 shrink-0 text-green-500" />
+                        <Check size={14} className="mt-0.5 shrink-0 text-accent-500" />
                         {f}
                       </li>
                     ))}
