@@ -8,9 +8,9 @@ import Logo from '@/components/Logo';
 
 function AuthLoadingScreen() {
   return (
-    <div className="flex min-h-screen flex-col items-center justify-center gap-4 bg-white">
+    <div className="flex min-h-screen flex-col items-center justify-center gap-4 bg-canvas">
       <Logo size="md" showText={false} to="" />
-      <div className="flex items-center gap-2 text-sm text-slate-500">
+      <div className="flex items-center gap-2 text-sm text-text-muted">
         <Spinner size={18} /> Loading...
       </div>
     </div>
@@ -39,7 +39,7 @@ export default function ProtectedRoute({ children }: { children: ReactNode }) {
   //    /login <-> /dashboard history loop from returning.)
   if (authError) {
     return (
-      <div className="flex min-h-screen flex-col items-center justify-center gap-5 bg-white px-4">
+      <div className="flex min-h-screen flex-col items-center justify-center gap-5 bg-canvas px-4">
         <Logo size="md" showText={false} to="" />
         <div className="w-full max-w-sm space-y-4 text-center">
           <ErrorBanner message={authError} />
@@ -54,7 +54,7 @@ export default function ProtectedRoute({ children }: { children: ReactNode }) {
             <button
               type="button"
               onClick={() => void logout()}
-              className="w-full text-sm font-medium text-slate-500 transition-colors hover:text-slate-700"
+              className="w-full text-sm font-medium text-text-muted transition-colors hover:text-text-secondary"
             >
               Sign out and sign in again
             </button>

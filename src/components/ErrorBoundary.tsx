@@ -28,13 +28,13 @@ export default class ErrorBoundary extends Component<Props, State> {
   render(): ReactNode {
     if (this.state.hasError) {
       return (
-        <div className="flex min-h-screen items-center justify-center bg-slate-50 p-6">
+        <div className="flex min-h-screen items-center justify-center bg-canvas p-6">
           <div className="card max-w-md p-8 text-center">
-            <div className="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-full bg-amber-50 text-2xl">
-              ⚠️
+            <div className="gradient-icon-badge mx-auto mb-4 h-12 w-12">
+              <span className="text-xl">⚠️</span>
             </div>
-            <h1 className="text-lg font-bold text-slate-900">Something went wrong</h1>
-            <p className="mt-2 text-sm text-slate-500">
+            <h1 className="text-lg font-bold text-text-primary">Something went wrong</h1>
+            <p className="mt-2 text-sm text-text-secondary">
               An unexpected error occurred while loading this page. Please refresh to try again, and check your
               console for details.
             </p>
