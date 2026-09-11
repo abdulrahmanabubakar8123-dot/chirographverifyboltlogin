@@ -58,8 +58,8 @@ export default function OverviewPage() {
       label: 'Verifications Used',
       value: `${data?.usage ?? 0}${data?.usageLimit ? ' / ' + data.usageLimit : ''}`,
       icon: TrendingUp,
-      color: 'text-green-600',
-      bg: 'bg-green-50',
+      color: 'text-accent-600',
+      bg: 'bg-accent-50',
     },
     {
       label: 'API Key',

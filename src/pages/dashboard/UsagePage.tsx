@@ -46,7 +46,7 @@ export default function UsagePage() {
     { label: 'Total Verifications', value: usage.toLocaleString(), color: 'text-brand-600', bg: 'bg-brand-50' },
     { label: '30-Day Count', value: thirtyDay.toLocaleString(), color: 'text-slate-700', bg: 'bg-slate-100' },
     { label: 'Flagged Devices', value: flagged.toLocaleString(), color: 'text-red-600', bg: 'bg-red-50' },
-    { label: 'Remaining', value: remaining.toLocaleString(), color: 'text-green-600', bg: 'bg-green-50' },
+    { label: 'Remaining', value: remaining.toLocaleString(), color: 'text-accent-600', bg: 'bg-accent-50' },
   ];
 
   return (
