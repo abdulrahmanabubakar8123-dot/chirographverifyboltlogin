@@ -111,7 +111,7 @@ export default function OverviewPage() {
                 <span className="stat-value">{data?.usage ?? 0}<span className="ml-2 font-sans text-sm font-normal text-slate-400">verifications</span></span>
                 <span className="text-slate-400">{data?.usageLimit ? `${data.usageLimit} limit` : 'No limit'}</span>
               </div>
-              <div className="mt-4 h-2 w-full overflow-hidden rounded-full bg-slate-50">
+              <div className="mt-4 h-2 w-full overflow-hidden rounded-full bg-slate-100">
                 <div
                   className="h-full rounded-full bg-indigo-600 transition-all duration-500"
                   style={{ width: `${usagePct}%` }}
