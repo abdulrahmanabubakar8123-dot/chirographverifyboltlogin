@@ -121,7 +121,7 @@ export default function WebhooksPage() {
         <div className="space-y-6">
           {actionError && <ErrorBanner message={actionError} />}
           {successMsg && (
-            <div className="flex items-center gap-2.5 rounded-lg border border-green-200 bg-green-50 px-3.5 py-3 text-sm text-green-700">
+            <div className="flex items-center gap-2.5 rounded-lg border border-accent-200 bg-accent-50 px-3.5 py-3 text-sm text-accent-700">
               <CheckCircle2 size={18} /> {successMsg}
             </div>
           )}
@@ -149,7 +149,7 @@ export default function WebhooksPage() {
               </button>
             </form>
             {data?.webhook?.active && (
-              <p className="mt-2 text-xs text-green-600">Webhook is configured and active.</p>
+              <p className="mt-2 text-xs text-accent-600">Webhook is configured and active.</p>
             )}
           </div>
 

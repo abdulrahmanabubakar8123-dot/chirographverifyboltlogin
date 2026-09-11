@@ -74,7 +74,7 @@ export default function ApiKeysPage() {
                   {showKey ? <EyeOff size={18} /> : <Eye size={18} />}
                 </button>
                 <button onClick={handleCopy} className="btn-ghost" aria-label="Copy key">
-                  {copied ? <Check size={18} className="text-green-600" /> : <Copy size={18} />}
+                  {copied ? <Check size={18} className="text-accent-600" /> : <Copy size={18} />}
                 </button>
               </div>
             ) : data?.prefix ? (
@@ -104,7 +104,7 @@ export default function ApiKeysPage() {
               <div>
                 <p className="text-xs font-medium text-slate-500">Status</p>
                 <p className="mt-0.5 flex items-center gap-1.5 text-sm">
-                  <span className={`h-2 w-2 rounded-full ${data.active ? 'bg-green-500' : 'bg-slate-300'}`} />
+                  <span className={`h-2 w-2 rounded-full ${data.active ? 'bg-accent-500' : 'bg-slate-300'}`} />
                   {data.active ? 'Active' : 'Inactive'}
                 </p>
               </div>
