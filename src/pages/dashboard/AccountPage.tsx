@@ -18,25 +18,25 @@ export default function AccountPage() {
       <div className="max-w-2xl space-y-6">
         <div className="card p-6">
           <div className="flex items-center gap-4">
-            <div className="flex h-20 w-20 items-center justify-center rounded-full bg-[#ff801f]/15 text-2xl font-bold text-[#ff801f] ring-2 ring-[#ff801f]/30 shadow-sm">
+            <div className="flex h-20 w-20 items-center justify-center rounded-full bg-indigo-50 text-2xl font-bold text-indigo-600 ring-2 ring-indigo-200 shadow-sm">
               {user?.email?.charAt(0).toUpperCase() || 'U'}
             </div>
             <div>
-              <h2 className="font-display text-3xl text-[#f0f0f0]">{user?.name || user?.email || 'Account'}</h2>
-              <p className="mt-1 font-mono text-sm text-[#a1a4a5]">{user?.email}</p>
+              <h2 className="text-3xl font-extrabold tracking-tight text-slate-900">{user?.name || user?.email || 'Account'}</h2>
+              <p className="mt-1 font-mono text-sm text-slate-500">{user?.email}</p>
             </div>
           </div>
         </div>
 
-        <div className="card divide-y divide-[rgba(214,235,253,0.19)]">
+        <div className="card divide-y divide-slate-100">
           {info.map((item) => {
             const Icon = item.icon;
             return (
               <div key={item.label} className="flex items-center gap-4 px-6 py-5">
-                <Icon size={18} strokeWidth={1.8} className="shrink-0 text-[#5c5c5c]" />
+                <Icon size={18} strokeWidth={1.8} className="shrink-0 text-slate-400" />
                 <div className="min-w-0 flex-1">
-                  <p className="text-xs font-medium text-[#a1a4a5]">{item.label}</p>
-                  <p className={`mt-0.5 text-sm text-[#f0f0f0] ${item.mono ? 'font-mono' : ''}`}>{item.value}</p>
+                  <p className="text-xs font-medium text-slate-500">{item.label}</p>
+                  <p className={`mt-0.5 text-sm text-slate-900 ${item.mono ? 'font-mono' : ''}`}>{item.value}</p>
                 </div>
               </div>
             );

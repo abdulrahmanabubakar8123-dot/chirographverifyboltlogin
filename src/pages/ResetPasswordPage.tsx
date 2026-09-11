@@ -185,7 +185,7 @@ export default function ResetPasswordPage() {
         title="Set a new password"
         subtitle="Your code was verified. Choose a new password."
         footer={
-          <Link to="/login" className="inline-flex items-center gap-1.5 font-semibold text-[#ff801f] hover:text-[#ff902f]">
+          <Link to="/login" className="inline-flex items-center gap-1.5 font-semibold text-indigo-600 hover:text-indigo-700">
             <ArrowLeft size={16} /> Back to sign in
           </Link>
         }
@@ -195,7 +195,7 @@ export default function ResetPasswordPage() {
           <div>
             <label htmlFor="password" className="label-text">New password</label>
             <div className="relative">
-              <Lock size={18} className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-[#5c5c5c]" />
+              <Lock size={18} className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" />
               <input
                 id="password"
                 type={showPassword ? 'text' : 'password'}
@@ -211,7 +211,7 @@ export default function ResetPasswordPage() {
               <button
                 type="button"
                 onClick={() => setShowPassword(!showPassword)}
-                className="absolute right-3 top-1/2 -translate-y-1/2 text-[#5c5c5c] hover:text-[#a1a4a5]"
+                className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-500"
                 aria-label={showPassword ? 'Hide password' : 'Show password'}
               >
                 {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
@@ -247,7 +247,7 @@ export default function ResetPasswordPage() {
       title="Verify your reset code"
       subtitle="Enter the code we emailed you, then set a new password"
       footer={
-        <Link to="/login" className="inline-flex items-center gap-1.5 font-semibold text-[#ff801f] hover:text-[#ff902f]">
+        <Link to="/login" className="inline-flex items-center gap-1.5 font-semibold text-indigo-600 hover:text-indigo-700">
           <ArrowLeft size={16} /> Back to sign in
         </Link>
       }
@@ -258,7 +258,7 @@ export default function ResetPasswordPage() {
         <div>
           <label htmlFor="email" className="label-text">Email</label>
           <div className="relative">
-            <Mail size={18} className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-[#5c5c5c]" />
+            <Mail size={18} className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" />
             <input
               id="email"
               type="email"
@@ -302,11 +302,11 @@ export default function ResetPasswordPage() {
             type="button"
             onClick={handleResendCode}
             disabled={loading || !email}
-            className="text-sm font-medium text-[#ff801f] hover:text-[#ff902f] disabled:opacity-50 disabled:cursor-not-allowed"
+            className="text-sm font-medium text-indigo-600 hover:text-indigo-700 disabled:opacity-50 disabled:cursor-not-allowed"
           >
             {codeSent ? 'Resend code' : 'Send code'}
           </button>
-          <p className="text-center text-xs text-[#5c5c5c]">
+          <p className="text-center text-xs text-slate-400">
             Next you'll choose a new password.
           </p>
         </div>

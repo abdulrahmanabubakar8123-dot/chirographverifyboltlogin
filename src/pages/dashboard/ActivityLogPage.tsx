@@ -25,13 +25,13 @@ export default function ActivityLogPage() {
             <option>Billing</option>
           </select>
         </div>
-        <ul className="mt-6 divide-y divide-[rgba(214,235,253,0.19)]">
+        <ul className="mt-6 divide-y divide-slate-100">
           {EVENTS.map((e) => (
             <li key={`${e.timestamp}-${e.action}`} className="flex items-start gap-3 py-3.5 first:pt-1 last:pb-0">
-              <span className="mt-1.5 h-2 w-2 shrink-0 rounded-full bg-[#ff801f]" />
+              <span className="mt-1.5 h-2 w-2 shrink-0 rounded-full bg-indigo-600" />
               <div className="min-w-0 flex-1">
-                <p className="text-sm text-[#f0f0f0]">{e.action}</p>
-                <p className="mt-0.5 font-mono text-xs text-[#5c5c5c]">
+                <p className="text-sm text-slate-900">{e.action}</p>
+                <p className="mt-0.5 font-mono text-xs text-slate-400">
                   {e.actor} · {e.timestamp}
                 </p>
               </div>

@@ -65,16 +65,16 @@ export default function ForgotPasswordPage() {
         title="Check your email"
         subtitle="We sent a password reset code to your inbox"
         footer={
-          <Link to="/login" className="inline-flex items-center gap-1.5 font-semibold text-[#ff801f] hover:text-[#ff902f]">
+          <Link to="/login" className="inline-flex items-center gap-1.5 font-semibold text-indigo-600 hover:text-indigo-700">
             <ArrowLeft size={16} /> Back to sign in
           </Link>
         }
       >
         <div className="text-center">
-          <div className="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-full border border-[#11ff99]/30 bg-[#11ff99]/10">
-            <CheckCircle2 size={28} className="text-[#11ff99]" />
+          <div className="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-full border border-emerald-200 bg-emerald-50">
+            <CheckCircle2 size={28} className="text-emerald-600" />
           </div>
-          <p className="text-sm text-[#a1a4a5]">
+          <p className="text-sm text-slate-500">
             We've sent a 6-digit reset code to <strong>{email}</strong>. Enter it on the next page along with your new
             password.
           </p>
@@ -94,7 +94,7 @@ export default function ForgotPasswordPage() {
       title="Reset your password"
       subtitle="Enter your email and we'll send you a reset code"
       footer={
-        <Link to="/login" className="inline-flex items-center gap-1.5 font-semibold text-[#ff801f] hover:text-[#ff902f]">
+        <Link to="/login" className="inline-flex items-center gap-1.5 font-semibold text-indigo-600 hover:text-indigo-700">
           <ArrowLeft size={16} /> Back to sign in
         </Link>
       }
@@ -104,7 +104,7 @@ export default function ForgotPasswordPage() {
         <div>
           <label htmlFor="email" className="label-text">Email</label>
           <div className="relative">
-            <Mail size={18} className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-[#5c5c5c]" />
+            <Mail size={18} className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" />
             <input
               id="email"
               type="email"

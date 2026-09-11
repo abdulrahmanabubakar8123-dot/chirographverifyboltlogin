@@ -11,9 +11,9 @@ const REQUESTS = [
 ];
 
 function statusColor(status: number) {
-  if (status >= 500) return 'text-[#ff2047]';
-  if (status >= 400) return 'text-[#ffc53d]';
-  return 'text-[#11ff99]';
+  if (status >= 500) return 'text-red-600';
+  if (status >= 400) return 'text-amber-600';
+  return 'text-emerald-600';
 }
 
 // Inert placeholder: static sample data only. No API calls, no effects, no handlers
@@ -27,20 +27,20 @@ export default function ApiLogsPage() {
         <div className="mt-6 overflow-x-auto">
           <table className="w-full text-left text-sm">
             <thead>
-              <tr className="border-b border-[rgba(214,235,253,0.19)] text-xs uppercase tracking-wide text-[#5c5c5c]">
+              <tr className="border-b border-slate-200/70 text-xs uppercase tracking-wide text-slate-400">
                 <th className="pb-3 pr-4 font-semibold">Timestamp</th>
                 <th className="pb-3 pr-4 font-semibold">Endpoint</th>
                 <th className="pb-3 pr-4 font-semibold">Status</th>
                 <th className="pb-3 font-semibold">Response time</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-[rgba(214,235,253,0.19)]">
+            <tbody className="divide-y divide-slate-100">
               {REQUESTS.map((r) => (
                 <tr key={`${r.timestamp}-${r.endpoint}`}>
-                  <td className="py-3.5 pr-4 font-mono text-xs text-[#5c5c5c]">{r.timestamp}</td>
-                  <td className="py-3.5 pr-4 font-mono text-xs text-[#f0f0f0]">{r.endpoint}</td>
+                  <td className="py-3.5 pr-4 font-mono text-xs text-slate-400">{r.timestamp}</td>
+                  <td className="py-3.5 pr-4 font-mono text-xs text-slate-900">{r.endpoint}</td>
                   <td className={`py-3.5 pr-4 font-mono text-xs font-semibold ${statusColor(r.status)}`}>{r.status}</td>
-                  <td className="py-3.5 font-mono text-xs text-[#a1a4a5]">{r.ms} ms</td>
+                  <td className="py-3.5 font-mono text-xs text-slate-500">{r.ms} ms</td>
                 </tr>
               ))}
             </tbody>

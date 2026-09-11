@@ -5,7 +5,6 @@ interface LogoProps {
   size?: 'sm' | 'md' | 'lg';
   showText?: boolean;
   to?: string;
-  onDark?: boolean;
 }
 
 const sizeMap = {
@@ -14,16 +13,16 @@ const sizeMap = {
   lg: { box: 'h-12 w-12', icon: 24, text: 'text-xl' },
 };
 
-export default function Logo({ size = 'md', showText = true, to = '/', onDark = false }: LogoProps) {
+export default function Logo({ size = 'md', showText = true, to = '/' }: LogoProps) {
   const s = sizeMap[size];
   const content = (
     <div className="flex items-center gap-2.5">
-      <div className={`${s.box} flex shrink-0 items-center justify-center rounded-full bg-[#ff801f] shadow-sm`}>
-        <Fingerprint className="text-black" size={s.icon} strokeWidth={2.2} />
+      <div className={`${s.box} flex shrink-0 items-center justify-center rounded-xl bg-gradient-to-br from-indigo-600 to-emerald-500 shadow-sm`}>
+        <Fingerprint className="text-white" size={s.icon} strokeWidth={2.2} />
       </div>
       {showText && (
-        <span className={`${s.text} font-bold tracking-tight text-[#f0f0f0]`}>
-          Chirograph<span className="text-[#ff801f]"> Verify</span>
+        <span className={`${s.text} font-bold tracking-tight text-white`}>
+          Chirograph<span className="bg-gradient-to-r from-indigo-300 to-emerald-300 bg-clip-text text-transparent"> Verify</span>
         </span>
       )}
     </div>

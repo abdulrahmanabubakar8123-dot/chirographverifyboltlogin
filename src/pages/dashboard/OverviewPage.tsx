@@ -62,6 +62,36 @@ export default function OverviewPage() {
         </div>
       ) : (
         <div className="space-y-6">
+          <div className="contrast-card p-6 sm:p-8">
+            <div className="flex flex-col gap-5 sm:flex-row sm:items-end sm:justify-between">
+              <div>
+                <p className="badge-indigo mb-4">WebAuthn-powered verification</p>
+                <h2 className="text-2xl font-extrabold tracking-tight text-white">
+                  {data?.usage ?? 0} <span className="gradient-text">verifications</span> this period
+                </h2>
+                <p className="contrast-faint mt-2 font-mono text-xs">
+                  {data?.usageLimit ? `${usagePct}% of ${data.usageLimit} used` : 'Usage tracking live'} · {data?.planName || data?.plan || 'Current plan'}
+                </p>
+              </div>
+              <div className="flex shrink-0 items-center gap-6">
+                <div>
+                  <p className="contrast-faint text-xs font-semibold uppercase tracking-wide">Plan</p>
+                  <p className="mt-1 text-lg font-bold text-white">{data?.planName || data?.plan || '—'}</p>
+                </div>
+                <div>
+                  <p className="contrast-faint text-xs font-semibold uppercase tracking-wide">Remaining</p>
+                  <p className="mt-1 font-mono text-lg font-bold text-white">{data?.remaining ?? '—'}</p>
+                </div>
+              </div>
+            </div>
+            <div className="mt-6 h-2 w-full overflow-hidden rounded-full bg-white/10">
+              <div
+                className="h-full rounded-full bg-gradient-to-r from-indigo-500 to-emerald-400 transition-all duration-500"
+                style={{ width: `${usagePct}%` }}
+              />
+            </div>
+          </div>
+
           <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4">
             {stats.map((stat) => (
               <div key={stat.label} className="card p-6">
@@ -74,37 +104,37 @@ export default function OverviewPage() {
           <div className="card p-6">
             <div className="flex items-center justify-between">
               <h2 className="section-title">Usage This Period</h2>
-              <span className="font-mono text-xs text-[#5c5c5c]">{usagePct}% used</span>
+              <span className="badge-indigo">{usagePct}% used</span>
             </div>
             <div className="mt-5">
               <div className="flex items-baseline justify-between gap-3 text-sm">
-                <span className="font-display text-4xl tabular-nums text-[#f0f0f0]">{data?.usage ?? 0}<span className="ml-2 font-sans text-sm font-normal text-[#5c5c5c]">verifications</span></span>
-                <span className="text-[#5c5c5c]">{data?.usageLimit ? `${data.usageLimit} limit` : 'No limit'}</span>
+                <span className="stat-value">{data?.usage ?? 0}<span className="ml-2 font-sans text-sm font-normal text-slate-400">verifications</span></span>
+                <span className="text-slate-400">{data?.usageLimit ? `${data.usageLimit} limit` : 'No limit'}</span>
               </div>
-              <div className="mt-4 h-2 w-full overflow-hidden rounded-full bg-white/[0.06]">
+              <div className="mt-4 h-2 w-full overflow-hidden rounded-full bg-slate-50">
                 <div
-                  className="h-full rounded-full bg-[#ff801f] transition-all duration-500"
+                  className="h-full rounded-full bg-indigo-600 transition-all duration-500"
                   style={{ width: `${usagePct}%` }}
                 />
               </div>
               {data?.remaining != null && (
-                <p className="mt-2 font-mono text-xs text-[#11ff99]">{data.remaining} remaining</p>
+                <p className="mt-2 font-mono text-xs text-emerald-600">{data.remaining} remaining</p>
               )}
             </div>
           </div>
 
           <div className="card p-6">
             <h2 className="mb-1 flex items-center gap-2 section-title">
-              <Activity size={18} strokeWidth={1.8} className="text-[#5c5c5c]" /> Recent Activity
+              <Activity size={18} strokeWidth={1.8} className="text-indigo-500" /> Recent Activity
             </h2>
             {data?.recentActivity && data.recentActivity.length > 0 ? (
-              <ul className="mt-3 divide-y divide-[rgba(214,235,253,0.19)]">
+              <ul className="mt-3 divide-y divide-slate-100">
                 {data.recentActivity.map((item) => (
                   <li key={item.id} className="flex items-start gap-3 py-3.5 first:pt-1 last:pb-0">
-                    <span className="mt-1.5 h-2 w-2 shrink-0 rounded-full bg-[#ff801f]" />
+                    <span className="mt-1.5 h-2 w-2 shrink-0 rounded-full bg-gradient-to-br from-indigo-600 to-emerald-500" />
                     <div className="min-w-0 flex-1">
-                      <p className="text-sm text-[#f0f0f0]">{item.description}</p>
-                      <p className="mt-0.5 font-mono text-xs text-[#5c5c5c]">{new Date(item.timestamp).toLocaleString()}</p>
+                      <p className="text-sm text-slate-900">{item.description}</p>
+                      <p className="mt-0.5 font-mono text-xs text-slate-400">{new Date(item.timestamp).toLocaleString()}</p>
                     </div>
                   </li>
                 ))}

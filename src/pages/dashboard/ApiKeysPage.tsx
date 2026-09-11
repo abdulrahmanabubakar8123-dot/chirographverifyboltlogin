@@ -53,53 +53,63 @@ export default function ApiKeysPage() {
       <div className="space-y-6">
         {regenError && <ErrorBanner message={regenError} />}
 
-        <div className="card p-6">
-          <div>
-              <h2 className="section-title text-[#f0f0f0]">Your API Key</h2>
-              <p className="text-xs text-[#a1a4a5]">Use this key in the <code className="rounded bg-white/[0.06] px-1 py-0.5 font-mono text-xs text-[#a1a4a5]">Authorization</code> header</p>
+        <div className="contrast-card p-6 sm:p-8">
+          <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
+            <div className="flex items-start gap-4">
+              <div className="gradient-icon-badge h-12 w-12 shrink-0">
+                <Key size={22} />
+              </div>
+              <div>
+                <h2 className="text-xl font-extrabold tracking-tight text-white">Your API Key</h2>
+                <p className="contrast-faint mt-1 text-xs">Use this key in the <code className="rounded bg-white/10 px-1 py-0.5 font-mono text-xs text-white">Authorization</code> header</p>
+              </div>
             </div>
+            <button onClick={handleRegenerate} disabled={regenerating} className="btn-secondary shrink-0 !border-white/20 !bg-white/10 !text-white hover:!bg-white/20">
+              {regenerating ? <Spinner size={16} /> : <RefreshCw size={16} />}
+              Regenerate
+            </button>
+          </div>
 
           <div className="mt-6">
             {data?.key ? (
               <div className="flex items-center gap-2">
-                <div className="flex-1 overflow-hidden rounded-xl border border-[rgba(214,235,253,0.19)] bg-white/[0.06] px-4 py-3 font-mono text-sm text-[#a1a4a5]">
+                <div className="flex-1 overflow-hidden rounded-xl border border-white/15 bg-white/5 px-4 py-3 font-mono text-sm text-white">
                   {showKey ? data.key : `${data.key.slice(0, 8)}${'•'.repeat(20)}`}
                 </div>
-                <button onClick={() => setShowKey(!showKey)} className="btn-ghost" aria-label={showKey ? 'Hide key' : 'Show key'}>
+                <button onClick={() => setShowKey(!showKey)} className="rounded-lg p-2 text-slate-300 transition-colors hover:bg-white/10 hover:text-white" aria-label={showKey ? 'Hide key' : 'Show key'}>
                   {showKey ? <EyeOff size={18} /> : <Eye size={18} />}
                 </button>
-                <button onClick={handleCopy} className="btn-ghost" aria-label="Copy key">
-                  {copied ? <Check size={18} className="text-[#11ff99]" /> : <Copy size={18} />}
+                <button onClick={handleCopy} className="rounded-lg p-2 text-slate-300 transition-colors hover:bg-white/10 hover:text-white" aria-label="Copy key">
+                  {copied ? <Check size={18} className="text-emerald-400" /> : <Copy size={18} />}
                 </button>
               </div>
             ) : data?.prefix ? (
               <div className="flex items-center gap-2">
-                <div className="flex-1 overflow-hidden rounded-xl border border-[rgba(214,235,253,0.19)] bg-white/[0.06] px-4 py-3 font-mono text-sm text-[#a1a4a5]">
+                <div className="flex-1 overflow-hidden rounded-xl border border-white/15 bg-white/5 px-4 py-3 font-mono text-sm text-white">
                   {data.prefix}{'•'.repeat(16)}
                 </div>
-                <span className="text-xs text-[#5c5c5c]">Key prefix only</span>
+                <span className="contrast-faint text-xs">Key prefix only</span>
               </div>
             ) : (
-              <EmptyState
-                icon={<Key size={24} />}
-                title="No API key displayed"
-                description="Regenerate your key to view it. For security, the full key is only shown once upon generation."
-              />
+              <div className="rounded-xl border border-white/15 bg-white/5 px-6 py-8 text-center">
+                <p className="text-sm font-semibold text-white">No API key displayed</p>
+                <p className="contrast-faint mt-1 text-sm">Regenerate your key to view it. For security, the full key is only shown once upon generation.</p>
+              </div>
             )}
           </div>
 
           {data && (
-            <div className="mt-6 grid grid-cols-1 gap-5 sm:grid-cols-2">
+            <div className="mt-6 grid grid-cols-1 gap-5 border-t border-white/10 pt-6 sm:grid-cols-2">
               {data.createdAt && (
                 <div>
-                  <p className="text-xs font-medium text-[#a1a4a5]">Created</p>
-                  <p className="mt-0.5 font-mono text-sm text-[#f0f0f0]">{new Date(data.createdAt).toLocaleDateString()}</p>
+                  <p className="contrast-faint text-xs font-medium">Created</p>
+                  <p className="mt-0.5 font-mono text-sm text-white">{new Date(data.createdAt).toLocaleDateString()}</p>
                 </div>
               )}
               <div>
-                <p className="text-xs font-medium text-[#a1a4a5]">Status</p>
-                <p className="mt-0.5 flex items-center gap-1.5 text-sm">
-                  <span className={`h-2 w-2 rounded-full ${data.active ? 'bg-[#11ff99]' : 'bg-white/[0.15]'}`} />
+                <p className="contrast-faint text-xs font-medium">Status</p>
+                <p className="mt-0.5 flex items-center gap-1.5 text-sm text-white">
+                  <span className={`h-2 w-2 rounded-full ${data.active ? 'bg-emerald-400' : 'bg-slate-400'}`} />
                   {data.active ? 'Active' : 'Inactive'}
                 </p>
               </div>
@@ -107,10 +117,10 @@ export default function ApiKeysPage() {
           )}
         </div>
 
-        <div className="card border-[#ffc53d]/30 bg-[#ffc53d]/[0.06] p-4">
+        <div className="card border-amber-200 bg-amber-50 p-4">
           <div className="flex gap-2.5">
-            <AlertCircle size={18} className="mt-0.5 shrink-0 text-[#ffc53d]" />
-            <p className="text-sm text-[#f0f0f0]">
+            <AlertCircle size={18} className="mt-0.5 shrink-0 text-amber-600" />
+            <p className="text-sm text-slate-600">
               Keep your API key secure. Never expose it in client-side code or public repositories. Regenerating the key will immediately invalidate the previous one.
             </p>
           </div>

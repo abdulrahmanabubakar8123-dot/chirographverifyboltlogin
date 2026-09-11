@@ -22,15 +22,15 @@ export default function TeamPage() {
           </button>
         }
       />
-      <div className="card divide-y divide-[rgba(214,235,253,0.19)]">
+      <div className="card divide-y divide-slate-100">
         {MEMBERS.map((m) => (
           <div key={m.email} className="flex items-center gap-4 px-6 py-5">
-            <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-[#ff801f]/15 font-mono text-sm font-semibold text-[#ff801f]">
+            <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-indigo-50 font-mono text-sm font-semibold text-indigo-600">
               {m.initials}
             </div>
             <div className="min-w-0 flex-1">
-              <p className="text-sm font-medium text-[#f0f0f0]">{m.name}</p>
-              <p className="mt-0.5 font-mono text-xs text-[#5c5c5c]">{m.email}</p>
+              <p className="text-sm font-medium text-slate-900">{m.name}</p>
+              <p className="mt-0.5 font-mono text-xs text-slate-400">{m.email}</p>
             </div>
             <select disabled value={m.role} className="input-field w-32 cursor-not-allowed opacity-50" aria-label={`${m.name} role`}>
               <option>Admin</option>

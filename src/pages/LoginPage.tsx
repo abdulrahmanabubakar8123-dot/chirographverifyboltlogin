@@ -71,7 +71,7 @@ export default function LoginPage() {
       footer={
         <>
           Don't have an account?{' '}
-          <Link to="/signup" className="font-semibold text-[#ff801f] hover:text-[#ff902f]">
+          <Link to="/signup" className="font-semibold text-indigo-600 hover:text-indigo-700">
             Sign up
           </Link>
         </>
@@ -83,7 +83,7 @@ export default function LoginPage() {
         <div>
           <label htmlFor="email" className="label-text">Email</label>
           <div className="relative">
-            <Mail size={18} className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-[#5c5c5c]" />
+            <Mail size={18} className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" />
             <input
               id="email"
               type="email"
@@ -105,12 +105,12 @@ export default function LoginPage() {
         <div>
           <div className="flex items-center justify-between">
             <label htmlFor="password" className="label-text">Password</label>
-            <Link to="/forgot-password" className="text-xs font-medium text-[#ff801f] hover:text-[#ff902f]">
+            <Link to="/forgot-password" className="text-xs font-medium text-indigo-600 hover:text-indigo-700">
               Forgot password?
             </Link>
           </div>
           <div className="relative">
-            <Lock size={18} className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-[#5c5c5c]" />
+            <Lock size={18} className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" />
             <input
               id="password"
               type={showPassword ? 'text' : 'password'}
@@ -125,7 +125,7 @@ export default function LoginPage() {
             <button
               type="button"
               onClick={() => setShowPassword(!showPassword)}
-              className="absolute right-3 top-1/2 -translate-y-1/2 text-[#5c5c5c] hover:text-[#a1a4a5]"
+              className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-500"
               aria-label={showPassword ? 'Hide password' : 'Show password'}
             >
               {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}

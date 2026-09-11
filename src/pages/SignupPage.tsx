@@ -152,23 +152,23 @@ export default function SignupPage() {
         footer={
           <>
             Already verified?{' '}
-            <Link to="/login" className="font-semibold text-[#ff801f] hover:text-[#ff902f]">
+            <Link to="/login" className="font-semibold text-indigo-600 hover:text-indigo-700">
               Sign in
             </Link>
           </>
         }
       >
         <div className="w-full max-w-sm text-center">
-          <div className="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-full border border-[rgba(214,235,253,0.19)] bg-white/[0.04]">
-            <Mail size={28} className="text-[#ff801f]" />
+          <div className="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-full border border-slate-200/70 bg-white/[0.04]">
+            <Mail size={28} className="text-indigo-600" />
           </div>
-          <p className="text-sm text-[#a1a4a5]">
-            We've sent a verification code to <span className="font-medium text-[#f0f0f0]">{email}</span>. Enter it below to verify your account and finish signing up.
+          <p className="text-sm text-slate-500">
+            We've sent a verification code to <span className="font-medium text-slate-900">{email}</span>. Enter it below to verify your account and finish signing up.
           </p>
 
           <div className="mt-5">
             {verifyError && <ErrorBanner message={verifyError} />}
-            {resendMessage && <p className="text-sm text-[#11ff99]">{resendMessage}</p>}
+            {resendMessage && <p className="text-sm text-emerald-600">{resendMessage}</p>}
           </div>
 
           <form onSubmit={handleVerifyCode} noValidate className="mt-4 space-y-4">
@@ -195,12 +195,12 @@ export default function SignupPage() {
             type="button"
             onClick={handleResendCode}
             disabled={resending}
-            className="mt-4 text-sm font-semibold text-[#ff801f] hover:text-[#ff902f] disabled:opacity-60"
+            className="mt-4 text-sm font-semibold text-indigo-600 hover:text-indigo-700 disabled:opacity-60"
           >
             {resending ? 'Resending…' : 'Resend code'}
           </button>
 
-          <p className="mt-4 text-xs text-[#5c5c5c]">
+          <p className="mt-4 text-xs text-slate-400">
             Didn't get a code? Check your spam folder.
           </p>
         </div>
@@ -215,7 +215,7 @@ export default function SignupPage() {
       footer={
         <>
           Already have an account?{' '}
-          <Link to="/login" className="font-semibold text-[#ff801f] hover:text-[#ff902f]">
+          <Link to="/login" className="font-semibold text-indigo-600 hover:text-indigo-700">
             Sign in
           </Link>
         </>
@@ -225,9 +225,9 @@ export default function SignupPage() {
         {error && <ErrorBanner message={error} />}
 
         <div>
-          <label htmlFor="name" className="label-text">Full name <span className="text-[#5c5c5c]">(optional)</span></label>
+          <label htmlFor="name" className="label-text">Full name <span className="text-slate-400">(optional)</span></label>
           <div className="relative">
-            <User size={18} className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-[#5c5c5c]" />
+            <User size={18} className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" />
             <input
               id="name"
               type="text"
@@ -243,7 +243,7 @@ export default function SignupPage() {
         <div>
           <label htmlFor="email" className="label-text">Email</label>
           <div className="relative">
-            <Mail size={18} className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-[#5c5c5c]" />
+            <Mail size={18} className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" />
             <input
               id="email"
               type="email"
@@ -263,7 +263,7 @@ export default function SignupPage() {
         <div>
           <label htmlFor="password" className="label-text">Password</label>
           <div className="relative">
-            <Lock size={18} className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-[#5c5c5c]" />
+            <Lock size={18} className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" />
             <input
               id="password"
               type={showPassword ? 'text' : 'password'}
@@ -278,7 +278,7 @@ export default function SignupPage() {
             <button
               type="button"
               onClick={() => setShowPassword(!showPassword)}
-              className="absolute right-3 top-1/2 -translate-y-1/2 text-[#5c5c5c] hover:text-[#a1a4a5]"
+              className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-500"
               aria-label={showPassword ? 'Hide password' : 'Show password'}
             >
               {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
@@ -290,7 +290,7 @@ export default function SignupPage() {
         <div>
           <label htmlFor="confirm-password" className="label-text">Confirm password</label>
           <div className="relative">
-            <Lock size={18} className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-[#5c5c5c]" />
+            <Lock size={18} className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" />
             <input
               id="confirm-password"
               type={showPassword ? 'text' : 'password'}
@@ -309,7 +309,7 @@ export default function SignupPage() {
         <button type="submit" disabled={loading} className="btn-primary w-full">
           {loading ? <Spinner size={18} /> : 'Create Account'}
         </button>
-        <p className="text-center text-xs text-[#5c5c5c]">
+        <p className="text-center text-xs text-slate-400">
           By signing up, you agree to our Terms of Service and Privacy Policy.
         </p>
       </form>

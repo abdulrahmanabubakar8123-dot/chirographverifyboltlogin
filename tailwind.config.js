@@ -5,23 +5,9 @@ export default {
     extend: {
       fontFamily: {
         sans: ['Inter', 'ui-sans-serif', 'system-ui', 'sans-serif'],
-        display: ['"Instrument Serif"', 'Georgia', 'serif'],
         mono: ['"JetBrains Mono"', 'ui-monospace', 'SFMono-Regular', 'Menlo', 'Consolas', 'monospace'],
       },
       colors: {
-        ink: {
-          DEFAULT: '#000000',
-          muted: '#a1a4a5',
-          faint: '#5c5c5c',
-          bright: '#f0f0f0',
-        },
-        resend: {
-          orange: '#ff801f',
-          success: '#11ff99',
-          warning: '#ffc53d',
-          danger: '#ff2047',
-        },
-        icy: 'rgba(214, 235, 253, 0.19)',
         brand: {
           50: '#eef2ff',
           100: '#e0e7ff',
