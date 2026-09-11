@@ -6,7 +6,7 @@ export default function AnalyticsPage() {
   return (
     <>
       <DashboardPageHeader title="Analytics" description="Insights into your verification traffic" />
-      <div className="card p-6">
+      <div className="card p-8">
         <EmptyState
           icon={<BarChart3 size={24} />}
           title="Analytics data unavailable"
