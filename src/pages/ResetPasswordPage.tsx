@@ -185,7 +185,7 @@ export default function ResetPasswordPage() {
         title="Set a new password"
         subtitle="Your code was verified. Choose a new password."
         footer={
-          <Link to="/login" className="inline-flex items-center gap-1.5 font-semibold text-indigo-600 hover:text-indigo-700">
+          <Link to="/login" className="inline-flex items-center gap-1.5 font-semibold text-brand-400 hover:text-brand-300">
             <ArrowLeft size={16} /> Back to sign in
           </Link>
         }
@@ -195,7 +195,7 @@ export default function ResetPasswordPage() {
           <div>
             <label htmlFor="password" className="label-text">New password</label>
             <div className="relative">
-              <Lock size={18} className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" />
+              <Lock size={18} className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-text-muted" />
               <input
                 id="password"
                 type={showPassword ? 'text' : 'password'}
@@ -211,13 +211,13 @@ export default function ResetPasswordPage() {
               <button
                 type="button"
                 onClick={() => setShowPassword(!showPassword)}
-                className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-500"
+                className="absolute right-3 top-1/2 -translate-y-1/2 text-text-muted hover:text-text-muted"
                 aria-label={showPassword ? 'Hide password' : 'Show password'}
               >
                 {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
               </button>
             </div>
-            {fieldErrors.password && <p id="password-error" className="mt-1.5 text-sm text-red-600">{fieldErrors.password}</p>}
+            {fieldErrors.password && <p id="password-error" className="mt-1.5 text-sm text-danger">{fieldErrors.password}</p>}
           </div>
           <div>
             <label htmlFor="confirm-password" className="label-text">Confirm new password</label>
@@ -232,7 +232,7 @@ export default function ResetPasswordPage() {
               aria-invalid={!!fieldErrors.confirm}
               aria-describedby={fieldErrors.confirm ? 'confirm-error' : undefined}
             />
-            {fieldErrors.confirm && <p id="confirm-error" className="mt-1.5 text-sm text-red-600">{fieldErrors.confirm}</p>}
+            {fieldErrors.confirm && <p id="confirm-error" className="mt-1.5 text-sm text-danger">{fieldErrors.confirm}</p>}
           </div>
           <button type="submit" disabled={loading} className="btn-primary w-full">
             {loading ? <Spinner size={18} /> : 'Set New Password & Sign In'}
@@ -247,7 +247,7 @@ export default function ResetPasswordPage() {
       title="Verify your reset code"
       subtitle="Enter the code we emailed you, then set a new password"
       footer={
-        <Link to="/login" className="inline-flex items-center gap-1.5 font-semibold text-indigo-600 hover:text-indigo-700">
+        <Link to="/login" className="inline-flex items-center gap-1.5 font-semibold text-brand-400 hover:text-brand-300">
           <ArrowLeft size={16} /> Back to sign in
         </Link>
       }
@@ -258,7 +258,7 @@ export default function ResetPasswordPage() {
         <div>
           <label htmlFor="email" className="label-text">Email</label>
           <div className="relative">
-            <Mail size={18} className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" />
+            <Mail size={18} className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-text-muted" />
             <input
               id="email"
               type="email"
@@ -271,7 +271,7 @@ export default function ResetPasswordPage() {
               aria-describedby={fieldErrors.email ? 'email-error' : undefined}
             />
           </div>
-          {fieldErrors.email && <p id="email-error" className="mt-1.5 text-sm text-red-600">{fieldErrors.email}</p>}
+          {fieldErrors.email && <p id="email-error" className="mt-1.5 text-sm text-danger">{fieldErrors.email}</p>}
         </div>
 
         <div>
@@ -289,7 +289,7 @@ export default function ResetPasswordPage() {
             aria-invalid={!!fieldErrors.code}
             aria-describedby={fieldErrors.code ? 'code-error' : undefined}
           />
-          {fieldErrors.code && <p id="code-error" className="mt-1.5 text-sm text-red-600">{fieldErrors.code}</p>}
+          {fieldErrors.code && <p id="code-error" className="mt-1.5 text-sm text-danger">{fieldErrors.code}</p>}
         </div>
 
         <div className="flex flex-col items-center gap-3">
@@ -302,11 +302,11 @@ export default function ResetPasswordPage() {
             type="button"
             onClick={handleResendCode}
             disabled={loading || !email}
-            className="text-sm font-medium text-indigo-600 hover:text-indigo-700 disabled:opacity-50 disabled:cursor-not-allowed"
+            className="text-sm font-medium text-brand-400 hover:text-brand-300 disabled:opacity-50 disabled:cursor-not-allowed"
           >
             {codeSent ? 'Resend code' : 'Send code'}
           </button>
-          <p className="text-center text-xs text-slate-400">
+          <p className="text-center text-xs text-text-muted">
             Next you'll choose a new password.
           </p>
         </div>

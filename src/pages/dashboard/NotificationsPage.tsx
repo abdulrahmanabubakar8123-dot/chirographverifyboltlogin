@@ -13,12 +13,12 @@ export default function NotificationsPage() {
   return (
     <>
       <DashboardPageHeader soon title="Notifications" description="Choose which alerts this workspace receives" />
-      <div className="card max-w-2xl divide-y divide-slate-100">
+      <div className="card max-w-2xl divide-y divide border-line">
         {ALERTS.map((a) => (
           <div key={a.title} className="flex items-center gap-4 px-6 py-5">
             <div className="min-w-0 flex-1">
-              <p className="text-sm font-medium text-slate-900">{a.title}</p>
-              <p className="mt-0.5 text-sm text-slate-500">{a.description}</p>
+              <p className="text-sm font-medium text-text-primary">{a.title}</p>
+              <p className="mt-0.5 text-sm text-text-muted">{a.description}</p>
             </div>
             <button
               type="button"
@@ -26,10 +26,10 @@ export default function NotificationsPage() {
               aria-checked={a.enabled}
               aria-label={a.title}
               disabled
-              className={`relative h-6 w-11 shrink-0 cursor-not-allowed rounded-full opacity-60 ${a.enabled ? 'bg-indigo-600' : 'bg-slate-200'}`}
+              className={`relative h-6 w-11 shrink-0 cursor-not-allowed rounded-full opacity-60 ${a.enabled ? 'bg-brand-gradient' : 'bg-slate-200'}`}
             >
               <span
-                className={`absolute top-0.5 h-5 w-5 rounded-full bg-white ${a.enabled ? 'right-0.5' : 'left-0.5 bg-slate-400'}`}
+                className={`absolute top-0.5 h-5 w-5 rounded-full bg-surface ${a.enabled ? 'right-0.5' : 'left-0.5 bg-slate-400'}`}
               />
             </button>
           </div>

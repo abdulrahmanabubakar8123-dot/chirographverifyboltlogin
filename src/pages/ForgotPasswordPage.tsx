@@ -65,16 +65,16 @@ export default function ForgotPasswordPage() {
         title="Check your email"
         subtitle="We sent a password reset code to your inbox"
         footer={
-          <Link to="/login" className="inline-flex items-center gap-1.5 font-semibold text-indigo-600 hover:text-indigo-700">
+          <Link to="/login" className="inline-flex items-center gap-1.5 font-semibold text-brand-400 hover:text-brand-300">
             <ArrowLeft size={16} /> Back to sign in
           </Link>
         }
       >
         <div className="text-center">
-          <div className="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-full border border-emerald-200 bg-emerald-50">
-            <CheckCircle2 size={28} className="text-emerald-600" />
+          <div className="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-full border border-accent-400/35 bg-accent-400/15">
+            <CheckCircle2 size={28} className="text-accent-400" />
           </div>
-          <p className="text-sm text-slate-500">
+          <p className="text-sm text-text-muted">
             We've sent a 6-digit reset code to <strong>{email}</strong>. Enter it on the next page along with your new
             password.
           </p>
@@ -94,7 +94,7 @@ export default function ForgotPasswordPage() {
       title="Reset your password"
       subtitle="Enter your email and we'll send you a reset code"
       footer={
-        <Link to="/login" className="inline-flex items-center gap-1.5 font-semibold text-indigo-600 hover:text-indigo-700">
+        <Link to="/login" className="inline-flex items-center gap-1.5 font-semibold text-brand-400 hover:text-brand-300">
           <ArrowLeft size={16} /> Back to sign in
         </Link>
       }
@@ -104,7 +104,7 @@ export default function ForgotPasswordPage() {
         <div>
           <label htmlFor="email" className="label-text">Email</label>
           <div className="relative">
-            <Mail size={18} className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" />
+            <Mail size={18} className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-text-muted" />
             <input
               id="email"
               type="email"
@@ -118,7 +118,7 @@ export default function ForgotPasswordPage() {
               aria-describedby={fieldError ? 'email-error' : undefined}
             />
           </div>
-          {fieldError && <p id="email-error" className="mt-1.5 text-sm text-red-600">{fieldError}</p>}
+          {fieldError && <p id="email-error" className="mt-1.5 text-sm text-danger">{fieldError}</p>}
         </div>
         <button type="submit" disabled={loading} className="btn-primary w-full">
           {loading ? <Spinner size={18} /> : 'Send Reset Code'}

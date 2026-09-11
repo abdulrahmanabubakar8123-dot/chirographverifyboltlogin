@@ -103,14 +103,14 @@ export default function BillingPage() {
                 <div className="flex items-center gap-4">
                   {data?.status && (
                     <span className={`inline-flex items-center gap-1.5 rounded-full px-3 py-1 text-xs font-medium ${
-                      data.status === 'active' ? 'bg-emerald-50 text-emerald-600' : 'bg-slate-50 text-slate-500'
+                      data.status === 'active' ? 'bg-accent-400/15 text-accent-400' : 'bg-surface-2 text-text-muted'
                     }`}>
-                      <span className={`h-1.5 w-1.5 rounded-full ${data.status === 'active' ? 'bg-emerald-500' : 'bg-slate-400'}`} />
+                      <span className={`h-1.5 w-1.5 rounded-full ${data.status === 'active' ? 'bg-accent-400/150' : 'bg-slate-400'}`} />
                       {data.status}
                     </span>
                   )}
                   {data?.cancelAtPeriodEnd && (
-                    <span className="text-xs text-amber-600">Cancels at period end</span>
+                    <span className="text-xs text-warning">Cancels at period end</span>
                   )}
                   {currentPlanName !== 'Free' && (
                     <button onClick={handleCancel} disabled={busy === 'cancel'} className="btn-secondary text-sm">
@@ -146,25 +146,25 @@ export default function BillingPage() {
               return (
                 <div
                   key={plan.id}
-                  className={`card relative flex flex-col p-7 ${plan.popular ? 'border-indigo-300 ring-1 ring-indigo-200 ' : ''}`}
+                  className={`card relative flex flex-col p-7 ${plan.popular ? 'border-indigo-300 ring-1 ring-brand-500/30 ' : ''}`}
                 >
                   {plan.popular && (
-                    <span className="absolute -top-3 left-1/2 -translate-x-1/2 rounded-full bg-indigo-600 px-3 py-1 text-[11px] font-semibold text-white shadow-sm">
+                    <span className="absolute -top-3 left-1/2 -translate-x-1/2 rounded-full bg-brand-gradient px-3 py-1 text-[11px] font-semibold text-white shadow-sm">
                       Most Popular
                     </span>
                   )}
                   <h3 className="stat-label">{plan.name || plan.tier || plan.id || 'Plan'}</h3>
                   <p className="mt-3 stat-value">
                     {isCustom ? 'Custom' : `$${plan.price}`}
-                    {!isCustom && <span className="font-sans text-sm font-normal text-slate-400">/mo</span>}
+                    {!isCustom && <span className="font-sans text-sm font-normal text-text-muted">/mo</span>}
                   </p>
-                  <p className="mt-1 text-xs text-slate-500">
+                  <p className="mt-1 text-xs text-text-muted">
                     {plan.verifications || (typeof plan.monthly_limit === 'number' ? `${plan.monthly_limit.toLocaleString()} verifications/month` : '')}
                   </p>
                   <ul className="mt-5 flex-1 space-y-2.5">
                     {(plan.features || []).map((f) => (
-                      <li key={f} className="flex items-start gap-2.5 text-sm text-slate-500">
-                        <Check size={15} className="mt-0.5 shrink-0 text-emerald-600" />
+                      <li key={f} className="flex items-start gap-2.5 text-sm text-text-muted">
+                        <Check size={15} className="mt-0.5 shrink-0 text-accent-400" />
                         {f}
                       </li>
                     ))}
@@ -201,10 +201,10 @@ export default function BillingPage() {
             })}
           </div>
 
-          <div className="card border-amber-200 bg-amber-50 p-4">
+          <div className="card border-warning/35 bg-warning/10 p-4">
             <div className="flex gap-2.5">
-              <Zap size={18} className="mt-0.5 shrink-0 text-amber-600" />
-              <p className="text-sm text-slate-900">
+              <Zap size={18} className="mt-0.5 shrink-0 text-warning" />
+              <p className="text-sm text-text-primary">
                 Payments are processed securely by Flutterwave. Plan changes are handled by the backend to ensure accurate billing.
               </p>
             </div>

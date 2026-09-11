@@ -84,7 +84,7 @@ export default function OverviewPage() {
                 </div>
               </div>
             </div>
-            <div className="mt-6 h-2 w-full overflow-hidden rounded-full bg-white/10">
+            <div className="mt-6 h-2 w-full overflow-hidden rounded-full bg-surface/10">
               <div
                 className="h-full rounded-full bg-gradient-to-r from-indigo-500 to-emerald-400 transition-all duration-500"
                 style={{ width: `${usagePct}%` }}
@@ -108,33 +108,33 @@ export default function OverviewPage() {
             </div>
             <div className="mt-5">
               <div className="flex items-baseline justify-between gap-3 text-sm">
-                <span className="font-mono text-2xl font-bold tabular-nums tracking-tight text-slate-900">{data?.usage ?? 0}<span className="ml-1 font-sans text-sm font-normal text-slate-400">verifications</span></span>
-                <span className="text-slate-400">{data?.usageLimit ? `${data.usageLimit} limit` : 'No limit'}</span>
+                <span className="font-mono text-2xl font-bold tabular-nums tracking-tight text-text-primary">{data?.usage ?? 0}<span className="ml-1 font-sans text-sm font-normal text-text-muted">verifications</span></span>
+                <span className="text-text-muted">{data?.usageLimit ? `${data.usageLimit} limit` : 'No limit'}</span>
               </div>
-              <div className="mt-4 h-2 w-full overflow-hidden rounded-full bg-slate-100">
+              <div className="mt-4 h-2 w-full overflow-hidden rounded-full bg-surface-3">
                 <div
-                  className="h-full rounded-full bg-indigo-600 transition-all duration-500"
+                  className="h-full rounded-full bg-brand-gradient transition-all duration-500"
                   style={{ width: `${usagePct}%` }}
                 />
               </div>
               {data?.remaining != null && (
-                <p className="mt-2 font-mono text-xs font-medium text-emerald-600">{data.remaining} remaining</p>
+                <p className="mt-2 font-mono text-xs font-medium text-accent-400">{data.remaining} remaining</p>
               )}
             </div>
           </div>
 
           <div className="card p-6">
             <h2 className="mb-1 flex items-center gap-2 section-title">
-              <Activity size={18} strokeWidth={1.8} className="text-indigo-500" /> Recent Activity
+              <Activity size={18} strokeWidth={1.8} className="text-brand-400" /> Recent Activity
             </h2>
             {data?.recentActivity && data.recentActivity.length > 0 ? (
-              <ul className="mt-3 divide-y divide-slate-100">
+              <ul className="mt-3 divide-y divide border-line">
                 {data.recentActivity.map((item) => (
                   <li key={item.id} className="flex items-start gap-3 py-3.5 first:pt-1 last:pb-0">
                     <span className="mt-1.5 h-2 w-2 shrink-0 rounded-full bg-gradient-to-br from-indigo-600 to-emerald-500" />
                     <div className="min-w-0 flex-1">
-                      <p className="text-sm text-slate-900">{item.description}</p>
-                      <p className="mt-0.5 font-mono text-xs text-slate-400">{new Date(item.timestamp).toLocaleString()}</p>
+                      <p className="text-sm text-text-primary">{item.description}</p>
+                      <p className="mt-0.5 font-mono text-xs text-text-muted">{new Date(item.timestamp).toLocaleString()}</p>
                     </div>
                   </li>
                 ))}

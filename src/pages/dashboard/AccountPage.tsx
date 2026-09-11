@@ -22,21 +22,21 @@ export default function AccountPage() {
               {user?.email?.charAt(0).toUpperCase() || 'U'}
             </div>
             <div>
-              <h2 className="text-3xl font-extrabold tracking-tight text-slate-900">{user?.name || user?.email || 'Account'}</h2>
-              <p className="mt-1 font-mono text-sm text-slate-500">{user?.email}</p>
+              <h2 className="text-3xl font-extrabold tracking-tight text-text-primary">{user?.name || user?.email || 'Account'}</h2>
+              <p className="mt-1 font-mono text-sm text-text-muted">{user?.email}</p>
             </div>
           </div>
         </div>
 
-        <div className="card divide-y divide-slate-100">
+        <div className="card divide-y divide border-line">
           {info.map((item) => {
             const Icon = item.icon;
             return (
               <div key={item.label} className="flex items-center gap-4 px-6 py-5">
-                <Icon size={18} strokeWidth={1.8} className="shrink-0 text-slate-400" />
+                <Icon size={18} strokeWidth={1.8} className="shrink-0 text-text-muted" />
                 <div className="min-w-0 flex-1">
-                  <p className="text-xs font-medium text-slate-500">{item.label}</p>
-                  <p className={`mt-0.5 text-sm text-slate-900 ${item.mono ? 'font-mono' : ''}`}>{item.value}</p>
+                  <p className="text-xs font-medium text-text-muted">{item.label}</p>
+                  <p className={`mt-0.5 text-sm text-text-primary ${item.mono ? 'font-mono' : ''}`}>{item.value}</p>
                 </div>
               </div>
             );

@@ -121,7 +121,7 @@ export default function WebhooksPage() {
         <div className="space-y-6">
           {actionError && <ErrorBanner message={actionError} />}
           {successMsg && (
-            <div className="flex items-center gap-2.5 rounded-xl border border-emerald-200 bg-emerald-50 px-3.5 py-3 text-sm text-emerald-600">
+            <div className="flex items-center gap-2.5 rounded-xl border border-accent-400/35 bg-accent-400/15 px-3.5 py-3 text-sm text-accent-400">
               <CheckCircle2 size={18} /> {successMsg}
             </div>
           )}
@@ -129,7 +129,7 @@ export default function WebhooksPage() {
           <div className="card p-6">
             <div>
               <h2 className="section-title">Webhook URL</h2>
-              <p className="text-xs text-slate-500">Where verification events will be delivered</p>
+              <p className="text-xs text-text-muted">Where verification events will be delivered</p>
             </div>
             <form onSubmit={handleSaveUrl} className="mt-5 flex gap-2">
               <input
@@ -144,14 +144,14 @@ export default function WebhooksPage() {
               </button>
             </form>
             {data?.webhook?.active && (
-              <p className="mt-2.5 text-xs font-medium text-emerald-600">Webhook is configured and active.</p>
+              <p className="mt-2.5 text-xs font-medium text-accent-400">Webhook is configured and active.</p>
             )}
           </div>
 
           <div className="card p-6">
             <div>
               <h2 className="section-title">Webhook Secret</h2>
-              <p className="text-xs text-slate-500">Used to verify webhook delivery signatures</p>
+              <p className="text-xs text-text-muted">Used to verify webhook delivery signatures</p>
             </div>
             <form onSubmit={handleSaveSecret} className="mt-5 flex gap-2">
               <input
@@ -166,14 +166,14 @@ export default function WebhooksPage() {
               </button>
             </form>
             {data?.webhookSecretConfigured && (
-              <p className="mt-2.5 text-xs text-slate-400">A webhook secret is currently configured.</p>
+              <p className="mt-2.5 text-xs text-text-muted">A webhook secret is currently configured.</p>
             )}
           </div>
 
           <div className="card p-6">
             <div>
               <h2 className="section-title">Allowed Origins</h2>
-              <p className="text-xs text-slate-500">Domains authorized to make verification requests</p>
+              <p className="text-xs text-text-muted">Domains authorized to make verification requests</p>
             </div>
             <div className="mt-5 flex gap-2">
               <input
@@ -191,9 +191,9 @@ export default function WebhooksPage() {
             {origins.length > 0 ? (
               <ul className="mt-5 space-y-2">
                 {origins.map((origin) => (
-                  <li key={origin} className="flex items-center justify-between rounded-xl border border-slate-200/70 bg-slate-50 px-4 py-2.5">
-                    <span className="font-mono text-sm text-slate-500">{origin}</span>
-                    <button onClick={() => handleRemoveOrigin(origin)} className="text-slate-400 hover:text-red-600" aria-label="Remove origin">
+                  <li key={origin} className="flex items-center justify-between rounded-xl border border-line bg-surface-2 px-4 py-2.5">
+                    <span className="font-mono text-sm text-text-muted">{origin}</span>
+                    <button onClick={() => handleRemoveOrigin(origin)} className="text-text-muted hover:text-danger" aria-label="Remove origin">
                       <Trash2 size={16} />
                     </button>
                   </li>

@@ -61,7 +61,7 @@ export default function UsagePage() {
           <div className="contrast-card p-6 sm:p-8">
             <div className="flex flex-col gap-5 sm:flex-row sm:items-end sm:justify-between">
               <div>
-                <p className="badge-indigo mb-4 !bg-white/10 !text-white">Monthly allowance</p>
+                <p className="badge-indigo mb-4 !bg-surface/10 !text-white">Monthly allowance</p>
                 <h2 className="text-2xl font-extrabold tracking-tight text-white">
                   {usage.toLocaleString()} <span className="gradient-text">used</span>
                 </h2>
@@ -78,9 +78,9 @@ export default function UsagePage() {
                 </div>
               </div>
             </div>
-            <div className="mt-6 h-2 w-full overflow-hidden rounded-full bg-white/10">
+            <div className="mt-6 h-2 w-full overflow-hidden rounded-full bg-surface/10">
               <div
-                className={`h-full rounded-full transition-all duration-500 ${pct > 90 ? 'bg-amber-400' : 'bg-gradient-to-r from-indigo-500 to-emerald-400'}`}
+                className={`h-full rounded-full transition-all duration-500 ${pct > 90 ? 'bg-warning' : 'bg-gradient-to-r from-indigo-500 to-emerald-400'}`}
                 style={{ width: `${pct}%` }}
               />
             </div>
@@ -102,12 +102,12 @@ export default function UsagePage() {
             </div>
             <div className="mt-5">
               <div className="flex items-baseline justify-between gap-3 text-sm">
-                <span className="font-mono text-2xl font-bold tabular-nums tracking-tight text-slate-900">{usage.toLocaleString()}<span className="ml-1 font-sans text-sm font-normal text-slate-400">used</span></span>
-                <span className="text-slate-400">{limit > 0 ? `${limit.toLocaleString()} limit` : 'Unlimited'}</span>
+                <span className="font-mono text-2xl font-bold tabular-nums tracking-tight text-text-primary">{usage.toLocaleString()}<span className="ml-1 font-sans text-sm font-normal text-text-muted">used</span></span>
+                <span className="text-text-muted">{limit > 0 ? `${limit.toLocaleString()} limit` : 'Unlimited'}</span>
               </div>
-              <div className="mt-4 h-2 w-full overflow-hidden rounded-full bg-slate-100">
+              <div className="mt-4 h-2 w-full overflow-hidden rounded-full bg-surface-3">
                 <div
-                  className={`h-full rounded-full transition-all duration-500 ${pct > 90 ? 'bg-amber-400' : 'bg-indigo-600'}`}
+                  className={`h-full rounded-full transition-all duration-500 ${pct > 90 ? 'bg-warning' : 'bg-brand-gradient'}`}
                   style={{ width: `${pct}%` }}
                 />
               </div>
@@ -118,7 +118,7 @@ export default function UsagePage() {
             <div className="card p-6">
               <div className="flex items-center justify-between">
                 <h2 className="section-title">Usage History</h2>
-                <span className="text-xs text-slate-400">Per day</span>
+                <span className="text-xs text-text-muted">Per day</span>
               </div>
               <div className="mt-5 space-y-2.5">
                 {data.history.map((item) => {
@@ -126,11 +126,11 @@ export default function UsagePage() {
                   const w = Math.max(2, Math.round((item.count / max) * 100));
                   return (
                     <div key={item.date} className="flex items-center gap-4">
-                      <span className="w-24 shrink-0 font-mono text-xs text-slate-400">{new Date(item.date).toLocaleDateString()}</span>
-                      <div className="h-6 flex-1 overflow-hidden rounded bg-slate-100">
-                        <div className="h-full rounded bg-indigo-600 transition-all" style={{ width: `${w}%` }} />
+                      <span className="w-24 shrink-0 font-mono text-xs text-text-muted">{new Date(item.date).toLocaleDateString()}</span>
+                      <div className="h-6 flex-1 overflow-hidden rounded bg-surface-3">
+                        <div className="h-full rounded bg-brand-gradient transition-all" style={{ width: `${w}%` }} />
                       </div>
-                      <span className="w-12 shrink-0 text-right font-mono text-xs font-medium text-slate-500">{item.count}</span>
+                      <span className="w-12 shrink-0 text-right font-mono text-xs font-medium text-text-muted">{item.count}</span>
                     </div>
                   );
                 })}

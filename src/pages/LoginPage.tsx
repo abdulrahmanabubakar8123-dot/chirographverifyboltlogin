@@ -71,7 +71,7 @@ export default function LoginPage() {
       footer={
         <>
           Don't have an account?{' '}
-          <Link to="/signup" className="font-semibold text-indigo-600 hover:text-indigo-700">
+          <Link to="/signup" className="font-semibold text-brand-400 hover:text-brand-300">
             Sign up
           </Link>
         </>
@@ -83,7 +83,7 @@ export default function LoginPage() {
         <div>
           <label htmlFor="email" className="label-text">Email</label>
           <div className="relative">
-            <Mail size={18} className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" />
+            <Mail size={18} className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-text-muted" />
             <input
               id="email"
               type="email"
@@ -98,19 +98,19 @@ export default function LoginPage() {
             />
           </div>
           {fieldErrors.email && (
-            <p id="email-error" className="mt-1.5 text-sm text-red-600">{fieldErrors.email}</p>
+            <p id="email-error" className="mt-1.5 text-sm text-danger">{fieldErrors.email}</p>
           )}
         </div>
 
         <div>
           <div className="flex items-center justify-between">
             <label htmlFor="password" className="label-text">Password</label>
-            <Link to="/forgot-password" className="text-xs font-medium text-indigo-600 hover:text-indigo-700">
+            <Link to="/forgot-password" className="text-xs font-medium text-brand-400 hover:text-brand-300">
               Forgot password?
             </Link>
           </div>
           <div className="relative">
-            <Lock size={18} className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" />
+            <Lock size={18} className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-text-muted" />
             <input
               id="password"
               type={showPassword ? 'text' : 'password'}
@@ -125,14 +125,14 @@ export default function LoginPage() {
             <button
               type="button"
               onClick={() => setShowPassword(!showPassword)}
-              className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-500"
+              className="absolute right-3 top-1/2 -translate-y-1/2 text-text-muted hover:text-text-muted"
               aria-label={showPassword ? 'Hide password' : 'Show password'}
             >
               {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
             </button>
           </div>
           {fieldErrors.password && (
-            <p id="password-error" className="mt-1.5 text-sm text-red-600">{fieldErrors.password}</p>
+            <p id="password-error" className="mt-1.5 text-sm text-danger">{fieldErrors.password}</p>
           )}
         </div>
 

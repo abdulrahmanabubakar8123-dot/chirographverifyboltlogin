@@ -54,12 +54,12 @@ export default function SettingsPage() {
           <div className="card p-6">
             <h2 className="section-title">Profile Settings</h2>
 
-            <div className="mt-6 divide-y divide-slate-100">
+            <div className="mt-6 divide-y divide border-line">
               {fields.map((field) => (
                 <div key={field.label} className="flex items-center justify-between py-4">
                   <div>
-                    <p className="text-xs font-medium text-slate-500">{field.label}</p>
-                    <p className={`mt-0.5 text-sm text-slate-900 ${field.label === 'Webhook URL' ? 'font-mono' : ''}`}>{field.value || 'Not set'}</p>
+                    <p className="text-xs font-medium text-text-muted">{field.label}</p>
+                    <p className={`mt-0.5 text-sm text-text-primary ${field.label === 'Webhook URL' ? 'font-mono' : ''}`}>{field.value || 'Not set'}</p>
                   </div>
                 </div>
               ))}
@@ -71,7 +71,7 @@ export default function SettingsPage() {
               <h2 className="section-title">Allowed Origins</h2>
               <ul className="mt-5 space-y-2">
                 {data.origins.map((origin) => (
-                  <li key={origin} className="rounded-xl border border-slate-200/70 bg-slate-50 px-4 py-2.5 font-mono text-sm text-slate-500">
+                  <li key={origin} className="rounded-xl border border-line bg-surface-2 px-4 py-2.5 font-mono text-sm text-text-muted">
                     {origin}
                   </li>
                 ))}
@@ -79,10 +79,10 @@ export default function SettingsPage() {
             </div>
           )}
 
-          <div className="card border-slate-200/70 bg-slate-50 p-4">
+          <div className="card border-line bg-surface-2 p-4">
             <div className="flex gap-2.5">
-              <Lock size={18} className="mt-0.5 shrink-0 text-slate-400" />
-              <p className="text-sm text-slate-500">
+              <Lock size={18} className="mt-0.5 shrink-0 text-text-muted" />
+              <p className="text-sm text-text-muted">
                 Settings are currently read-only. To update your profile, organization, or webhook URL, please use the Webhooks tab or contact support.
               </p>
             </div>
