@@ -25,7 +25,7 @@ export default function TeamPage() {
       <div className="card divide-y divide-slate-100">
         {MEMBERS.map((m) => (
           <div key={m.email} className="flex items-center gap-4 px-6 py-5">
-            <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-indigo-50 font-mono text-sm font-semibold text-indigo-600">
+            <div className="gradient-icon-badge h-10 w-10 shrink-0 font-mono text-sm font-semibold">
               {m.initials}
             </div>
             <div className="min-w-0 flex-1">

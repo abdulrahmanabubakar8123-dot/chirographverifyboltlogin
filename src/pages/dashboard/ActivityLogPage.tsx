@@ -28,7 +28,7 @@ export default function ActivityLogPage() {
         <ul className="mt-6 divide-y divide-slate-100">
           {EVENTS.map((e) => (
             <li key={`${e.timestamp}-${e.action}`} className="flex items-start gap-3 py-3.5 first:pt-1 last:pb-0">
-              <span className="mt-1.5 h-2 w-2 shrink-0 rounded-full bg-indigo-600" />
+              <span className="mt-1.5 h-2 w-2 shrink-0 rounded-full bg-gradient-to-br from-indigo-600 to-emerald-500" />
               <div className="min-w-0 flex-1">
                 <p className="text-sm text-slate-900">{e.action}</p>
                 <p className="mt-0.5 font-mono text-xs text-slate-400">
