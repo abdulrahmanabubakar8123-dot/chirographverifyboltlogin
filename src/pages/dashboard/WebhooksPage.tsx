@@ -1,5 +1,5 @@
 import { useEffect, useState, type FormEvent } from 'react';
-import { Webhook, AlertCircle, Plus, Trash2, CheckCircle2 } from 'lucide-react';
+import { Webhook, AlertCircle, Plus, Trash2, CheckCircle2, Globe, Lock } from 'lucide-react';
 import { DashboardPageHeader } from '@/layouts/DashboardLayout';
 import { LoadingState, EmptyState, ErrorBanner } from '@/components/Feedback';
 import Spinner from '@/components/Spinner';
@@ -127,21 +127,21 @@ export default function WebhooksPage() {
           )}
 
           <div className="card p-6">
-            <div className="flex items-center gap-2.5">
-              <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-brand-50">
+            <div className="flex items-center gap-3">
+              <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-brand-50">
                 <Webhook size={20} className="text-brand-600" />
               </div>
               <div>
-                <h2 className="text-sm font-semibold text-slate-900">Webhook URL</h2>
+                <h2 className="text-base font-semibold tracking-tight text-slate-900">Webhook URL</h2>
                 <p className="text-xs text-slate-500">Where verification events will be delivered</p>
               </div>
             </div>
-            <form onSubmit={handleSaveUrl} className="mt-4 flex gap-2">
+            <form onSubmit={handleSaveUrl} className="mt-5 flex gap-2">
               <input
                 type="url"
                 value={webhookUrl}
                 onChange={(e) => setWebhookUrl(e.target.value)}
-                className="input-field"
+                className="input-field font-mono"
                 placeholder="https://your-app.com/api/webhooks/chirograph"
               />
               <button type="submit" disabled={savingUrl} className="btn-primary shrink-0">
@@ -149,19 +149,26 @@ export default function WebhooksPage() {
               </button>
             </form>
             {data?.webhook?.active && (
-              <p className="mt-2 text-xs text-accent-600">Webhook is configured and active.</p>
+              <p className="mt-2.5 text-xs font-medium text-accent-600">Webhook is configured and active.</p>
             )}
           </div>
 
           <div className="card p-6">
-            <h2 className="text-sm font-semibold text-slate-900">Webhook Secret</h2>
-            <p className="text-xs text-slate-500">Used to verify webhook delivery signatures</p>
-            <form onSubmit={handleSaveSecret} className="mt-4 flex gap-2">
+            <div className="flex items-center gap-3">
+              <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-brand-50">
+                <Lock size={20} className="text-brand-600" />
+              </div>
+              <div>
+                <h2 className="text-base font-semibold tracking-tight text-slate-900">Webhook Secret</h2>
+                <p className="text-xs text-slate-500">Used to verify webhook delivery signatures</p>
+              </div>
+            </div>
+            <form onSubmit={handleSaveSecret} className="mt-5 flex gap-2">
               <input
                 type="password"
                 value={webhookSecret}
                 onChange={(e) => setWebhookSecret(e.target.value)}
-                className="input-field"
+                className="input-field font-mono"
                 placeholder={data?.webhookSecretConfigured ? 'Enter new secret to replace' : 'Enter webhook secret'}
               />
               <button type="submit" disabled={savingSecret || !webhookSecret} className="btn-primary shrink-0">
@@ -169,20 +176,27 @@ export default function WebhooksPage() {
               </button>
             </form>
             {data?.webhookSecretConfigured && (
-              <p className="mt-2 text-xs text-slate-400">A webhook secret is currently configured.</p>
+              <p className="mt-2.5 text-xs text-slate-400">A webhook secret is currently configured.</p>
             )}
           </div>
 
           <div className="card p-6">
-            <h2 className="text-sm font-semibold text-slate-900">Allowed Origins</h2>
-            <p className="text-xs text-slate-500">Domains authorized to make verification requests</p>
-            <div className="mt-4 flex gap-2">
+            <div className="flex items-center gap-3">
+              <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-brand-50">
+                <Globe size={20} className="text-brand-600" />
+              </div>
+              <div>
+                <h2 className="text-base font-semibold tracking-tight text-slate-900">Allowed Origins</h2>
+                <p className="text-xs text-slate-500">Domains authorized to make verification requests</p>
+              </div>
+            </div>
+            <div className="mt-5 flex gap-2">
               <input
                 type="text"
                 value={originInput}
                 onChange={(e) => setOriginInput(e.target.value)}
                 onKeyDown={(e) => { if (e.key === 'Enter') { e.preventDefault(); handleAddOrigin(); } }}
-                className="input-field"
+                className="input-field font-mono"
                 placeholder="https://your-app.com"
               />
               <button type="button" onClick={handleAddOrigin} className="btn-secondary shrink-0">
@@ -190,9 +204,9 @@ export default function WebhooksPage() {
               </button>
             </div>
             {origins.length > 0 ? (
-              <ul className="mt-4 space-y-2">
+              <ul className="mt-5 space-y-2">
                 {origins.map((origin) => (
-                  <li key={origin} className="flex items-center justify-between rounded-lg border border-slate-200 bg-slate-50 px-3.5 py-2.5">
+                  <li key={origin} className="flex items-center justify-between rounded-lg border border-slate-200/70 bg-slate-50 px-4 py-2.5">
                     <span className="font-mono text-sm text-slate-700">{origin}</span>
                     <button onClick={() => handleRemoveOrigin(origin)} className="text-slate-400 hover:text-red-600" aria-label="Remove origin">
                       <Trash2 size={16} />
@@ -201,10 +215,14 @@ export default function WebhooksPage() {
                 ))}
               </ul>
             ) : (
-              <p className="mt-4 text-sm text-slate-400">No origins configured yet.</p>
+              <EmptyState
+                icon={<Globe size={24} />}
+                title="No origins configured"
+                description="Add a domain above to authorize it to make verification requests."
+              />
             )}
             {origins.length > 0 && (
-              <button onClick={handleSaveOrigins} disabled={savingOrigins} className="btn-primary mt-4">
+              <button onClick={handleSaveOrigins} disabled={savingOrigins} className="btn-primary mt-5">
                 {savingOrigins ? <Spinner size={16} /> : 'Save Origins'}
               </button>
             )}
