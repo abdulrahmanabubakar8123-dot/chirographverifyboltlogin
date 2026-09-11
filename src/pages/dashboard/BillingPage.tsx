@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { CreditCard, AlertCircle, Check, Zap } from 'lucide-react';
+import { AlertCircle, Check, Zap } from 'lucide-react';
 import { DashboardPageHeader } from '@/layouts/DashboardLayout';
 import { LoadingState, EmptyState, ErrorBanner } from '@/components/Feedback';
 import Spinner from '@/components/Spinner';
@@ -96,14 +96,9 @@ export default function BillingPage() {
           {currentPlanName && (
             <div className="card p-5">
               <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-                <div className="flex items-center gap-2.5">
-                  <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-brand-50">
-                    <CreditCard size={20} className="text-brand-600" />
-                  </div>
-                  <div>
-                    <p className="text-sm text-slate-500">Current Plan</p>
-                    <p className="text-lg font-bold text-slate-900">{currentPlanName}</p>
-                  </div>
+                <div>
+                  <p className="stat-label">Current Plan</p>
+                  <p className="mt-1 font-mono text-2xl font-bold tracking-tight text-zinc-900">{currentPlanName}</p>
                 </div>
                 <div className="flex items-center gap-4">
                   {data?.status && (
