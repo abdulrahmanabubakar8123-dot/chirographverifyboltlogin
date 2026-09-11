@@ -127,7 +127,7 @@ export default function BillingPage() {
             </div>
           )}
 
-          <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5">
+          <div className="grid grid-cols-1 gap-5 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5">
             {plans.map((plan) => {
               const planName = (plan.name || '').toLowerCase();
               const current = (currentPlanName || '').toLowerCase();
@@ -151,30 +151,30 @@ export default function BillingPage() {
               return (
                 <div
                   key={plan.id}
-                  className={`card relative flex flex-col p-6 ${plan.popular ? 'border-brand-300 ring-1 ring-brand-200 shadow-md' : ''}`}
+                  className={`card relative flex flex-col p-7 ${plan.popular ? 'border-brand-300 ring-1 ring-brand-200 shadow-md' : ''}`}
                 >
                   {plan.popular && (
-                    <span className="absolute -top-3 left-1/2 -translate-x-1/2 rounded-full bg-brand-600 px-3 py-1 text-xs font-semibold text-white">
+                    <span className="absolute -top-3 left-1/2 -translate-x-1/2 rounded-full bg-brand-600 px-3 py-1 text-[11px] font-semibold text-white shadow-sm">
                       Most Popular
                     </span>
                   )}
-                  <h3 className="text-sm font-semibold text-slate-900">{plan.name || plan.tier || plan.id || 'Plan'}</h3>
-                  <p className="mt-2 text-3xl font-bold text-slate-900">
+                  <h3 className="text-lg font-semibold tracking-tight text-slate-900">{plan.name || plan.tier || plan.id || 'Plan'}</h3>
+                  <p className="mt-3 font-mono text-3xl font-bold tracking-tight text-slate-900">
                     {isCustom ? 'Custom' : `$${plan.price}`}
                     {!isCustom && <span className="text-sm font-normal text-slate-400">/mo</span>}
                   </p>
                   <p className="mt-1 text-xs text-slate-500">
                     {plan.verifications || (typeof plan.monthly_limit === 'number' ? `${plan.monthly_limit.toLocaleString()} verifications/month` : '')}
                   </p>
-                  <ul className="mt-4 flex-1 space-y-2">
+                  <ul className="mt-5 flex-1 space-y-2.5">
                     {(plan.features || []).map((f) => (
-                      <li key={f} className="flex items-start gap-2 text-xs text-slate-600">
-                        <Check size={14} className="mt-0.5 shrink-0 text-accent-500" />
+                      <li key={f} className="flex items-start gap-2.5 text-sm text-slate-600">
+                        <Check size={15} className="mt-0.5 shrink-0 text-accent-500" />
                         {f}
                       </li>
                     ))}
                   </ul>
-                  <div className="mt-5">
+                  <div className="mt-6">
                     {isCurrent || (isFree && current === '') ? (
                       <button disabled className="btn-secondary w-full cursor-default opacity-60">
                         Current Plan
