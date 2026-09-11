@@ -98,19 +98,19 @@ export default function BillingPage() {
               <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
                 <div>
                   <p className="stat-label">Current Plan</p>
-                  <p className="mt-1 font-mono text-2xl font-bold tracking-tight text-zinc-900">{currentPlanName}</p>
+                  <p className="mt-3 font-display text-4xl tabular-nums text-[#f0f0f0]">{currentPlanName}</p>
                 </div>
                 <div className="flex items-center gap-4">
                   {data?.status && (
                     <span className={`inline-flex items-center gap-1.5 rounded-full px-3 py-1 text-xs font-medium ${
-                      data.status === 'active' ? 'bg-accent-50 text-accent-700' : 'bg-zinc-100 text-zinc-600'
+                      data.status === 'active' ? 'bg-[#11ff99]/10 text-[#11ff99]' : 'bg-white/[0.06] text-[#a1a4a5]'
                     }`}>
-                      <span className={`h-1.5 w-1.5 rounded-full ${data.status === 'active' ? 'bg-accent-500' : 'bg-zinc-400'}`} />
+                      <span className={`h-1.5 w-1.5 rounded-full ${data.status === 'active' ? 'bg-[#11ff99]' : 'bg-white/[0.25]'}`} />
                       {data.status}
                     </span>
                   )}
                   {data?.cancelAtPeriodEnd && (
-                    <span className="text-xs text-amber-600">Cancels at period end</span>
+                    <span className="text-xs text-[#ffc53d]">Cancels at period end</span>
                   )}
                   {currentPlanName !== 'Free' && (
                     <button onClick={handleCancel} disabled={busy === 'cancel'} className="btn-secondary text-sm">
@@ -146,25 +146,25 @@ export default function BillingPage() {
               return (
                 <div
                   key={plan.id}
-                  className={`card relative flex flex-col p-7 ${plan.popular ? 'border-brand-300 ring-1 ring-brand-200 shadow-md' : ''}`}
+                  className={`card relative flex flex-col p-7 ${plan.popular ? 'border-[#ff801f]/50 ring-1 ring-[#ff801f]/30 ' : ''}`}
                 >
                   {plan.popular && (
-                    <span className="absolute -top-3 left-1/2 -translate-x-1/2 rounded-full bg-brand-600 px-3 py-1 text-[11px] font-semibold text-white shadow-sm">
+                    <span className="absolute -top-3 left-1/2 -translate-x-1/2 rounded-full bg-[#ff801f] px-3 py-1 text-[11px] font-semibold text-black shadow-sm">
                       Most Popular
                     </span>
                   )}
                   <h3 className="stat-label">{plan.name || plan.tier || plan.id || 'Plan'}</h3>
                   <p className="mt-3 stat-value">
                     {isCustom ? 'Custom' : `$${plan.price}`}
-                    {!isCustom && <span className="font-sans text-sm font-normal text-zinc-400">/mo</span>}
+                    {!isCustom && <span className="font-sans text-sm font-normal text-[#5c5c5c]">/mo</span>}
                   </p>
-                  <p className="mt-1 text-xs text-zinc-500">
+                  <p className="mt-1 text-xs text-[#a1a4a5]">
                     {plan.verifications || (typeof plan.monthly_limit === 'number' ? `${plan.monthly_limit.toLocaleString()} verifications/month` : '')}
                   </p>
                   <ul className="mt-5 flex-1 space-y-2.5">
                     {(plan.features || []).map((f) => (
-                      <li key={f} className="flex items-start gap-2.5 text-sm text-zinc-600">
-                        <Check size={15} className="mt-0.5 shrink-0 text-accent-500" />
+                      <li key={f} className="flex items-start gap-2.5 text-sm text-[#a1a4a5]">
+                        <Check size={15} className="mt-0.5 shrink-0 text-[#11ff99]" />
                         {f}
                       </li>
                     ))}
@@ -201,10 +201,10 @@ export default function BillingPage() {
             })}
           </div>
 
-          <div className="card border-amber-200 bg-amber-50 p-4">
+          <div className="card border-[#ffc53d]/30 bg-[#ffc53d]/[0.06] p-4">
             <div className="flex gap-2.5">
-              <Zap size={18} className="mt-0.5 shrink-0 text-amber-600" />
-              <p className="text-sm text-amber-800">
+              <Zap size={18} className="mt-0.5 shrink-0 text-[#ffc53d]" />
+              <p className="text-sm text-[#f0f0f0]">
                 Payments are processed securely by Flutterwave. Plan changes are handled by the backend to ensure accurate billing.
               </p>
             </div>

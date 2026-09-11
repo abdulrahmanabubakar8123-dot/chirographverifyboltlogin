@@ -55,29 +55,29 @@ export default function ApiKeysPage() {
 
         <div className="card p-6">
           <div>
-              <h2 className="text-base font-semibold tracking-tight text-zinc-900">Your API Key</h2>
-              <p className="text-xs text-zinc-500">Use this key in the <code className="rounded bg-zinc-100 px-1 py-0.5 font-mono text-xs text-zinc-600">Authorization</code> header</p>
+              <h2 className="section-title text-[#f0f0f0]">Your API Key</h2>
+              <p className="text-xs text-[#a1a4a5]">Use this key in the <code className="rounded bg-white/[0.06] px-1 py-0.5 font-mono text-xs text-[#a1a4a5]">Authorization</code> header</p>
             </div>
 
           <div className="mt-6">
             {data?.key ? (
               <div className="flex items-center gap-2">
-                <div className="flex-1 overflow-hidden rounded-lg border border-zinc-200/70 bg-zinc-100 px-4 py-3 font-mono text-sm text-zinc-700">
+                <div className="flex-1 overflow-hidden rounded-xl border border-[rgba(214,235,253,0.19)] bg-white/[0.06] px-4 py-3 font-mono text-sm text-[#a1a4a5]">
                   {showKey ? data.key : `${data.key.slice(0, 8)}${'•'.repeat(20)}`}
                 </div>
                 <button onClick={() => setShowKey(!showKey)} className="btn-ghost" aria-label={showKey ? 'Hide key' : 'Show key'}>
                   {showKey ? <EyeOff size={18} /> : <Eye size={18} />}
                 </button>
                 <button onClick={handleCopy} className="btn-ghost" aria-label="Copy key">
-                  {copied ? <Check size={18} className="text-accent-600" /> : <Copy size={18} />}
+                  {copied ? <Check size={18} className="text-[#11ff99]" /> : <Copy size={18} />}
                 </button>
               </div>
             ) : data?.prefix ? (
               <div className="flex items-center gap-2">
-                <div className="flex-1 overflow-hidden rounded-lg border border-zinc-200/70 bg-zinc-100 px-4 py-3 font-mono text-sm text-zinc-700">
+                <div className="flex-1 overflow-hidden rounded-xl border border-[rgba(214,235,253,0.19)] bg-white/[0.06] px-4 py-3 font-mono text-sm text-[#a1a4a5]">
                   {data.prefix}{'•'.repeat(16)}
                 </div>
-                <span className="text-xs text-zinc-400">Key prefix only</span>
+                <span className="text-xs text-[#5c5c5c]">Key prefix only</span>
               </div>
             ) : (
               <EmptyState
@@ -92,14 +92,14 @@ export default function ApiKeysPage() {
             <div className="mt-6 grid grid-cols-1 gap-5 sm:grid-cols-2">
               {data.createdAt && (
                 <div>
-                  <p className="text-xs font-medium text-zinc-500">Created</p>
-                  <p className="mt-0.5 font-mono text-sm text-zinc-900">{new Date(data.createdAt).toLocaleDateString()}</p>
+                  <p className="text-xs font-medium text-[#a1a4a5]">Created</p>
+                  <p className="mt-0.5 font-mono text-sm text-[#f0f0f0]">{new Date(data.createdAt).toLocaleDateString()}</p>
                 </div>
               )}
               <div>
-                <p className="text-xs font-medium text-zinc-500">Status</p>
+                <p className="text-xs font-medium text-[#a1a4a5]">Status</p>
                 <p className="mt-0.5 flex items-center gap-1.5 text-sm">
-                  <span className={`h-2 w-2 rounded-full ${data.active ? 'bg-accent-500' : 'bg-zinc-300'}`} />
+                  <span className={`h-2 w-2 rounded-full ${data.active ? 'bg-[#11ff99]' : 'bg-white/[0.15]'}`} />
                   {data.active ? 'Active' : 'Inactive'}
                 </p>
               </div>
@@ -107,10 +107,10 @@ export default function ApiKeysPage() {
           )}
         </div>
 
-        <div className="card border-amber-200 bg-amber-50 p-4">
+        <div className="card border-[#ffc53d]/30 bg-[#ffc53d]/[0.06] p-4">
           <div className="flex gap-2.5">
-            <AlertCircle size={18} className="mt-0.5 shrink-0 text-amber-600" />
-            <p className="text-sm text-amber-800">
+            <AlertCircle size={18} className="mt-0.5 shrink-0 text-[#ffc53d]" />
+            <p className="text-sm text-[#f0f0f0]">
               Keep your API key secure. Never expose it in client-side code or public repositories. Regenerating the key will immediately invalidate the previous one.
             </p>
           </div>

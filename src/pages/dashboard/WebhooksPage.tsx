@@ -121,15 +121,15 @@ export default function WebhooksPage() {
         <div className="space-y-6">
           {actionError && <ErrorBanner message={actionError} />}
           {successMsg && (
-            <div className="flex items-center gap-2.5 rounded-lg border border-accent-200 bg-accent-50 px-3.5 py-3 text-sm text-accent-700">
+            <div className="flex items-center gap-2.5 rounded-xl border border-[#11ff99]/30 bg-[#11ff99]/10 px-3.5 py-3 text-sm text-[#11ff99]">
               <CheckCircle2 size={18} /> {successMsg}
             </div>
           )}
 
           <div className="card p-6">
             <div>
-              <h2 className="text-base font-semibold tracking-tight text-zinc-900">Webhook URL</h2>
-              <p className="text-xs text-zinc-500">Where verification events will be delivered</p>
+              <h2 className="section-title text-[#f0f0f0]">Webhook URL</h2>
+              <p className="text-xs text-[#a1a4a5]">Where verification events will be delivered</p>
             </div>
             <form onSubmit={handleSaveUrl} className="mt-5 flex gap-2">
               <input
@@ -144,14 +144,14 @@ export default function WebhooksPage() {
               </button>
             </form>
             {data?.webhook?.active && (
-              <p className="mt-2.5 text-xs font-medium text-accent-600">Webhook is configured and active.</p>
+              <p className="mt-2.5 text-xs font-medium text-[#11ff99]">Webhook is configured and active.</p>
             )}
           </div>
 
           <div className="card p-6">
             <div>
-              <h2 className="text-base font-semibold tracking-tight text-zinc-900">Webhook Secret</h2>
-              <p className="text-xs text-zinc-500">Used to verify webhook delivery signatures</p>
+              <h2 className="section-title text-[#f0f0f0]">Webhook Secret</h2>
+              <p className="text-xs text-[#a1a4a5]">Used to verify webhook delivery signatures</p>
             </div>
             <form onSubmit={handleSaveSecret} className="mt-5 flex gap-2">
               <input
@@ -166,14 +166,14 @@ export default function WebhooksPage() {
               </button>
             </form>
             {data?.webhookSecretConfigured && (
-              <p className="mt-2.5 text-xs text-zinc-400">A webhook secret is currently configured.</p>
+              <p className="mt-2.5 text-xs text-[#5c5c5c]">A webhook secret is currently configured.</p>
             )}
           </div>
 
           <div className="card p-6">
             <div>
-              <h2 className="text-base font-semibold tracking-tight text-zinc-900">Allowed Origins</h2>
-              <p className="text-xs text-zinc-500">Domains authorized to make verification requests</p>
+              <h2 className="section-title text-[#f0f0f0]">Allowed Origins</h2>
+              <p className="text-xs text-[#a1a4a5]">Domains authorized to make verification requests</p>
             </div>
             <div className="mt-5 flex gap-2">
               <input
@@ -191,9 +191,9 @@ export default function WebhooksPage() {
             {origins.length > 0 ? (
               <ul className="mt-5 space-y-2">
                 {origins.map((origin) => (
-                  <li key={origin} className="flex items-center justify-between rounded-lg border border-zinc-200/70 bg-zinc-100 px-4 py-2.5">
-                    <span className="font-mono text-sm text-zinc-700">{origin}</span>
-                    <button onClick={() => handleRemoveOrigin(origin)} className="text-zinc-400 hover:text-red-600" aria-label="Remove origin">
+                  <li key={origin} className="flex items-center justify-between rounded-xl border border-[rgba(214,235,253,0.19)] bg-white/[0.06] px-4 py-2.5">
+                    <span className="font-mono text-sm text-[#a1a4a5]">{origin}</span>
+                    <button onClick={() => handleRemoveOrigin(origin)} className="text-[#5c5c5c] hover:text-[#ff2047]" aria-label="Remove origin">
                       <Trash2 size={16} />
                     </button>
                   </li>
