@@ -1,10 +1,6 @@
 import { useEffect, useState } from 'react';
 import {
   Activity,
-  Key,
-  Webhook,
-  TrendingUp,
-  ShieldCheck,
   AlertCircle,
 } from 'lucide-react';
 import { DashboardPageHeader } from '@/layouts/DashboardLayout';
@@ -47,34 +43,10 @@ export default function OverviewPage() {
     : 0;
 
   const stats = [
-    {
-      label: 'Current Plan',
-      value: data?.planName || data?.plan || '—',
-      icon: ShieldCheck,
-      color: 'text-brand-600',
-      bg: 'bg-brand-50',
-    },
-    {
-      label: 'Verifications Used',
-      value: `${data?.usage ?? 0}${data?.usageLimit ? ' / ' + data.usageLimit : ''}`,
-      icon: TrendingUp,
-      color: 'text-accent-600',
-      bg: 'bg-accent-50',
-    },
-    {
-      label: 'API Key',
-      value: data?.apiKeyActive ? 'Active' : (data?.apiKeyStatus || '—'),
-      icon: Key,
-      color: 'text-slate-600',
-      bg: 'bg-slate-100',
-    },
-    {
-      label: 'Webhook',
-      value: data?.webhookConfigured ? 'Configured' : (data?.webhookStatus || 'Not set'),
-      icon: Webhook,
-      color: 'text-amber-600',
-      bg: 'bg-amber-50',
-    },
+    { label: 'Current Plan', value: data?.planName || data?.plan || '—' },
+    { label: 'Verifications Used', value: `${data?.usage ?? 0}${data?.usageLimit ? ' / ' + data.usageLimit : ''}` },
+    { label: 'API Key', value: data?.apiKeyActive ? 'Active' : (data?.apiKeyStatus || '—') },
+    { label: 'Webhook', value: data?.webhookConfigured ? 'Configured' : (data?.webhookStatus || 'Not set') },
   ];
 
   return (
@@ -90,32 +62,26 @@ export default function OverviewPage() {
         </div>
       ) : (
         <div className="space-y-6">
-          <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-4">
-            {stats.map((stat) => {
-              const Icon = stat.icon;
-              return (
-                <div key={stat.label} className="card relative overflow-hidden p-6">
-                  <div className={`flex h-11 w-11 items-center justify-center rounded-xl ${stat.bg}`}>
-                    <Icon size={20} className={stat.color} />
-                  </div>
-                  <p className="mt-4 text-sm text-slate-500">{stat.label}</p>
-                  <p className="mt-1 text-2xl font-bold tracking-tight text-slate-900">{stat.value}</p>
-                </div>
-              );
-            })}
+          <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4">
+            {stats.map((stat) => (
+              <div key={stat.label} className="card p-6">
+                <p className="stat-label">{stat.label}</p>
+                <p className="mt-3 stat-value">{stat.value}</p>
+              </div>
+            ))}
           </div>
 
           <div className="card p-6">
             <div className="flex items-center justify-between">
-              <h2 className="text-sm font-semibold text-slate-900">Usage This Period</h2>
-              <span className="text-xs font-medium text-slate-400">{usagePct}% used</span>
+              <h2 className="text-sm font-semibold tracking-tight text-zinc-900">Usage This Period</h2>
+              <span className="text-xs font-medium text-zinc-400">{usagePct}% used</span>
             </div>
             <div className="mt-5">
-              <div className="flex items-baseline justify-between text-sm">
-                <span className="font-medium text-slate-900">{data?.usage ?? 0} verifications</span>
-                <span className="text-slate-400">{data?.usageLimit ? `${data.usageLimit} limit` : 'No limit'}</span>
+              <div className="flex items-baseline justify-between gap-3 text-sm">
+                <span className="font-mono text-2xl font-bold tracking-tight tabular-nums text-zinc-900">{data?.usage ?? 0}<span className="ml-1 text-sm font-normal text-zinc-400">verifications</span></span>
+                <span className="text-zinc-400">{data?.usageLimit ? `${data.usageLimit} limit` : 'No limit'}</span>
               </div>
-              <div className="mt-3 h-2 w-full overflow-hidden rounded-full bg-slate-100">
+              <div className="mt-4 h-2 w-full overflow-hidden rounded-full bg-zinc-100">
                 <div
                   className="h-full rounded-full bg-brand-500 transition-all duration-500"
                   style={{ width: `${usagePct}%` }}
@@ -128,17 +94,17 @@ export default function OverviewPage() {
           </div>
 
           <div className="card p-6">
-            <h2 className="mb-1 flex items-center gap-2 text-sm font-semibold text-slate-900">
-              <Activity size={18} className="text-slate-400" /> Recent Activity
+            <h2 className="mb-1 flex items-center gap-2 text-sm font-semibold tracking-tight text-zinc-900">
+              <Activity size={18} strokeWidth={1.8} className="text-zinc-400" /> Recent Activity
             </h2>
             {data?.recentActivity && data.recentActivity.length > 0 ? (
-              <ul className="mt-3 divide-y divide-slate-100">
+              <ul className="mt-3 divide-y divide-zinc-100">
                 {data.recentActivity.map((item) => (
                   <li key={item.id} className="flex items-start gap-3 py-3.5 first:pt-1 last:pb-0">
-                    <span className="mt-1.5 h-2 w-2 shrink-0 rounded-full bg-brand-400" />
+                    <span className="mt-1.5 h-2 w-2 shrink-0 rounded-full bg-zinc-400" />
                     <div className="min-w-0 flex-1">
-                      <p className="text-sm text-slate-900">{item.description}</p>
-                      <p className="mt-0.5 font-mono text-xs text-slate-400">{new Date(item.timestamp).toLocaleString()}</p>
+                      <p className="text-sm text-zinc-900">{item.description}</p>
+                      <p className="mt-0.5 font-mono text-xs text-zinc-400">{new Date(item.timestamp).toLocaleString()}</p>
                     </div>
                   </li>
                 ))}
