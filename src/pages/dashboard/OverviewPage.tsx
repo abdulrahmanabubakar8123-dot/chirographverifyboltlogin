@@ -108,7 +108,7 @@ export default function OverviewPage() {
             </div>
             <div className="mt-5">
               <div className="flex items-baseline justify-between gap-3 text-sm">
-                <span className="stat-value">{data?.usage ?? 0}<span className="ml-2 font-sans text-sm font-normal text-slate-400">verifications</span></span>
+                <span className="font-mono text-2xl font-bold tabular-nums tracking-tight text-slate-900">{data?.usage ?? 0}<span className="ml-1 font-sans text-sm font-normal text-slate-400">verifications</span></span>
                 <span className="text-slate-400">{data?.usageLimit ? `${data.usageLimit} limit` : 'No limit'}</span>
               </div>
               <div className="mt-4 h-2 w-full overflow-hidden rounded-full bg-slate-100">
@@ -118,7 +118,7 @@ export default function OverviewPage() {
                 />
               </div>
               {data?.remaining != null && (
-                <p className="mt-2 font-mono text-xs text-emerald-600">{data.remaining} remaining</p>
+                <p className="mt-2 font-mono text-xs font-medium text-emerald-600">{data.remaining} remaining</p>
               )}
             </div>
           </div>
