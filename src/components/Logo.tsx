@@ -18,12 +18,12 @@ export default function Logo({ size = 'md', showText = true, to = '/', onDark = 
   const s = sizeMap[size];
   const content = (
     <div className="flex items-center gap-2.5">
-      <div className={`${s.box} flex shrink-0 items-center justify-center rounded-lg bg-brand-600 shadow-sm`}>
-        <Fingerprint className="text-white" size={s.icon} strokeWidth={2.2} />
+      <div className={`${s.box} flex shrink-0 items-center justify-center rounded-full bg-[#ff801f] shadow-sm`}>
+        <Fingerprint className="text-black" size={s.icon} strokeWidth={2.2} />
       </div>
       {showText && (
-        <span className={`${s.text} font-bold tracking-tight ${onDark ? 'text-white' : 'text-slate-900'}`}>
-          Chirograph<span className={onDark ? 'text-brand-400' : 'text-brand-600'}> Verify</span>
+        <span className={`${s.text} font-bold tracking-tight text-[#f0f0f0]`}>
+          Chirograph<span className="text-[#ff801f]"> Verify</span>
         </span>
       )}
     </div>

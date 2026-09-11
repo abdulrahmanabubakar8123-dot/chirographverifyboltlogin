@@ -9,6 +9,10 @@ import {
   CreditCard,
   Settings,
   UserCircle,
+  Users,
+  ScrollText,
+  Bell,
+  TerminalSquare,
   LogOut,
   Menu,
   X,
@@ -28,11 +32,19 @@ const navItems = [
   { to: '/dashboard/account', label: 'Account', icon: UserCircle },
 ];
 
+const soonNavItems = [
+  { to: '/dashboard/team', label: 'Team', icon: Users },
+  { to: '/dashboard/activity-log', label: 'Activity Log', icon: ScrollText },
+  { to: '/dashboard/notifications', label: 'Notifications', icon: Bell },
+  { to: '/dashboard/api-logs', label: 'API Logs', icon: TerminalSquare },
+];
+
 interface NavItem {
   to: string;
   label: string;
   icon: typeof LayoutDashboard;
   end?: boolean;
+  soon?: boolean;
 }
 
 function SidebarNavItem({ item, onNavigate }: { item: NavItem; onNavigate: () => void }) {
@@ -43,16 +55,20 @@ function SidebarNavItem({ item, onNavigate }: { item: NavItem; onNavigate: () =>
       end={item.end}
       onClick={onNavigate}
       className={({ isActive }) =>
-        `group relative flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium transition-colors ${
-          isActive ? 'bg-zinc-800/70 text-white' : 'text-zinc-400 hover:bg-zinc-800/40 hover:text-zinc-100'
+        `group relative flex items-center gap-3 rounded-full px-4 py-2.5 text-sm font-medium transition-colors ${
+          isActive ? 'bg-[#ff801f] text-black' : 'text-[#a1a4a5] hover:bg-white/[0.04] hover:text-[#f0f0f0]'
         }`
       }
     >
       {({ isActive }) => (
         <>
-          {isActive && <span className="absolute left-0 top-1/2 h-5 w-0.5 -translate-y-1/2 rounded-r-full bg-indigo-400" />}
-          <Icon size={18} strokeWidth={1.8} className={isActive ? 'text-white' : 'text-zinc-500 group-hover:text-zinc-300'} />
-          {item.label}
+          <Icon size={18} strokeWidth={1.8} className={isActive ? 'text-black' : 'text-[#5c5c5c] group-hover:text-[#a1a4a5]'} />
+          <span className="flex-1">{item.label}</span>
+          {item.soon && (
+            <span className={`rounded-full px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wider ${isActive ? 'bg-black/15 text-black' : 'soon-badge ml-0'}`}>
+              Soon
+            </span>
+          )}
         </>
       )}
     </NavLink>
@@ -70,24 +86,30 @@ export default function DashboardLayout() {
   };
 
   const sidebarContent = (
-    <div className="flex h-full flex-col bg-zinc-950 text-zinc-400">
+    <div className="flex h-full flex-col bg-black text-[#a1a4a5]">
       <div className="flex h-16 items-center px-5">
         <Logo size="sm" to="/dashboard" onDark />
       </div>
       <div className="px-4 pb-1 pt-4">
-        <p className="px-3 text-[10px] font-semibold uppercase tracking-widest text-zinc-500">Workspace</p>
+        <p className="px-3 text-[10px] font-semibold uppercase tracking-widest text-[#5c5c5c]">Workspace</p>
       </div>
-      <nav className="flex-1 space-y-1 px-3 py-3">
+      <nav className="flex-1 space-y-1 overflow-y-auto px-3 py-3">
         {navItems.map((item) => (
           <SidebarNavItem key={item.to} item={item} onNavigate={() => setMobileOpen(false)} />
         ))}
+        <div className="px-3 pb-1 pt-5">
+          <p className="text-[10px] font-semibold uppercase tracking-widest text-[#5c5c5c]">Coming soon</p>
+        </div>
+        {soonNavItems.map((item) => (
+          <SidebarNavItem key={item.to} item={{ ...item, soon: true }} onNavigate={() => setMobileOpen(false)} />
+        ))}
       </nav>
-      <div className="mt-2 border-t border-zinc-800/80 p-3">
+      <div className="mt-2 border-t border-[rgba(214,235,253,0.19)] p-3">
         <button
           onClick={handleLogout}
-          className="group flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium text-zinc-400 transition-colors hover:bg-zinc-800/40 hover:text-white"
+          className="group flex w-full items-center gap-3 rounded-full px-4 py-2.5 text-sm font-medium text-[#a1a4a5] transition-colors hover:bg-white/[0.04] hover:text-[#f0f0f0]"
         >
-          <LogOut size={18} strokeWidth={1.8} className="text-zinc-500 group-hover:text-zinc-200" />
+          <LogOut size={18} strokeWidth={1.8} className="text-[#5c5c5c] group-hover:text-[#a1a4a5]" />
           Sign Out
         </button>
       </div>
@@ -95,9 +117,9 @@ export default function DashboardLayout() {
   );
 
   return (
-    <div className="flex min-h-screen bg-zinc-100">
+    <div className="flex min-h-screen bg-black">
       {/* Desktop sidebar */}
-      <aside className="hidden w-64 shrink-0 border-r border-zinc-800 bg-zinc-950 lg:block">
+      <aside className="hidden w-64 shrink-0 border-r border-[rgba(214,235,253,0.19)] bg-black lg:block">
         {sidebarContent}
       </aside>
 
@@ -105,13 +127,13 @@ export default function DashboardLayout() {
       {mobileOpen && (
         <>
           <div
-            className="fixed inset-0 z-40 bg-zinc-950/50 backdrop-blur-sm lg:hidden"
+            className="fixed inset-0 z-40 bg-black/70 backdrop-blur-sm lg:hidden"
             onClick={() => setMobileOpen(false)}
           />
-          <aside className="fixed left-0 top-0 z-50 h-full w-64 border-r border-zinc-800 bg-zinc-950 lg:hidden">
+          <aside className="fixed left-0 top-0 z-50 h-full w-64 border-r border-[rgba(214,235,253,0.19)] bg-black lg:hidden">
             <button
               onClick={() => setMobileOpen(false)}
-              className="absolute right-3 top-4 rounded-lg p-1.5 text-zinc-400 hover:bg-zinc-800"
+              className="absolute right-3 top-4 rounded-full p-1.5 text-[#a1a4a5] hover:bg-white/[0.06]"
             >
               <X size={20} />
             </button>
@@ -122,29 +144,29 @@ export default function DashboardLayout() {
 
       {/* Main content */}
       <div className="flex min-w-0 flex-1 flex-col">
-        <header className="flex h-16 items-center justify-between border-b border-zinc-200/80 bg-white px-4 lg:px-8">
+        <header className="flex h-16 items-center justify-between border-b border-[rgba(214,235,253,0.19)] bg-black px-4 lg:px-8">
           <button
             onClick={() => setMobileOpen(true)}
-            className="rounded-lg p-2 text-zinc-500 hover:bg-zinc-100 lg:hidden"
+            className="rounded-full p-2 text-[#a1a4a5] hover:bg-white/[0.06] lg:hidden"
           >
             <Menu size={20} />
           </button>
           <div className="flex items-center gap-2 lg:hidden">
-            <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-brand-600">
-              <Fingerprint className="text-white" size={16} />
+            <div className="flex h-8 w-8 items-center justify-center rounded-full bg-[#ff801f]">
+              <Fingerprint className="text-black" size={16} />
             </div>
-            <span className="text-sm font-bold text-zinc-900">Chirograph Verify</span>
+            <span className="text-sm font-bold text-[#f0f0f0]">Chirograph Verify</span>
           </div>
           <div className="ml-auto flex items-center gap-3">
-            <div className="hidden font-mono text-sm text-zinc-500 sm:block">
+            <div className="hidden font-mono text-sm text-[#a1a4a5] sm:block">
               {user?.email}
             </div>
-            <div className="flex h-9 w-9 items-center justify-center rounded-full bg-brand-100 text-sm font-semibold text-brand-700">
+            <div className="flex h-9 w-9 items-center justify-center rounded-full bg-[#ff801f] text-sm font-semibold text-black">
               {user?.email?.charAt(0).toUpperCase() || 'U'}
             </div>
           </div>
         </header>
-        <main className="flex-1 overflow-y-auto p-4 sm:p-6 lg:p-10">
+        <main className="flex-1 overflow-y-auto bg-black p-4 sm:p-6 lg:p-10">
           <Outlet />
         </main>
       </div>
@@ -152,12 +174,15 @@ export default function DashboardLayout() {
   );
 }
 
-export function DashboardPageHeader({ title, description, action }: { title: string; description?: string; action?: ReactNode }) {
+export function DashboardPageHeader({ title, description, action, soon }: { title: string; description?: string; action?: ReactNode; soon?: boolean }) {
   return (
     <div className="mb-8 flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
       <div>
-        <h1 className="text-3xl font-bold tracking-tight text-zinc-900">{title}</h1>
-        {description && <p className="mt-1.5 text-sm leading-relaxed text-zinc-500">{description}</p>}
+        <h1 className="page-title">
+          {title}
+          {soon && <span className="coming-soon-badge align-middle">Coming soon</span>}
+        </h1>
+        {description && <p className="page-description">{description}</p>}
       </div>
       {action && <div className="flex-shrink-0">{action}</div>}
     </div>

@@ -10,7 +10,7 @@ export function ErrorBanner({ message }: ErrorBannerProps) {
   return (
     <div
       role="alert"
-      className="flex items-start gap-2.5 rounded-lg border border-red-200 bg-red-50 px-3.5 py-3 text-sm text-red-700"
+      className="flex items-start gap-2.5 rounded-xl border border-[#ff2047]/30 bg-[#ff2047]/[0.06] px-3.5 py-3 text-sm text-[#f0f0f0]"
     >
       <AlertCircle size={18} className="mt-0.5 shrink-0" />
       <span>{message}</span>
@@ -29,12 +29,12 @@ export function EmptyState({ icon, title, description, action }: EmptyStateProps
   return (
     <div className="flex flex-col items-center justify-center px-6 py-14 text-center">
       {icon && (
-        <div className="mb-4 flex h-14 w-14 items-center justify-center rounded-2xl bg-zinc-100 text-zinc-400">
+        <div className="mb-4 flex h-14 w-14 items-center justify-center rounded-full text-[#5c5c5c]" style={{ border: '1px solid rgba(214, 235, 253, 0.19)', backgroundColor: 'rgba(214, 235, 253, 0.03)' }}>
           {icon}
         </div>
       )}
-      <h3 className="text-base font-semibold tracking-tight text-zinc-900">{title}</h3>
-      {description && <p className="mt-1.5 max-w-sm text-sm leading-relaxed text-zinc-500">{description}</p>}
+      <h3 className="text-base font-bold tracking-tight text-[#f0f0f0]">{title}</h3>
+      {description && <p className="mt-1.5 max-w-sm text-sm leading-relaxed text-[#a1a4a5]">{description}</p>}
       {action && <div className="mt-5">{action}</div>}
     </div>
   );
@@ -46,8 +46,8 @@ interface LoadingStateProps {
 
 export function LoadingState({ label = 'Loading...' }: LoadingStateProps) {
   return (
-    <div className="flex flex-col items-center justify-center gap-3 py-20 text-sm text-zinc-400">
-      <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-zinc-100">
+    <div className="flex flex-col items-center justify-center gap-3 py-20 text-sm text-[#5c5c5c]">
+      <div className="flex h-10 w-10 items-center justify-center rounded-full" style={{ border: '1px solid rgba(214, 235, 253, 0.19)', backgroundColor: 'rgba(214, 235, 253, 0.03)' }}>
         <Spinner size={18} />
       </div>
       <span>{label}</span>
