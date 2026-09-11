@@ -159,7 +159,7 @@ export default function SignupPage() {
         }
       >
         <div className="w-full max-w-sm text-center">
-          <div className="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-full border border-slate-200/70 bg-white/[0.04]">
+          <div className="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-full border border-indigo-100 bg-indigo-50">
             <Mail size={28} className="text-indigo-600" />
           </div>
           <p className="text-sm text-slate-500">
