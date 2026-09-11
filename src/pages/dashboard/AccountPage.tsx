@@ -18,12 +18,12 @@ export default function AccountPage() {
       <div className="max-w-2xl space-y-6">
         <div className="card p-6">
           <div className="flex items-center gap-4">
-            <div className="flex h-16 w-16 items-center justify-center rounded-full bg-brand-100 text-xl font-bold text-brand-700 ring-2 ring-brand-200 shadow-sm">
+            <div className="flex h-20 w-20 items-center justify-center rounded-full bg-brand-100 text-2xl font-bold text-brand-700 ring-2 ring-brand-200 shadow-sm">
               {user?.email?.charAt(0).toUpperCase() || 'U'}
             </div>
             <div>
-              <h2 className="text-lg font-bold text-slate-900">{user?.name || user?.email || 'Account'}</h2>
-              <p className="text-sm text-slate-500">{user?.email}</p>
+              <h2 className="text-xl font-bold tracking-tight text-slate-900">{user?.name || user?.email || 'Account'}</h2>
+              <p className="mt-1 text-sm text-slate-500">{user?.email}</p>
             </div>
           </div>
         </div>
@@ -32,8 +32,8 @@ export default function AccountPage() {
           {info.map((item) => {
             const Icon = item.icon;
             return (
-              <div key={item.label} className="flex items-center gap-3 p-4">
-                <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-brand-50 text-brand-600">
+              <div key={item.label} className="flex items-center gap-4 p-4.5">
+                <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-brand-50 text-brand-600">
                   <Icon size={18} className="text-slate-500" />
                 </div>
                 <div className="min-w-0 flex-1">

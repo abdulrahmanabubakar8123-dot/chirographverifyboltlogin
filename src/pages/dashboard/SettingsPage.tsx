@@ -52,19 +52,19 @@ export default function SettingsPage() {
       ) : (
         <div className="max-w-2xl space-y-6">
           <div className="card p-6">
-            <div className="flex items-center gap-2.5">
-              <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-brand-50">
+            <div className="flex items-center gap-3">
+              <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-brand-50">
                 <SettingsIcon size={20} className="text-brand-600" />
               </div>
-              <h2 className="text-sm font-semibold text-slate-900">Profile Settings</h2>
+              <h2 className="text-base font-semibold tracking-tight text-slate-900">Profile Settings</h2>
             </div>
 
-            <div className="mt-5 divide-y divide-slate-100">
+            <div className="mt-6 divide-y divide-slate-100">
               {fields.map((field) => (
-                <div key={field.label} className="flex items-center justify-between py-3.5">
+                <div key={field.label} className="flex items-center justify-between py-4">
                   <div>
                     <p className="text-xs font-medium text-slate-500">{field.label}</p>
-                    <p className="mt-0.5 text-sm text-slate-900">{field.value || 'Not set'}</p>
+                    <p className={`mt-0.5 text-sm text-slate-900 ${field.label === 'Webhook URL' ? 'font-mono' : ''}`}>{field.value || 'Not set'}</p>
                   </div>
                 </div>
               ))}
@@ -74,9 +74,9 @@ export default function SettingsPage() {
           {data?.origins && data.origins.length > 0 && (
             <div className="card p-6">
               <h2 className="text-sm font-semibold text-slate-900">Allowed Origins</h2>
-              <ul className="mt-4 space-y-2">
+              <ul className="mt-5 space-y-2">
                 {data.origins.map((origin) => (
-                  <li key={origin} className="rounded-lg border border-slate-200 bg-slate-50 px-3.5 py-2.5 font-mono text-sm text-slate-700">
+                  <li key={origin} className="rounded-lg border border-slate-200/70 bg-slate-50 px-4 py-2.5 font-mono text-sm text-slate-700">
                     {origin}
                   </li>
                 ))}
