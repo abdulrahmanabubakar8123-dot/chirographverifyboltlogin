@@ -54,19 +54,20 @@ function SidebarNavItem({ item, onNavigate }: { item: NavItem; onNavigate: () =>
       end={item.end}
       onClick={onNavigate}
       className={({ isActive }) =>
-        `group relative flex items-center gap-3 rounded-xl px-4 py-2.5 text-sm font-medium transition-colors ${
-          isActive ? 'bg-white/10 text-white' : 'text-slate-400 hover:bg-white/5 hover:text-white'
+        `group relative flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium transition-colors ${
+          isActive ? 'bg-brand-500/15 text-text-primary' : 'text-text-muted hover:bg-white/[0.04] hover:text-text-secondary'
         }`
       }
     >
       {({ isActive }) => (
         <>
-          <Icon size={18} strokeWidth={1.8} className={isActive ? 'text-white' : 'text-slate-500 group-hover:text-slate-300'} />
+          {isActive && (
+            <span className="absolute left-0 top-1/2 h-5 w-[3px] -translate-y-1/2 rounded-r-full bg-brand-gradient" />
+          )}
+          <Icon size={18} strokeWidth={1.8} className={isActive ? 'text-text-primary' : 'text-text-muted group-hover:text-text-secondary'} />
           <span className="flex-1">{item.label}</span>
           {item.soon && (
-            <span className={`rounded-full px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wider ${isActive ? 'bg-white/15 text-white' : 'soon-badge ml-0'}`}>
-              Soon
-            </span>
+            <span className="pill-soon">Soon</span>
           )}
         </>
       )}
@@ -85,30 +86,30 @@ export default function DashboardLayout() {
   };
 
   const sidebarContent = (
-    <div className="flex h-full flex-col bg-slate-900 text-slate-300">
-      <div className="flex h-16 items-center px-5">
+    <div className="flex h-full flex-col bg-[#0E1218] text-text-secondary">
+      <div className="flex h-14 items-center px-4">
         <Logo size="sm" to="/dashboard" />
       </div>
-      <div className="px-4 pb-1 pt-4">
-        <p className="px-3 text-[10px] font-semibold uppercase tracking-widest text-slate-500">Workspace</p>
+      <div className="px-4 pb-1 pt-3">
+        <p className="micro-label px-3">Workspace</p>
       </div>
-      <nav className="flex-1 space-y-1 overflow-y-auto px-3 py-3">
+      <nav className="flex-1 space-y-0.5 overflow-y-auto px-3 py-2">
         {navItems.map((item) => (
           <SidebarNavItem key={item.to} item={item} onNavigate={() => setMobileOpen(false)} />
         ))}
         <div className="px-3 pb-1 pt-5">
-          <p className="text-[10px] font-semibold uppercase tracking-widest text-slate-500">Coming soon</p>
+          <p className="micro-label">Coming soon</p>
         </div>
         {soonNavItems.map((item) => (
           <SidebarNavItem key={item.to} item={{ ...item, soon: true }} onNavigate={() => setMobileOpen(false)} />
         ))}
       </nav>
-      <div className="mt-2 border-t border-white/10 p-3">
+      <div className="mt-2 border-t border-line p-3">
         <button
           onClick={handleLogout}
-          className="group flex w-full items-center gap-3 rounded-xl px-4 py-2.5 text-sm font-medium text-slate-400 transition-colors hover:bg-white/5 hover:text-white"
+          className="group flex w-full items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium text-text-muted transition-colors hover:bg-white/[0.04] hover:text-text-secondary"
         >
-          <LogOut size={18} strokeWidth={1.8} className="text-slate-500 group-hover:text-slate-300" />
+          <LogOut size={18} strokeWidth={1.8} className="text-text-muted group-hover:text-text-secondary" />
           Sign Out
         </button>
       </div>
@@ -116,9 +117,9 @@ export default function DashboardLayout() {
   );
 
   return (
-    <div className="flex min-h-screen bg-slate-50">
+    <div className="flex min-h-screen bg-canvas">
       {/* Desktop sidebar */}
-      <aside className="hidden w-64 shrink-0 bg-slate-900 lg:block">
+      <aside className="hidden w-[260px] shrink-0 border-r border-line bg-[#0E1218] lg:block">
         {sidebarContent}
       </aside>
 
@@ -126,13 +127,14 @@ export default function DashboardLayout() {
       {mobileOpen && (
         <>
           <div
-            className="fixed inset-0 z-40 bg-slate-900/50 backdrop-blur-sm lg:hidden"
+            className="fixed inset-0 z-40 bg-black/60 backdrop-blur-sm lg:hidden"
             onClick={() => setMobileOpen(false)}
           />
-          <aside className="fixed left-0 top-0 z-50 h-full w-64 bg-slate-900 lg:hidden">
+          <aside className="fixed left-0 top-0 z-50 h-full w-[260px] border-r border-line bg-[#0E1218] lg:hidden">
             <button
               onClick={() => setMobileOpen(false)}
-              className="absolute right-3 top-4 rounded-lg p-1.5 text-slate-400 hover:bg-white/10"
+              className="absolute right-3 top-3.5 rounded-lg p-1.5 text-text-muted hover:bg-white/[0.06]"
+              aria-label="Close menu"
             >
               <X size={20} />
             </button>
@@ -143,10 +145,11 @@ export default function DashboardLayout() {
 
       {/* Main content */}
       <div className="flex min-w-0 flex-1 flex-col">
-        <header className="flex h-16 items-center justify-between border-b border-slate-200/70 bg-white px-4 lg:px-8">
+        <header className="flex h-14 items-center justify-between border-b border-line bg-canvas px-4 lg:px-8">
           <button
             onClick={() => setMobileOpen(true)}
-            className="rounded-lg p-2 text-slate-500 hover:bg-slate-100 lg:hidden"
+            className="rounded-lg p-2 text-text-muted hover:bg-white/[0.06] lg:hidden"
+            aria-label="Open menu"
           >
             <Menu size={20} />
           </button>
@@ -154,16 +157,18 @@ export default function DashboardLayout() {
             <Logo size="sm" to="/dashboard" />
           </div>
           <div className="ml-auto flex items-center gap-3">
-            <div className="hidden font-mono text-sm text-slate-500 sm:block">
+            <div className="hidden font-mono text-sm text-text-muted sm:block">
               {user?.email}
             </div>
-            <div className="flex h-9 w-9 items-center justify-center rounded-full bg-indigo-600 text-sm font-semibold text-white">
+            <div className="flex h-8 w-8 items-center justify-center rounded-full bg-brand-gradient text-sm font-semibold text-white">
               {user?.email?.charAt(0).toUpperCase() || 'U'}
             </div>
           </div>
         </header>
-        <main className="flex-1 overflow-y-auto bg-slate-50 p-4 sm:p-6 lg:p-10">
-          <Outlet />
+        <main className="flex-1 overflow-y-auto bg-canvas p-4 sm:p-6 lg:p-10">
+          <div className="mx-auto max-w-[1200px]">
+            <Outlet />
+          </div>
         </main>
       </div>
     </div>

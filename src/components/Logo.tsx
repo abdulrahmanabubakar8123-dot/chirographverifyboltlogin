@@ -21,8 +21,8 @@ export default function Logo({ size = 'md', showText = true, to = '/' }: LogoPro
         <Fingerprint className="text-white" size={s.icon} strokeWidth={2.2} />
       </div>
       {showText && (
-        <span className={`${s.text} font-bold tracking-tight text-white`}>
-          Chirograph<span className="bg-gradient-to-r from-indigo-300 to-emerald-300 bg-clip-text text-transparent"> Verify</span>
+        <span className={`${s.text} font-bold tracking-tight text-text-primary`}>
+          Chirograph<span className="gradient-text"> Verify</span>
         </span>
       )}
     </div>
