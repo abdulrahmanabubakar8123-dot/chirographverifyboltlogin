@@ -73,38 +73,38 @@ export default function OverviewPage() {
 
           <div className="card p-6">
             <div className="flex items-center justify-between">
-              <h2 className="text-sm font-semibold tracking-tight text-zinc-900">Usage This Period</h2>
-              <span className="text-xs font-medium text-zinc-400">{usagePct}% used</span>
+              <h2 className="section-title">Usage This Period</h2>
+              <span className="font-mono text-xs text-[#5c5c5c]">{usagePct}% used</span>
             </div>
             <div className="mt-5">
               <div className="flex items-baseline justify-between gap-3 text-sm">
-                <span className="font-mono text-2xl font-bold tracking-tight tabular-nums text-zinc-900">{data?.usage ?? 0}<span className="ml-1 text-sm font-normal text-zinc-400">verifications</span></span>
-                <span className="text-zinc-400">{data?.usageLimit ? `${data.usageLimit} limit` : 'No limit'}</span>
+                <span className="font-display text-4xl tabular-nums text-[#f0f0f0]">{data?.usage ?? 0}<span className="ml-2 font-sans text-sm font-normal text-[#5c5c5c]">verifications</span></span>
+                <span className="text-[#5c5c5c]">{data?.usageLimit ? `${data.usageLimit} limit` : 'No limit'}</span>
               </div>
-              <div className="mt-4 h-2 w-full overflow-hidden rounded-full bg-zinc-100">
+              <div className="mt-4 h-2 w-full overflow-hidden rounded-full bg-white/[0.06]">
                 <div
-                  className="h-full rounded-full bg-brand-500 transition-all duration-500"
+                  className="h-full rounded-full bg-[#ff801f] transition-all duration-500"
                   style={{ width: `${usagePct}%` }}
                 />
               </div>
               {data?.remaining != null && (
-                <p className="mt-2 text-xs font-medium text-accent-600">{data.remaining} remaining</p>
+                <p className="mt-2 font-mono text-xs text-[#11ff99]">{data.remaining} remaining</p>
               )}
             </div>
           </div>
 
           <div className="card p-6">
-            <h2 className="mb-1 flex items-center gap-2 text-sm font-semibold tracking-tight text-zinc-900">
-              <Activity size={18} strokeWidth={1.8} className="text-zinc-400" /> Recent Activity
+            <h2 className="mb-1 flex items-center gap-2 section-title">
+              <Activity size={18} strokeWidth={1.8} className="text-[#5c5c5c]" /> Recent Activity
             </h2>
             {data?.recentActivity && data.recentActivity.length > 0 ? (
-              <ul className="mt-3 divide-y divide-zinc-100">
+              <ul className="mt-3 divide-y divide-[rgba(214,235,253,0.19)]">
                 {data.recentActivity.map((item) => (
                   <li key={item.id} className="flex items-start gap-3 py-3.5 first:pt-1 last:pb-0">
-                    <span className="mt-1.5 h-2 w-2 shrink-0 rounded-full bg-zinc-400" />
+                    <span className="mt-1.5 h-2 w-2 shrink-0 rounded-full bg-[#ff801f]" />
                     <div className="min-w-0 flex-1">
-                      <p className="text-sm text-zinc-900">{item.description}</p>
-                      <p className="mt-0.5 font-mono text-xs text-zinc-400">{new Date(item.timestamp).toLocaleString()}</p>
+                      <p className="text-sm text-[#f0f0f0]">{item.description}</p>
+                      <p className="mt-0.5 font-mono text-xs text-[#5c5c5c]">{new Date(item.timestamp).toLocaleString()}</p>
                     </div>
                   </li>
                 ))}

@@ -69,17 +69,17 @@ export default function UsagePage() {
 
           <div className="card p-6">
             <div className="flex items-center justify-between">
-              <h2 className="text-sm font-semibold tracking-tight text-zinc-900">Monthly Usage Progress</h2>
-              <span className="text-xs font-medium text-zinc-400">{pct}% of allowance used</span>
+              <h2 className="section-title">Monthly Usage Progress</h2>
+              <span className="text-xs font-medium text-[#5c5c5c]">{pct}% of allowance used</span>
             </div>
             <div className="mt-5">
               <div className="flex items-baseline justify-between gap-3 text-sm">
-                <span className="font-mono text-2xl font-bold tracking-tight tabular-nums text-zinc-900">{usage.toLocaleString()}<span className="ml-1 text-sm font-normal text-zinc-400">used</span></span>
-                <span className="text-zinc-400">{limit > 0 ? `${limit.toLocaleString()} limit` : 'Unlimited'}</span>
+                <span className="font-display text-4xl tabular-nums text-[#f0f0f0]">{usage.toLocaleString()}<span className="ml-2 font-sans text-sm font-normal text-[#5c5c5c]">used</span></span>
+                <span className="text-[#5c5c5c]">{limit > 0 ? `${limit.toLocaleString()} limit` : 'Unlimited'}</span>
               </div>
-              <div className="mt-4 h-2 w-full overflow-hidden rounded-full bg-zinc-100">
+              <div className="mt-4 h-2 w-full overflow-hidden rounded-full bg-white/[0.06]">
                 <div
-                  className={`h-full rounded-full transition-all duration-500 ${pct > 90 ? 'bg-red-500' : 'bg-brand-500'}`}
+                  className={`h-full rounded-full transition-all duration-500 ${pct > 90 ? 'bg-[#ffc53d]' : 'bg-[#ff801f]'}`}
                   style={{ width: `${pct}%` }}
                 />
               </div>
@@ -89,8 +89,8 @@ export default function UsagePage() {
           {data?.history && data.history.length > 0 && (
             <div className="card p-6">
               <div className="flex items-center justify-between">
-                <h2 className="text-sm font-semibold tracking-tight text-zinc-900">Usage History</h2>
-                <span className="text-xs text-zinc-400">Per day</span>
+                <h2 className="section-title">Usage History</h2>
+                <span className="text-xs text-[#5c5c5c]">Per day</span>
               </div>
               <div className="mt-5 space-y-2.5">
                 {data.history.map((item) => {
@@ -98,11 +98,11 @@ export default function UsagePage() {
                   const w = Math.max(2, Math.round((item.count / max) * 100));
                   return (
                     <div key={item.date} className="flex items-center gap-4">
-                      <span className="w-24 shrink-0 font-mono text-xs text-zinc-400">{new Date(item.date).toLocaleDateString()}</span>
-                      <div className="h-6 flex-1 overflow-hidden rounded bg-zinc-100">
-                        <div className="h-full rounded bg-brand-400 transition-all" style={{ width: `${w}%` }} />
+                      <span className="w-24 shrink-0 font-mono text-xs text-[#5c5c5c]">{new Date(item.date).toLocaleDateString()}</span>
+                      <div className="h-6 flex-1 overflow-hidden rounded bg-white/[0.06]">
+                        <div className="h-full rounded bg-[#ff801f] transition-all" style={{ width: `${w}%` }} />
                       </div>
-                      <span className="w-12 shrink-0 text-right font-mono text-xs font-medium text-zinc-600">{item.count}</span>
+                      <span className="w-12 shrink-0 text-right font-mono text-xs font-medium text-[#a1a4a5]">{item.count}</span>
                     </div>
                   );
                 })}
