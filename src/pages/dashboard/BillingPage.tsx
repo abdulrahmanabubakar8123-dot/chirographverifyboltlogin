@@ -153,10 +153,10 @@ export default function BillingPage() {
                       Most Popular
                     </span>
                   )}
-                  <h3 className="text-lg font-semibold tracking-tight text-zinc-900">{plan.name || plan.tier || plan.id || 'Plan'}</h3>
-                  <p className="mt-3 font-mono text-3xl font-bold tracking-tight text-zinc-900">
+                  <h3 className="stat-label">{plan.name || plan.tier || plan.id || 'Plan'}</h3>
+                  <p className="mt-3 stat-value">
                     {isCustom ? 'Custom' : `$${plan.price}`}
-                    {!isCustom && <span className="text-sm font-normal text-zinc-400">/mo</span>}
+                    {!isCustom && <span className="font-sans text-sm font-normal text-zinc-400">/mo</span>}
                   </p>
                   <p className="mt-1 text-xs text-zinc-500">
                     {plan.verifications || (typeof plan.monthly_limit === 'number' ? `${plan.monthly_limit.toLocaleString()} verifications/month` : '')}

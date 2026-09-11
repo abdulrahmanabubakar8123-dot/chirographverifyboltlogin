@@ -7,9 +7,9 @@ export default function AccountPage() {
 
   const info = [
     { label: 'Name', value: user?.name || 'Not set', icon: UserCircle },
-    { label: 'Email', value: user?.email || '—', icon: Mail },
+    { label: 'Email', value: user?.email || '—', icon: Mail, mono: true },
     { label: 'Account ID', value: user?.id || '—', icon: Shield, mono: true },
-    { label: 'Member since', value: user?.createdAt ? new Date(user.createdAt).toLocaleDateString() : '—', icon: Calendar },
+    { label: 'Member since', value: user?.createdAt ? new Date(user.createdAt).toLocaleDateString() : '—', icon: Calendar, mono: true },
   ];
 
   return (
