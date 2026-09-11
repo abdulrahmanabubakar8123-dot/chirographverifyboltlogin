@@ -90,54 +90,55 @@ export default function OverviewPage() {
         </div>
       ) : (
         <div className="space-y-6">
-          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
+          <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-4">
             {stats.map((stat) => {
               const Icon = stat.icon;
               return (
-                <div key={stat.label} className="card p-5">
-                  <div className="flex items-center justify-between">
-                    <div className={`flex h-10 w-10 items-center justify-center rounded-lg ${stat.bg}`}>
-                      <Icon size={20} className={stat.color} />
-                    </div>
+                <div key={stat.label} className="card relative overflow-hidden p-6">
+                  <div className={`flex h-11 w-11 items-center justify-center rounded-xl ${stat.bg}`}>
+                    <Icon size={20} className={stat.color} />
                   </div>
-                  <p className="mt-3 text-sm text-slate-500">{stat.label}</p>
-                  <p className="mt-1 text-lg font-bold text-slate-900">{stat.value}</p>
+                  <p className="mt-4 text-sm text-slate-500">{stat.label}</p>
+                  <p className="mt-1 text-2xl font-bold tracking-tight text-slate-900">{stat.value}</p>
                 </div>
               );
             })}
           </div>
 
           <div className="card p-6">
-            <h2 className="text-sm font-semibold text-slate-900">Usage This Period</h2>
-            <div className="mt-4">
-              <div className="flex items-center justify-between text-sm">
-                <span className="text-slate-500">{data?.usage ?? 0} verifications</span>
-                <span className="text-slate-500">{data?.usageLimit ? `${data.usageLimit} limit` : 'No limit'}</span>
+            <div className="flex items-center justify-between">
+              <h2 className="text-sm font-semibold text-slate-900">Usage This Period</h2>
+              <span className="text-xs font-medium text-slate-400">{usagePct}% used</span>
+            </div>
+            <div className="mt-5">
+              <div className="flex items-baseline justify-between text-sm">
+                <span className="font-medium text-slate-900">{data?.usage ?? 0} verifications</span>
+                <span className="text-slate-400">{data?.usageLimit ? `${data.usageLimit} limit` : 'No limit'}</span>
               </div>
-              <div className="mt-2 h-2.5 w-full overflow-hidden rounded-full bg-slate-100">
+              <div className="mt-3 h-2 w-full overflow-hidden rounded-full bg-slate-100">
                 <div
                   className="h-full rounded-full bg-brand-500 transition-all duration-500"
                   style={{ width: `${usagePct}%` }}
                 />
               </div>
-              <p className="mt-2 text-xs text-slate-400">
-                {data?.remaining != null ? `${data.remaining} remaining` : ''}
-              </p>
+              {data?.remaining != null && (
+                <p className="mt-2 text-xs font-medium text-accent-600">{data.remaining} remaining</p>
+              )}
             </div>
           </div>
 
           <div className="card p-6">
-            <h2 className="mb-4 flex items-center gap-2 text-sm font-semibold text-slate-900">
+            <h2 className="mb-1 flex items-center gap-2 text-sm font-semibold text-slate-900">
               <Activity size={18} className="text-slate-400" /> Recent Activity
             </h2>
             {data?.recentActivity && data.recentActivity.length > 0 ? (
-              <ul className="space-y-3">
+              <ul className="mt-3 divide-y divide-slate-100">
                 {data.recentActivity.map((item) => (
-                  <li key={item.id} className="flex items-start gap-3 border-b border-slate-50 pb-3 last:border-0 last:pb-0">
+                  <li key={item.id} className="flex items-start gap-3 py-3.5 first:pt-1 last:pb-0">
                     <span className="mt-1.5 h-2 w-2 shrink-0 rounded-full bg-brand-400" />
                     <div className="min-w-0 flex-1">
                       <p className="text-sm text-slate-900">{item.description}</p>
-                      <p className="text-xs text-slate-400">{new Date(item.timestamp).toLocaleString()}</p>
+                      <p className="mt-0.5 font-mono text-xs text-slate-400">{new Date(item.timestamp).toLocaleString()}</p>
                     </div>
                   </li>
                 ))}
