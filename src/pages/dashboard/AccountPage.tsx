@@ -28,6 +28,29 @@ export default function AccountPage() {
           </div>
         </div>
 
+        <div className="card p-6">
+          <h2 className="section-title">Change password</h2>
+          <div className="mt-5 space-y-4">
+            <div>
+              <label htmlFor="current-password" className="label-text">Current password</label>
+              <input id="current-password" type="password" className="input-field" placeholder="Enter current password" />
+            </div>
+            <div>
+              <label htmlFor="new-password" className="label-text">New password</label>
+              <input id="new-password" type="password" className="input-field" placeholder="Enter new password" />
+            </div>
+            <button type="button" className="btn-primary">Update password</button>
+          </div>
+        </div>
+
+        <div className="card border-danger/40 bg-surface p-6">
+          <h2 className="text-sm font-semibold text-danger">Danger zone</h2>
+          <p className="mt-1 text-xs text-text-muted">Permanently delete your account and all associated data. This action cannot be undone.</p>
+          <button type="button" className="mt-4 rounded-[10px] border border-danger/40 px-4 py-2 text-sm font-semibold text-danger transition-colors hover:bg-danger/10" style={{height: 40}}>
+            Delete account
+          </button>
+        </div>
+
         <div className="card divide-y divide border-line">
           {info.map((item) => {
             const Icon = item.icon;

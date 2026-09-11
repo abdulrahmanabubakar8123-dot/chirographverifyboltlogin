@@ -79,6 +79,36 @@ export default function SettingsPage() {
             </div>
           )}
 
+          <div className="card p-6">
+            <div className="flex items-center justify-between">
+              <h2 className="section-title">Preferences</h2>
+              <button type="button" className="btn-primary">Save</button>
+            </div>
+            <div className="mt-6 divide-y divide border-line">
+              {[
+                { id: 'email_notifications', label: 'Email notifications', desc: 'Receive email updates about your account' },
+                { id: 'webhook_alerts', label: 'Webhook alerts', desc: 'Get notified of webhook delivery failures' },
+                { id: 'usage_reports', label: 'Weekly usage reports', desc: 'Receive a weekly usage summary' },
+              ].map((pref) => (
+                <div key={pref.id} className="flex items-center justify-between py-4 first:pt-0 last:pb-0">
+                  <div>
+                    <p className="text-sm text-text-primary">{pref.label}</p>
+                    <p className="mt-0.5 text-xs text-text-muted">{pref.desc}</p>
+                  </div>
+                  <button
+                    type="button"
+                    role="switch"
+                    aria-checked="true"
+                    aria-label={pref.label}
+                    className="relative h-[22px] w-10 shrink-0 cursor-pointer rounded-full bg-brand-gradient transition-opacity"
+                  >
+                    <span className="absolute right-[3px] top-[3px] h-4 w-4 rounded-full bg-white transition-transform" />
+                  </button>
+                </div>
+              ))}
+            </div>
+          </div>
+
           <div className="card border-line bg-surface-2 p-4">
             <div className="flex gap-2.5">
               <Lock size={18} className="mt-0.5 shrink-0 text-text-muted" />

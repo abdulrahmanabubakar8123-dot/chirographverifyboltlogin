@@ -209,6 +209,19 @@ export default function BillingPage() {
               </p>
             </div>
           </div>
+
+          <div className="gradient-border-card p-6">
+            <h3 className="section-title mb-4">Invoices</h3>
+            <div className="flex h-48 items-center justify-center">
+              <div className="text-center">
+                <div className="gradient-icon-badge mx-auto mb-3 h-12 w-12">
+                  <Check size={20} />
+                </div>
+                <p className="text-sm text-text-secondary">No invoices yet</p>
+                <p className="mt-1 text-xs text-text-muted">Billing history will appear here</p>
+              </div>
+            </div>
+          </div>
         </div>
       )}
     </>
