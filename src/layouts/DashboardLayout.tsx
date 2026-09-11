@@ -95,7 +95,7 @@ export default function DashboardLayout() {
   );
 
   return (
-    <div className="flex min-h-screen bg-slate-50">
+    <div className="flex min-h-screen bg-zinc-100">
       {/* Desktop sidebar */}
       <aside className="hidden w-64 shrink-0 border-r border-zinc-800 bg-zinc-950 lg:block">
         {sidebarContent}
@@ -136,7 +136,7 @@ export default function DashboardLayout() {
             <span className="text-sm font-bold text-slate-900">Chirograph Verify</span>
           </div>
           <div className="ml-auto flex items-center gap-3">
-            <div className="hidden text-sm text-slate-500 sm:block">
+            <div className="hidden font-mono text-sm text-zinc-500 sm:block">
               {user?.email}
             </div>
             <div className="flex h-9 w-9 items-center justify-center rounded-full bg-brand-100 text-sm font-semibold text-brand-700">
