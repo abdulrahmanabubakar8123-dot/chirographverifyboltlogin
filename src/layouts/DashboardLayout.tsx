@@ -55,8 +55,8 @@ export default function DashboardLayout() {
               className={({ isActive }) =>
                 `flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium transition-colors ${
                   isActive
-                    ? 'bg-brand-50 text-brand-700'
-                    : 'text-slate-600 hover:bg-slate-50 hover:text-slate-900'
+                    ? 'bg-brand-50 font-semibold text-brand-700 shadow-sm ring-1 ring-brand-100'
+                    : 'text-slate-600 hover:bg-slate-100 hover:text-slate-900'
                 }`
               }
             >
@@ -106,7 +106,7 @@ export default function DashboardLayout() {
 
       {/* Main content */}
       <div className="flex min-w-0 flex-1 flex-col">
-        <header className="flex h-16 items-center justify-between border-b border-slate-200 bg-white px-4 lg:px-8">
+        <header className="flex h-16 items-center justify-between border-b border-slate-200 bg-white px-4 shadow-sm lg:px-8">
           <button
             onClick={() => setMobileOpen(true)}
             className="rounded-lg p-2 text-slate-500 hover:bg-slate-100 lg:hidden"
@@ -140,8 +140,8 @@ export function DashboardPageHeader({ title, description, action }: { title: str
   return (
     <div className="mb-6 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
       <div>
-        <h1 className="text-xl font-bold tracking-tight text-slate-900">{title}</h1>
-        {description && <p className="mt-1 text-sm text-slate-500">{description}</p>}
+        <h1 className="text-2xl font-bold tracking-tight text-slate-900">{title}</h1>
+        {description && <p className="mt-1.5 text-sm leading-relaxed text-slate-500">{description}</p>}
       </div>
       {action && <div className="flex-shrink-0">{action}</div>}
     </div>
