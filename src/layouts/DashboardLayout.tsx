@@ -28,6 +28,37 @@ const navItems = [
   { to: '/dashboard/account', label: 'Account', icon: UserCircle },
 ];
 
+interface NavItem {
+  to: string;
+  label: string;
+  icon: typeof LayoutDashboard;
+  end?: boolean;
+}
+
+function SidebarNavItem({ item, onNavigate }: { item: NavItem; onNavigate: () => void }) {
+  const Icon = item.icon;
+  return (
+    <NavLink
+      to={item.to}
+      end={item.end}
+      onClick={onNavigate}
+      className={({ isActive }) =>
+        `group relative flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium transition-colors ${
+          isActive ? 'bg-zinc-800/70 text-white' : 'text-zinc-400 hover:bg-zinc-800/40 hover:text-zinc-100'
+        }`
+      }
+    >
+      {({ isActive }) => (
+        <>
+          {isActive && <span className="absolute left-0 top-1/2 h-5 w-0.5 -translate-y-1/2 rounded-r-full bg-indigo-400" />}
+          <Icon size={18} strokeWidth={1.8} className={isActive ? 'text-white' : 'text-zinc-500 group-hover:text-zinc-300'} />
+          {item.label}
+        </>
+      )}
+    </NavLink>
+  );
+}
+
 export default function DashboardLayout() {
   const { user, logout } = useAuth();
   const navigate = useNavigate();
@@ -39,39 +70,24 @@ export default function DashboardLayout() {
   };
 
   const sidebarContent = (
-    <div className="flex h-full flex-col">
-      <div className="flex h-16 items-center px-6">
-        <Logo size="sm" to="/dashboard" />
+    <div className="flex h-full flex-col bg-zinc-950 text-zinc-400">
+      <div className="flex h-16 items-center px-5">
+        <Logo size="sm" to="/dashboard" onDark />
       </div>
-      <nav className="flex-1 space-y-1 px-3 py-4">
-        {navItems.map((item) => {
-          const Icon = item.icon;
-          return (
-            <NavLink
-              key={item.to}
-              to={item.to}
-              end={item.end}
-              onClick={() => setMobileOpen(false)}
-              className={({ isActive }) =>
-                `flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium transition-colors ${
-                  isActive
-                    ? 'bg-brand-50 font-semibold text-brand-700 shadow-sm ring-1 ring-brand-100'
-                    : 'text-slate-600 hover:bg-slate-100 hover:text-slate-900'
-                }`
-              }
-            >
-              <Icon size={18} strokeWidth={2} />
-              {item.label}
-            </NavLink>
-          );
-        })}
+      <div className="px-4 pb-1 pt-4">
+        <p className="px-3 text-[10px] font-semibold uppercase tracking-widest text-zinc-500">Workspace</p>
+      </div>
+      <nav className="flex-1 space-y-1 px-3 py-3">
+        {navItems.map((item) => (
+          <SidebarNavItem key={item.to} item={item} onNavigate={() => setMobileOpen(false)} />
+        ))}
       </nav>
-      <div className="border-t border-slate-100 p-3">
+      <div className="mt-2 border-t border-zinc-800/80 p-3">
         <button
           onClick={handleLogout}
-          className="flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium text-slate-600 transition-colors hover:bg-red-50 hover:text-red-600"
+          className="group flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium text-zinc-400 transition-colors hover:bg-zinc-800/40 hover:text-white"
         >
-          <LogOut size={18} strokeWidth={2} />
+          <LogOut size={18} strokeWidth={1.8} className="text-zinc-500 group-hover:text-zinc-200" />
           Sign Out
         </button>
       </div>
@@ -81,7 +97,7 @@ export default function DashboardLayout() {
   return (
     <div className="flex min-h-screen bg-slate-50">
       {/* Desktop sidebar */}
-      <aside className="hidden w-64 shrink-0 border-r border-slate-200 bg-white lg:block">
+      <aside className="hidden w-64 shrink-0 border-r border-zinc-800 bg-zinc-950 lg:block">
         {sidebarContent}
       </aside>
 
@@ -89,13 +105,13 @@ export default function DashboardLayout() {
       {mobileOpen && (
         <>
           <div
-            className="fixed inset-0 z-40 bg-slate-900/30 lg:hidden"
+            className="fixed inset-0 z-40 bg-zinc-950/50 backdrop-blur-sm lg:hidden"
             onClick={() => setMobileOpen(false)}
           />
-          <aside className="fixed left-0 top-0 z-50 h-full w-64 border-r border-slate-200 bg-white lg:hidden">
+          <aside className="fixed left-0 top-0 z-50 h-full w-64 border-r border-zinc-800 bg-zinc-950 lg:hidden">
             <button
               onClick={() => setMobileOpen(false)}
-              className="absolute right-3 top-4 rounded-lg p-1.5 text-slate-400 hover:bg-slate-100"
+              className="absolute right-3 top-4 rounded-lg p-1.5 text-zinc-400 hover:bg-zinc-800"
             >
               <X size={20} />
             </button>
@@ -106,7 +122,7 @@ export default function DashboardLayout() {
 
       {/* Main content */}
       <div className="flex min-w-0 flex-1 flex-col">
-        <header className="flex h-16 items-center justify-between border-b border-slate-200 bg-white px-4 shadow-sm lg:px-8">
+        <header className="flex h-16 items-center justify-between border-b border-slate-200/80 bg-white px-4 lg:px-8">
           <button
             onClick={() => setMobileOpen(true)}
             className="rounded-lg p-2 text-slate-500 hover:bg-slate-100 lg:hidden"
@@ -128,7 +144,7 @@ export default function DashboardLayout() {
             </div>
           </div>
         </header>
-        <main className="flex-1 overflow-y-auto p-4 lg:p-8">
+        <main className="flex-1 overflow-y-auto p-4 sm:p-6 lg:p-10">
           <Outlet />
         </main>
       </div>
@@ -138,9 +154,9 @@ export default function DashboardLayout() {
 
 export function DashboardPageHeader({ title, description, action }: { title: string; description?: string; action?: ReactNode }) {
   return (
-    <div className="mb-6 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+    <div className="mb-8 flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
       <div>
-        <h1 className="text-2xl font-bold tracking-tight text-slate-900">{title}</h1>
+        <h1 className="text-3xl font-bold tracking-tight text-slate-900">{title}</h1>
         {description && <p className="mt-1.5 text-sm leading-relaxed text-slate-500">{description}</p>}
       </div>
       {action && <div className="flex-shrink-0">{action}</div>}

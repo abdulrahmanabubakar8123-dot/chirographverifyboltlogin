@@ -27,15 +27,15 @@ interface EmptyStateProps {
 
 export function EmptyState({ icon, title, description, action }: EmptyStateProps) {
   return (
-    <div className="flex flex-col items-center justify-center px-6 py-12 text-center">
+    <div className="flex flex-col items-center justify-center px-6 py-14 text-center">
       {icon && (
-        <div className="mb-3 flex h-12 w-12 items-center justify-center rounded-full bg-slate-100 text-slate-400">
+        <div className="mb-4 flex h-14 w-14 items-center justify-center rounded-2xl bg-slate-100 text-slate-500 ring-1 ring-inset ring-slate-200/60">
           {icon}
         </div>
       )}
-      <h3 className="text-sm font-semibold text-slate-900">{title}</h3>
-      {description && <p className="mt-1 max-w-sm text-sm text-slate-500">{description}</p>}
-      {action && <div className="mt-4">{action}</div>}
+      <h3 className="text-base font-semibold tracking-tight text-slate-900">{title}</h3>
+      {description && <p className="mt-1.5 max-w-sm text-sm leading-relaxed text-slate-500">{description}</p>}
+      {action && <div className="mt-5">{action}</div>}
     </div>
   );
 }
@@ -46,8 +46,10 @@ interface LoadingStateProps {
 
 export function LoadingState({ label = 'Loading...' }: LoadingStateProps) {
   return (
-    <div className="flex items-center justify-center gap-2.5 py-12 text-sm text-slate-500">
-      <Spinner size={18} />
+    <div className="flex flex-col items-center justify-center gap-3 py-20 text-sm text-slate-400">
+      <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-slate-100">
+        <Spinner size={18} />
+      </div>
       <span>{label}</span>
     </div>
   );

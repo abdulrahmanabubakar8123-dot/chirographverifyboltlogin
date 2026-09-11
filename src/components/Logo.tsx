@@ -5,6 +5,7 @@ interface LogoProps {
   size?: 'sm' | 'md' | 'lg';
   showText?: boolean;
   to?: string;
+  onDark?: boolean;
 }
 
 const sizeMap = {
@@ -13,7 +14,7 @@ const sizeMap = {
   lg: { box: 'h-12 w-12', icon: 24, text: 'text-xl' },
 };
 
-export default function Logo({ size = 'md', showText = true, to = '/' }: LogoProps) {
+export default function Logo({ size = 'md', showText = true, to = '/', onDark = false }: LogoProps) {
   const s = sizeMap[size];
   const content = (
     <div className="flex items-center gap-2.5">
@@ -21,8 +22,8 @@ export default function Logo({ size = 'md', showText = true, to = '/' }: LogoPro
         <Fingerprint className="text-white" size={s.icon} strokeWidth={2.2} />
       </div>
       {showText && (
-        <span className={`${s.text} font-bold tracking-tight text-slate-900`}>
-          Chirograph<span className="text-brand-600"> Verify</span>
+        <span className={`${s.text} font-bold tracking-tight ${onDark ? 'text-white' : 'text-slate-900'}`}>
+          Chirograph<span className={onDark ? 'text-brand-400' : 'text-brand-600'}> Verify</span>
         </span>
       )}
     </div>
