@@ -188,18 +188,27 @@ export default function LoginPage() {
 
               <div className="flex items-center gap-3">
                 <div className="h-px flex-1 bg-line" />
-                <span className="text-xs text-text-muted">OR CONTINUE WITH</span>
+                <span className="inline-flex items-center gap-1 text-xs text-text-muted">
+                  OR CONTINUE WITH
+                  <span className="pill-soon">Coming soon</span>
+                </span>
                 <div className="h-px flex-1 bg-line" />
               </div>
 
               <div className="grid grid-cols-2 gap-3">
-                <button type="button" className="btn-secondary !h-10">
+                <button type="button" className="btn-secondary !h-10 cursor-not-allowed opacity-50" disabled>
                   <svg className="h-4 w-4" viewBox="0 0 24 24"><path fill="currentColor" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92a5.06 5.06 0 0 1-2.2 3.32v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.1z" /><path fill="currentColor" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84A11 11 0 0 0 12 23z" /><path fill="currentColor" d="M5.84 14.1a6.6 6.6 0 0 1 0-4.2V7.07H2.18a11 11 0 0 0 0 9.86l3.66-2.84z" /><path fill="currentColor" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15A11 11 0 0 0 2.18 7.07l3.66 2.84C6.71 7.31 9.14 5.38 12 5.38z" /></svg>
-                  Google
+                  <span className="flex items-center gap-1">
+                    <span>Google</span>
+                    <span className="pill-soon">Soon</span>
+                  </span>
                 </button>
-                <button type="button" className="btn-secondary !h-10">
+                <button type="button" className="btn-secondary !h-10 cursor-not-allowed opacity-50" disabled>
                   <svg className="h-4 w-4" viewBox="0 0 24 24"><path fill="currentColor" d="M12 2A10 10 0 0 0 8.84 21.5c.5.08.66-.23.66-.5v-1.69c-2.77.6-3.36-1.34-3.36-1.34a2.65 2.65 0 0 0-1.11-1.46c-.91-.62.07-.6.07-.6a2.1 2.1 0 0 1 1.53 1 2.15 2.15 0 0 0 2.91.83 2.16 2.16 0 0 1 .63-1.34c-2.22-.25-4.55-1.11-4.55-4.94a3.86 3.86 0 0 1 1-2.71 3.59 3.59 0 0 1 .1-2.64s.84-.27 2.75 1a9.63 9.63 0 0 1 5 0c1.91-1.29 2.75-1 2.75-1a3.59 3.59 0 0 1 .1 2.64 3.86 3.86 0 0 1 1 2.71c0 3.84-2.34 4.68-4.57 4.93a2.39 2.39 0 0 1 .69 1.85V21c0 .27.16.59.67.5A10 10 0 0 0 12 2" /></svg>
-                  GitHub
+                  <span className="flex items-center gap-1">
+                    <span>GitHub</span>
+                    <span className="pill-soon">Soon</span>
+                  </span>
                 </button>
               </div>
             </form>

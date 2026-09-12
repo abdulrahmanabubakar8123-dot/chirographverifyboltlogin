@@ -16,7 +16,11 @@ export default function AnalyticsPage() {
 
   return (
     <>
-      <DashboardPageHeader title="Analytics" description="Insights into your verification traffic" />
+      <DashboardPageHeader
+        soon
+        title="Analytics"
+        description="Insights into your verification traffic"
+      />
 
       <div className="space-y-6">
         {/* Controls */}
@@ -26,8 +30,11 @@ export default function AnalyticsPage() {
               <button
                 key={r}
                 type="button"
+                disabled
                 className={`rounded-lg px-3 py-1.5 text-xs font-semibold transition-colors ${
-                  r === activeRange ? 'bg-brand-500/20 text-text-primary' : 'text-text-muted hover:text-text-secondary'
+                  r === activeRange
+                    ? 'bg-brand-500/20 text-text-primary'
+                    : 'cursor-not-allowed opacity-50 text-text-muted'
                 }`}
               >
                 {r}
@@ -35,10 +42,15 @@ export default function AnalyticsPage() {
             ))}
           </div>
           <div className="flex items-center gap-2">
-            <select className="input-field w-auto cursor-pointer" defaultValue="all" aria-label="Filter by origin">
+            <select
+              className="input-field w-auto cursor-not-allowed opacity-50"
+              defaultValue="all"
+              aria-label="Filter by origin"
+              disabled
+            >
               <option value="all">All origins</option>
             </select>
-            <button type="button" className="btn-secondary">
+            <button type="button" className="btn-secondary cursor-not-allowed opacity-50" disabled>
               Export CSV
             </button>
           </div>
@@ -52,6 +64,7 @@ export default function AnalyticsPage() {
               <div key={kpi.label} className="card p-5">
                 <div className="flex items-center justify-between">
                   <p className="micro-label">{kpi.label}</p>
+                  <span className="pill-soon">Soon</span>
                   <Icon size={16} className="text-text-muted" />
                 </div>
                 <p className="mt-3 font-mono text-2xl font-semibold tabular-nums tracking-tight text-text-primary">{kpi.value}</p>
@@ -82,13 +95,19 @@ export default function AnalyticsPage() {
         {/* Bottom two columns */}
         <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
           <div className="card p-6">
-            <h3 className="section-title mb-4">Verifications by origin</h3>
+            <div className="mb-4 flex items-center justify-between">
+              <h3 className="section-title">Verifications by origin</h3>
+              <span className="pill-soon">Coming soon</span>
+            </div>
             <div className="flex h-40 items-center justify-center rounded-lg border border-dashed border-white/15">
               <p className="text-sm text-text-muted">No origins yet</p>
             </div>
           </div>
           <div className="card p-6">
-            <h3 className="section-title mb-4">Latency distribution</h3>
+            <div className="mb-4 flex items-center justify-between">
+              <h3 className="section-title">Latency distribution</h3>
+              <span className="pill-soon">Coming soon</span>
+            </div>
             <div className="flex h-40 items-end justify-center gap-1.5 rounded-lg px-4 pb-4">
               {[40, 65, 30, 80, 55, 20, 45, 70, 35, 60].map((h, i) => (
                 <div key={i} className="w-full rounded-t bg-brand-gradient opacity-40" style={{ height: `${h}%` }} />

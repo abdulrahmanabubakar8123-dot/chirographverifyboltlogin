@@ -104,7 +104,7 @@ export default function WebhooksPage() {
   if (loading) {
     return (
       <>
-        <DashboardPageHeader title="Webhooks" description="Configure webhook delivery and allowed origins" />
+        <DashboardPageHeader soon title="Webhooks" description="Configure webhook endpoints and event subscriptions" />
         <LoadingState />
       </>
     );
@@ -112,7 +112,7 @@ export default function WebhooksPage() {
 
   return (
     <>
-      <DashboardPageHeader title="Webhooks" description="Configure webhook delivery and allowed origins" />
+      <DashboardPageHeader soon title="Webhooks" description="Configure webhook endpoints and event subscriptions" />
       {error ? (
         <div className="card p-6">
           <EmptyState icon={<AlertCircle size={24} />} title="Couldn't load webhook settings" description={error} />
@@ -230,12 +230,14 @@ export default function WebhooksPage() {
                     <p className="font-mono text-sm text-text-primary">{evt.label}</p>
                     <p className="mt-0.5 text-xs text-text-muted">{evt.desc}</p>
                   </div>
+                  <span className="pill-soon">Coming soon</span>
                   <button
                     type="button"
                     role="switch"
                     aria-checked="true"
                     aria-label={evt.label}
-                    className="relative h-[22px] w-10 shrink-0 cursor-pointer rounded-full bg-brand-gradient transition-opacity"
+                    disabled
+                    className="relative h-[22px] w-10 shrink-0 cursor-not-allowed rounded-full opacity-50 bg-brand-gradient transition-opacity"
                   >
                     <span className="absolute right-[3px] top-[3px] h-4 w-4 rounded-full bg-white transition-transform" />
                   </button>

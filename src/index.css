@@ -109,6 +109,9 @@
   .pill-soon {
     @apply inline-flex items-center rounded-full bg-brand-400/15 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wider text-brand-300;
   }
+  .coming-soon-badge {
+    @apply ml-2 inline-flex items-center rounded-full bg-brand-400/15 px-2.5 py-1 text-[10px] font-semibold uppercase tracking-wider text-brand-300;
+  }
   .label-text {
     @apply mb-1.5 block font-sans text-sm font-medium text-text-secondary;
   }

@@ -105,7 +105,7 @@ export default function BillingPage() {
                     <span className={`inline-flex items-center gap-1.5 rounded-full px-3 py-1 text-xs font-medium ${
                       data.status === 'active' ? 'bg-accent-400/15 text-accent-400' : 'bg-surface-2 text-text-muted'
                     }`}>
-                      <span className={`h-1.5 w-1.5 rounded-full ${data.status === 'active' ? 'bg-accent-400/150' : 'bg-slate-400'}`} />
+                      <span className={`h-1.5 w-1.5 rounded-full ${data.status === 'active' ? 'bg-accent-400/30' : 'bg-slate-400'}`} />
                       {data.status}
                     </span>
                   )}

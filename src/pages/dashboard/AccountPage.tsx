@@ -14,7 +14,7 @@ export default function AccountPage() {
 
   return (
     <>
-      <DashboardPageHeader title="Account" description="Your account information" />
+             <DashboardPageHeader soon title="Account" description="Your account information" />
       <div className="max-w-2xl space-y-6">
         <div className="card p-6">
           <div className="flex items-center gap-4">
@@ -28,26 +28,36 @@ export default function AccountPage() {
           </div>
         </div>
 
-        <div className="card p-6">
-          <h2 className="section-title">Change password</h2>
+                <div className="card p-6">
+          <div className="flex items-center justify-between">
+            <h2 className="section-title">Change password</h2>
+            <span className="pill-soon">Coming soon</span>
+          </div>
           <div className="mt-5 space-y-4">
             <div>
               <label htmlFor="current-password" className="label-text">Current password</label>
-              <input id="current-password" type="password" className="input-field" placeholder="Enter current password" />
+              <input id="current-password" type="password" className="input-field" placeholder="Enter current password" disabled />
             </div>
             <div>
               <label htmlFor="new-password" className="label-text">New password</label>
-              <input id="new-password" type="password" className="input-field" placeholder="Enter new password" />
+              <input id="new-password" type="password" className="input-field" placeholder="Enter new password" disabled />
             </div>
-            <button type="button" className="btn-primary">Update password</button>
+            <button type="button" className="btn-primary w-full cursor-not-allowed opacity-50" disabled>
+              Update password
+            </button>
           </div>
         </div>
 
         <div className="card border-danger/40 bg-surface p-6">
-          <h2 className="text-sm font-semibold text-danger">Danger zone</h2>
+          <div className="flex items-center justify-between">
+            <h2 className="text-sm font-semibold text-danger">Danger zone</h2>
+            <span className="pill-soon">Coming soon</span>
+          </div>
           <p className="mt-1 text-xs text-text-muted">Permanently delete your account and all associated data. This action cannot be undone.</p>
-          <button type="button" className="mt-4 rounded-[10px] border border-danger/40 px-4 py-2 text-sm font-semibold text-danger transition-colors hover:bg-danger/10" style={{height: 40}}>
-            Delete account
+          <button type="button" className="mt-4 w-full cursor-not-allowed opacity-50" style={{height: 40}} disabled>
+            <span className="inline-flex items-center justify-center gap-2 rounded-[10px] border border-danger/40 px-4 py-2 text-sm font-semibold text-danger">
+              Delete account
+            </span>
           </button>
         </div>
 

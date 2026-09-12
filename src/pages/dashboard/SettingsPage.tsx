@@ -29,7 +29,7 @@ export default function SettingsPage() {
   if (loading) {
     return (
       <>
-        <DashboardPageHeader title="Settings" description="View your account and organization settings" />
+                <DashboardPageHeader soon title="Settings" description="View your account and organization settings" />
         <LoadingState />
       </>
     );
@@ -44,7 +44,7 @@ export default function SettingsPage() {
 
   return (
     <>
-      <DashboardPageHeader title="Settings" description="View your account and organization settings" />
+            <DashboardPageHeader soon title="Settings" description="View your account and organization settings" />
       {error ? (
         <div className="card p-6">
           <EmptyState icon={<AlertCircle size={24} />} title="Couldn't load settings" description={error} />
@@ -79,10 +79,13 @@ export default function SettingsPage() {
             </div>
           )}
 
-          <div className="card p-6">
+                    <div className="card p-6">
             <div className="flex items-center justify-between">
-              <h2 className="section-title">Preferences</h2>
-              <button type="button" className="btn-primary">Save</button>
+              <div className="flex items-center gap-2">
+                <h2 className="section-title">Preferences</h2>
+                <span className="pill-soon">Coming soon</span>
+              </div>
+              <button type="button" className="btn-secondary cursor-not-allowed opacity-50" disabled>Save</button>
             </div>
             <div className="mt-6 divide-y divide border-line">
               {[
@@ -100,7 +103,8 @@ export default function SettingsPage() {
                     role="switch"
                     aria-checked="true"
                     aria-label={pref.label}
-                    className="relative h-[22px] w-10 shrink-0 cursor-pointer rounded-full bg-brand-gradient transition-opacity"
+                    disabled
+                    className="relative h-[22px] w-10 shrink-0 cursor-not-allowed rounded-full opacity-50 bg-brand-gradient transition-opacity"
                   >
                     <span className="absolute right-[3px] top-[3px] h-4 w-4 rounded-full bg-white transition-transform" />
                   </button>
