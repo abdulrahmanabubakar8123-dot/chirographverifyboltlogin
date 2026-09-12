@@ -5,6 +5,7 @@ import AuthLayout from '@/layouts/AuthLayout';
 import { useSignIn, useAuth } from '@clerk/react';
 import { ErrorBanner } from '@/components/Feedback';
 import Spinner from '@/components/Spinner';
+import Logo from '@/components/Logo';
 
 export default function LoginPage() {
   const { signIn } = useSignIn();
