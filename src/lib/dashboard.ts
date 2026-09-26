@@ -6,6 +6,7 @@ import type {
   WebhooksResponse,
   Billing,
   Settings,
+  UpgradeResult,
 } from './types';
 
 export async function getOverview(): Promise<Overview> {
@@ -82,11 +83,16 @@ export async function getBilling(): Promise<Billing> {
   return apiRequest<Billing>('/api/dashboard/billing');
 }
 
-export async function upgradePlan(planId: string): Promise<void> {
+/**
+ * Start a hosted checkout for a self-serve tier. Returns the parsed response
+ * body so the caller can redirect the browser to `checkout_url`; the plan is
+ * NOT applied until Flutterwave confirms payment.
+ */
+export async function upgradePlan(planId: string): Promise<UpgradeResult> {
   // The backend validates the `tier` field strictly: it 400s when the field is
   // missing, is "enterprise", or is sent under any other key (e.g. `plan`).
   // Send exactly { tier: "<plan-id>" } for self-serve tiers (developer/growth/scale).
-  await apiRequest('/api/dashboard/billing/upgrade', {
+  return apiRequest<UpgradeResult>('/api/dashboard/billing/upgrade', {
     method: 'POST',
     body: JSON.stringify({ tier: planId }),
   });

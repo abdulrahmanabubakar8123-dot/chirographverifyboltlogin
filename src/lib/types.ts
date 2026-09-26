@@ -116,6 +116,19 @@ export interface Billing {
   cancelAtPeriodEnd?: boolean;
 }
 
+/**
+ * Success body returned by POST /api/dashboard/billing/upgrade.
+ * Field names are snake_case exactly as the backend sends them.
+ * `checkout_url` is the provider hosted-checkout link the browser must open.
+ */
+export interface UpgradeResult {
+  status: string;
+  tier: string;
+  tx_ref: string;
+  price_label?: string;
+  checkout_url: string;
+}
+
 export interface Settings {
   email?: string;
   name?: string;

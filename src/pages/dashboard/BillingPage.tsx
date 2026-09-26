@@ -45,9 +45,17 @@ export default function BillingPage() {
     setActionError('');
     setBusy(planId);
     try {
-      await upgradePlan(planId);
-      const res = await getBilling();
-      setData(res);
+      const result = await upgradePlan(planId);
+      // The backend starts a Flutterwave hosted checkout and returns its link in
+      // `checkout_url`. Send the browser there immediately — do NOT re-fetch
+      // billing state first: the tenant's plan is unchanged until Flutterwave
+      // confirms payment, and the user is leaving the page.
+      if (result?.checkout_url) {
+        window.location.href = result.checkout_url;
+        return;
+      }
+      // Defensive: a 200 without a checkout link means checkout never started.
+      setActionError('Checkout could not be started. Please try again.');
     } catch (err) {
       setActionError(err instanceof ApiError ? err.message : 'Failed to change plan.');
     } finally {
