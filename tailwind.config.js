@@ -9,52 +9,67 @@ export default {
         mono: ['"Geist Mono"', 'ui-monospace', 'SFMono-Regular', 'Menlo', 'Consolas', 'monospace'],
       },
       colors: {
-        // ── X Minimal Light ─────────────────────────────────────
-        primary: '#0F141A',      // near-black ink
-        accent: '#1D9BF0',       // platform blue — focus/links ONLY
-        secondary: '#5B6572',    // muted slate
-        tertiary: '#D1D5DB',     // light gray outline
-        muted: '#8892A0',
-        border: '#E5E7EB',
+        // ── Chirograph Verify console — X Developer Platform system ──
+        // True-black canvas; depth from hairlines and near-black surface
+        // steps. `primary` is the text/ink token, so it resolves to white.
+        primary: '#FFFFFF',      // headings & strong text
         neutral: '#FFFFFF',
-        surface: '#FFFFFF',
-        canvas: '#FFFFFF',
-        'surface-2': '#F7F9FA',
-        'surface-3': '#F0F3F4',
-        line: '#E5E7EB',
-        'line-strong': '#D1D5DB',
-        error: '#D93025',
-        // Brand scale maps onto the ink ramp for focus/hover states.
+        secondary: '#A3A3A3',    // secondary body text
+        tertiary: '#262626',     // legacy alias for a hairline border
+        muted: '#8C8C8C',        // muted body text
+        canvas: '#000000',       // page background
+        surface: '#0A0A0A',      // raised surface
+        'surface-2': '#141414',
+        'surface-3': '#1F1F1F',
+        line: '#1F1F1F',         // hairline border
+        'line-strong': '#2E2E2E',
+        // Accent = white, matching the reference's white focus ring.
+        accent: '#FFFFFF',
+        // The numeric accent steps exist for success/positive states
+        // (verified calls, active webhooks, sent notices) and resolve to
+        // the single green chromatic accent used across the console.
+        'accent-50': '#04140E',
+        'accent-100': '#06251A',
+        'accent-200': '#0B3D2A',
+        'accent-300': '#10B981',
+        'accent-400': '#34D399',
+        'accent-500': '#10B981',
+        'accent-600': '#059669',
+        'accent-700': '#047857',
+        // Green is the single chromatic accent, reserved for positive
+        // figures and success states.
+        success: '#10B981',
+        warning: '#F59E0B',
+        danger: '#EF4444',
+        error: '#EF4444',
+        'text-primary': '#FFFFFF',
+        'text-secondary': '#A3A3A3',
+        'text-muted': '#8C8C8C',
+        'text-micro': '#737980',
+        // Legacy brand ramp retained for components that still reference it;
+        // it now resolves to greys so nothing renders in the old blue.
         brand: {
-          50: '#E8F5FD',
-          100: '#C8E6FB',
-          200: '#9BD4F7',
-          300: '#6BBEF2',
-          400: '#3FAAEE',
-          500: '#1D9BF0',
-          600: '#1687D6',
-          700: '#1273B5',
-          800: '#0F5F94',
-          900: '#0C4A73',
+          50: '#141414',
+          100: '#1F1F1F',
+          200: '#2E2E2E',
+          300: '#B8B8B8',
+          400: '#D4D4D4',
+          500: '#E0E0E0',
+          600: '#FFFFFF',
+          700: '#A3A3A3',
+          800: '#8C8C8C',
+          900: '#737980',
         },
-        success: '#00BA7C',
-        warning: '#F4A261',
-        danger: '#D93025',
-        'text-primary': '#0F141A',
-        'text-secondary': '#5B6572',
-        'text-muted': '#8892A0',
-        'text-micro': '#8892A0',
       },
       fontFamily: {
-        // TwitterChirp is proprietary; Inter is the closest freely
-        // available substitute with near-identical metrics.
-        sans: ['Inter', 'Chirp', 'ui-sans-serif', 'system-ui', '-apple-system', 'sans-serif'],
-        mono: ['ui-monospace', 'SFMono-Regular', 'Menlo', 'Consolas', 'monospace'],
+        // X uses Inter for sans and Geist Mono for code.
+        sans: ['Inter', 'ui-sans-serif', 'system-ui', 'sans-serif'],
+        mono: ['"Geist Mono"', 'ui-monospace', 'SFMono-Regular', 'Menlo', 'Consolas', 'monospace'],
       },
       fontSize: {
         // Spec: display / headline / body / label scales, 500-600 weight.
         '2xs': ['0.6875rem', { lineHeight: '1rem' }],
-        'display-lg': ['64px', { lineHeight: '77px', letterSpacing: '-1px' }],
+        'display-lg': ['64px', { lineHeight: '1.06', letterSpacing: '-0.022em' }],
         'headline-lg': ['24px', { lineHeight: '29px', letterSpacing: '0px' }],
         'headline-md': ['20px', { lineHeight: '24px', letterSpacing: '0px' }],
         'headline-sm': ['18px', { lineHeight: '22px', letterSpacing: '0px' }],
@@ -76,7 +91,7 @@ export default {
         // Spec: none 0 / sm 4 / md 8 / lg 12 / xl 24 / full 9999
         none: '0px',
         sm: '4px',
-        control: '4px',
+        control: '9999px',
         md: '8px',
         xl2: '8px',
         panel: '8px',
@@ -98,10 +113,13 @@ export default {
         micro: '0px',
       },
       boxShadow: {
-        // Elevation is expressed through hairlines, not shadows.
+        // Elevation is expressed through hairlines, not shadows. The only
+        // glow is the soft white halo on the primary action.
         none: 'none',
         control: 'none',
         card: 'none',
+        glow: '0 0 34px 2px rgb(255 255 255 / 0.20)',
+        'glow-sm': '0 0 18px 0 rgb(255 255 255 / 0.12)',
       },
       backgroundImage: {
         'brand-gradient': 'none',

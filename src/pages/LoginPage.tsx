@@ -1,7 +1,6 @@
 import { useState, type FormEvent } from 'react';
 import { Link, Navigate, useNavigate, useLocation } from 'react-router-dom';
 import { Mail, Lock, Eye, EyeOff, Fingerprint } from 'lucide-react';
-import AuthLayout from '@/layouts/AuthLayout';
 import { useSignIn, useAuth } from '@clerk/react';
 import { ErrorBanner } from '@/components/Feedback';
 import Spinner from '@/components/Spinner';
@@ -180,8 +179,8 @@ export default function LoginPage() {
 
           {/* Oversized brand mark — dramatic and unadorned, per spec */}
           <div className="hidden lg:block" aria-hidden="true">
-            <div className="flex h-56 w-56 items-center justify-center rounded-full bg-primary">
-              <Fingerprint size={120} strokeWidth={1.5} className="text-neutral" />
+            <div className="flex h-56 w-56 items-center justify-center rounded-full bg-primary shadow-glow">
+              <Fingerprint size={120} strokeWidth={1.5} className="text-canvas" />
             </div>
           </div>
         </div>

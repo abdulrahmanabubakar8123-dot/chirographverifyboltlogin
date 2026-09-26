@@ -17,11 +17,11 @@ export default function Logo({ size = 'md', showText = true, to = '/' }: LogoPro
   const s = sizeMap[size];
   const content = (
     <div className="flex items-center gap-2">
-      <div className={`${s.box} flex shrink-0 items-center justify-center rounded-full bg-primary text-neutral`}>
+      <div className={`${s.box} flex shrink-0 items-center justify-center rounded-full bg-primary text-canvas`}>
         <Fingerprint size={s.icon} strokeWidth={2.1} />
       </div>
       {showText && (
-        <span className={`${s.text} font-semibold text-primary`}>
+        <span className={`${s.text} font-medium text-primary`}>
           Chirograph<span className="text-muted"> Verify</span>
         </span>
       )}

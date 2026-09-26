@@ -154,10 +154,10 @@ export default function BillingPage() {
               return (
                 <div
                   key={plan.id}
-                  className={`card relative flex flex-col p-5 ${plan.popular ? 'border-primary-300 ' : ''}`}
+                  className={`card relative flex flex-col p-5 ${plan.popular ? 'border-white ' : ''}`}
                 >
                   {plan.popular && (
-                    <span className="absolute -top-2.5 left-1/2 -translate-x-1/2 rounded-full bg-primary-600 px-2.5 py-0.5 text-2xs font-semibold uppercase tracking-wider text-white">
+                    <span className="absolute -top-2.5 left-1/2 -translate-x-1/2 rounded-full bg-primary px-2.5 py-0.5 text-2xs font-semibold uppercase tracking-wider text-canvas">
                       Most popular
                     </span>
                   )}

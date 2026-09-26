@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { Key, RefreshCw, Copy, Check, AlertCircle, Eye, EyeOff } from 'lucide-react';
 import { DashboardPageHeader } from '@/layouts/DashboardLayout';
-import { EmptyState, ErrorBanner } from '@/components/Feedback';
+import { ErrorBanner } from '@/components/Feedback';
 import Spinner from '@/components/Spinner';
 import { regenerateApiKey } from '@/lib/dashboard';
 import { ApiError } from '@/lib/apiClient';
@@ -109,7 +109,7 @@ export default function ApiKeysPage() {
               <div>
                 <p className="text-muted text-xs font-medium">Status</p>
                 <p className="mt-0.5 flex items-center gap-1.5 text-sm text-primary">
-                  <span className={`h-2 w-2 rounded-full ${data.active ? 'bg-emerald-400' : 'bg-slate-400'}`} />
+                  <span className={`h-2 w-2 rounded-full ${data.active ? 'bg-success' : 'bg-line-strong'}`} />
                   {data.active ? 'Active' : 'Inactive'}
                 </p>
               </div>

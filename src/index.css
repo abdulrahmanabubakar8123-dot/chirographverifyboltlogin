@@ -4,26 +4,26 @@
 
 @layer base {
   :root {
-    /* X Minimal Light */
-    --primary: #0F141A;
-    --accent: #1D9BF0;
-    --secondary: #5B6572;
-    --tertiary: #D1D5DB;
-    --muted: #8892A0;
+    /* X Developer Platform system — true-black canvas. */
+    --primary: #FFFFFF;
+    --accent: #FFFFFF;
+    --secondary: #A3A3A3;
+    --tertiary: #262626;
+    --muted: #8C8C8C;
     --neutral: #FFFFFF;
-    --canvas: #FFFFFF;
-    --surface: #FFFFFF;
-    --surface-2: #F7F9FA;
-    --surface-3: #F0F3F4;
-    --line: #E5E7EB;
-    --line-strong: #D1D5DB;
-    --error: #D93025;
-    --success: #00BA7C;
-    --warning: #F4A261;
-    --text-primary: #0F141A;
-    --text-secondary: #5B6572;
-    --text-muted: #8892A0;
-    --text-micro: #8892A0;
+    --canvas: #000000;
+    --surface: #0A0A0A;
+    --surface-2: #141414;
+    --surface-3: #1F1F1F;
+    --line: #1F1F1F;
+    --line-strong: #2E2E2E;
+    --error: #EF4444;
+    --success: #10B981;
+    --warning: #F59E0B;
+    --text-primary: #FFFFFF;
+    --text-secondary: #A3A3A3;
+    --text-muted: #8C8C8C;
+    --text-micro: #737980;
     --radius: 8px;
   }
   html {
@@ -44,20 +44,20 @@
     @apply outline-none ring-2 ring-accent ring-offset-2 ring-offset-canvas;
   }
   ::selection {
-    @apply bg-accent/20 text-primary;
+    @apply bg-white/20 text-primary;
   }
 }
 
 @layer components {
   /* ── Typography: spec scales, 500-600 weight throughout ──── */
   .page-title {
-    @apply text-headline-lg font-semibold text-primary;
+    @apply text-headline-lg font-normal text-primary;
   }
   .page-description {
     @apply mt-1 text-body-md text-secondary;
   }
   .section-title {
-    @apply text-headline-sm font-semibold text-primary;
+    @apply text-headline-sm font-medium text-primary;
   }
   .micro-label {
     @apply text-label-md text-secondary;
@@ -65,23 +65,23 @@
   .gradient-text {
     @apply text-primary;
   }
-  /* button-primary: #0F141A pill, white text, 48px */
+  /* button-primary: solid white pill, black label, 48px, soft glow */
   .btn-primary {
-    @apply inline-flex items-center justify-center gap-2 rounded-full bg-primary px-6 text-body-md font-medium text-neutral transition-colors duration-150 hover:bg-black focus:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50;
+    @apply inline-flex items-center justify-center gap-2 rounded-full bg-neutral px-6 text-body-md font-medium text-canvas transition-all duration-200 hover:bg-white hover:shadow-glow focus:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2 focus-visible:ring-offset-canvas disabled:cursor-not-allowed disabled:opacity-50;
     height: 48px;
   }
-  /* button-secondary: white, light border, dark text */
+  /* button-secondary: hairline-outlined pill on black */
   .btn-secondary {
-    @apply inline-flex items-center justify-center gap-2 rounded-full border border-tertiary bg-neutral px-6 text-body-md font-medium text-primary transition-colors duration-150 hover:bg-surface-2 focus:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50;
+    @apply inline-flex items-center justify-center gap-2 rounded-full border border-line-strong bg-transparent px-6 text-body-md font-medium text-primary transition-colors duration-200 hover:border-muted hover:bg-white/[0.06] focus:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2 focus-visible:ring-offset-canvas disabled:cursor-not-allowed disabled:opacity-50;
     height: 48px;
   }
   /* button-tertiary: text only, no chrome */
   .btn-ghost {
     @apply inline-flex items-center justify-center text-label-md text-primary transition-colors duration-150 hover:text-accent focus:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50;
   }
-  /* input: white, 4px radius, 62px, blue focus */
+  /* input: pill, hairline border, 62px, white focus */
   .input-field {
-    @apply w-full rounded-sm border border-tertiary bg-surface px-3 text-body-md text-primary transition-colors duration-150 placeholder:text-muted hover:border-line-strong focus:border-accent focus:outline-none focus:ring-1 focus:ring-accent/40 disabled:cursor-not-allowed disabled:bg-surface-2;
+    @apply w-full rounded-full border border-line-strong bg-surface px-5 text-body-md text-primary transition-colors duration-200 placeholder:text-muted hover:border-muted focus:border-white focus:outline-none focus:ring-1 focus:ring-white/30 disabled:cursor-not-allowed disabled:bg-surface-2;
     height: 62px;
   }
   /* Surfaces: flat, hairline, no shadow */
@@ -125,7 +125,7 @@
     @apply text-label-md text-secondary;
   }
   .stat-value {
-    @apply text-headline-md font-semibold tabular-nums text-primary;
+    @apply text-headline-md font-normal tabular-nums text-primary;
   }
   .mono-value {
     @apply tabular-nums;
@@ -140,8 +140,8 @@
   /* ── Backgrounds: no gradient, just a hairline grid ────────── */
   .grid-bg {
     background-image:
-      linear-gradient(to right, rgba(15,17,21,0.03) 1px, transparent 1px),
-      linear-gradient(to bottom, rgba(15,17,21,0.03) 1px, transparent 1px);
+      linear-gradient(to right, rgba(255,255,255,0.04) 1px, transparent 1px),
+      linear-gradient(to bottom, rgba(255,255,255,0.04) 1px, transparent 1px);
     background-size: 32px 32px;
   }
 }
