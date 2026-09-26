@@ -86,12 +86,15 @@ export async function apiRequest<T>(
   }
 
   if (!response.ok) {
+    // The backend returns its failure reason under `error` (snake_case), e.g.
+    // { "error": "billing_unconfigured" } or { "error": "checkout_failed" }.
+    // Fall back to `message` so any proxied/legacy JSON shape still works.
+    const record = data && typeof data === 'object' ? (data as Record<string, unknown>) : null;
+    const reason = record?.error ?? record?.message;
     const message =
-      (data && typeof data === 'object' && 'message' in data
-        ? String((data as Record<string, unknown>).message)
-        : typeof data === 'string' && data
-          ? data
-          : '') || `Request failed (${response.status})`;
+      (typeof reason === 'string' && reason) ||
+      (typeof data === 'string' && data) ||
+      `Request failed (${response.status})`;
     throw new ApiError(message, response.status);
   }
 
