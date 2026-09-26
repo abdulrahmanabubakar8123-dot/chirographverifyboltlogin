@@ -26,10 +26,10 @@ export default function NotificationsPage() {
               aria-checked={a.enabled}
               aria-label={a.title}
               disabled
-              className={`relative h-6 w-11 shrink-0 cursor-not-allowed rounded-full opacity-60 ${a.enabled ? 'bg-brand-gradient' : 'bg-slate-200'}`}
+              className={`relative h-6 w-11 shrink-0 cursor-not-allowed rounded-full opacity-60 ${a.enabled ? 'bg-brand-600' : 'bg-line-strong'}`}
             >
               <span
-                className={`absolute top-0.5 h-5 w-5 rounded-full bg-surface ${a.enabled ? 'right-0.5' : 'left-0.5 bg-slate-400'}`}
+                className={`absolute top-0.5 h-5 w-5 rounded-full bg-surface ${a.enabled ? 'right-0.5' : 'left-0.5 bg-line-strong'}`}
               />
             </button>
           </div>

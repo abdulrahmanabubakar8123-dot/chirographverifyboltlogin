@@ -66,27 +66,27 @@ export default function OverviewPage() {
             <div className="flex flex-col gap-5 sm:flex-row sm:items-end sm:justify-between">
               <div>
                 <p className="badge-indigo mb-4">WebAuthn-powered verification</p>
-                <h2 className="text-2xl font-extrabold tracking-tight text-white">
+                <h2 className="text-xl font-semibold tracking-tight text-text-primary">
                   {data?.usage ?? 0} <span className="gradient-text">verifications</span> this period
                 </h2>
-                <p className="text-white/60 mt-2 font-mono text-xs">
+                <p className="text-text-muted mt-2 font-mono text-xs">
                   {data?.usageLimit ? `${usagePct}% of ${data.usageLimit} used` : 'Usage tracking live'} · {data?.planName || data?.plan || 'Current plan'}
                 </p>
               </div>
               <div className="flex shrink-0 items-center gap-6">
                 <div>
-                  <p className="text-white/60 text-xs font-semibold uppercase tracking-wide">Plan</p>
-                  <p className="mt-1 text-lg font-bold text-white">{data?.planName || data?.plan || '—'}</p>
+                  <p className="text-text-muted text-xs font-semibold uppercase tracking-wide">Plan</p>
+                  <p className="mt-1 text-base font-semibold text-text-primary">{data?.planName || data?.plan || '—'}</p>
                 </div>
                 <div>
-                  <p className="text-white/60 text-xs font-semibold uppercase tracking-wide">Remaining</p>
-                  <p className="mt-1 font-mono text-lg font-bold text-white">{data?.remaining ?? '—'}</p>
+                  <p className="text-text-muted text-xs font-semibold uppercase tracking-wide">Remaining</p>
+                  <p className="mt-1 font-mono text-lg font-semibold text-text-primary">{data?.remaining ?? '—'}</p>
                 </div>
               </div>
             </div>
-            <div className="mt-6 h-2 w-full overflow-hidden rounded-full bg-white/10">
+            <div className="mt-6 h-2 w-full overflow-hidden rounded-full bg-surface-3">
               <div
-                className="h-full rounded-full bg-brand-gradient transition-all duration-500"
+                className="h-full rounded-full bg-brand-600 transition-all duration-500"
                 style={{ width: `${usagePct}%` }}
               />
             </div>
@@ -111,27 +111,27 @@ export default function OverviewPage() {
                 <span className="font-mono text-2xl font-bold tabular-nums tracking-tight text-text-primary">{data?.usage ?? 0}<span className="ml-1 font-sans text-sm font-normal text-text-muted">verifications</span></span>
                 <span className="text-text-muted">{data?.usageLimit ? `${data.usageLimit} limit` : 'No limit'}</span>
               </div>
-              <div className="mt-4 h-2 w-full overflow-hidden rounded-full bg-white/[0.08]">
+              <div className="mt-4 h-2 w-full overflow-hidden rounded-full bg-surface-3">
                 <div
-                  className="h-full rounded-full bg-brand-gradient transition-all duration-500"
+                  className="h-full rounded-full bg-brand-600 transition-all duration-500"
                   style={{ width: `${usagePct}%` }}
                 />
               </div>
               {data?.remaining != null && (
-                <p className="mt-2 font-mono text-xs font-medium text-accent-400">{data.remaining} remaining</p>
+                <p className="mt-2 font-mono text-xs font-medium text-accent-600">{data.remaining} remaining</p>
               )}
             </div>
           </div>
 
           <div className="card p-6">
             <h2 className="mb-1 flex items-center gap-2 section-title">
-              <Activity size={18} strokeWidth={1.8} className="text-brand-400" /> Recent Activity
+              <Activity size={18} strokeWidth={1.8} className="text-brand-600" /> Recent Activity
             </h2>
             {data?.recentActivity && data.recentActivity.length > 0 ? (
               <ul className="mt-3 divide-y divide border-line">
                 {data.recentActivity.map((item) => (
                   <li key={item.id} className="flex items-start gap-3 py-3.5 first:pt-1 last:pb-0">
-                    <span className="mt-1.5 h-2 w-2 shrink-0 rounded-full bg-gradient-to-br from-indigo-600 to-emerald-500" />
+                    <span className="mt-1.5 h-2 w-2 shrink-0 rounded-full bg-brand-600" />
                     <div className="min-w-0 flex-1">
                       <p className="text-sm text-text-primary">{item.description}</p>
                       <p className="mt-0.5 font-mono text-xs text-text-muted">{new Date(item.timestamp).toLocaleString()}</p>

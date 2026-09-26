@@ -93,6 +93,12 @@
   .card-interactive {
     @apply rounded-xl2 border border-line bg-surface shadow-card transition-all duration-150 hover:border-line-strong hover:shadow-control;
   }
+  /* Panel that must stand out from a white canvas: a soft tinted fill
+     instead of a heavier shadow. (Class was referenced by three dashboard
+     pages but had no definition.) */
+  .contrast-card {
+    @apply rounded-xl2 border border-line bg-surface-2 p-6 shadow-card;
+  }
   .gradient-border-card {
     @apply rounded-xl2 border border-line bg-surface shadow-card;
   }

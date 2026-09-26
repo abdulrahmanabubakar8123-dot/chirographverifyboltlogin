@@ -54,17 +54,17 @@ function SidebarNavItem({ item, onNavigate }: { item: NavItem; onNavigate: () =>
       end={item.end}
       onClick={onNavigate}
       className={({ isActive }) =>
-        `group relative flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium transition-colors ${
-          isActive ? 'bg-brand-500/15 text-text-primary' : 'text-text-muted hover:bg-white/[0.04] hover:text-text-secondary'
+        `group relative flex items-center gap-2.5 rounded-control py-[7px] pl-3 pr-2 text-[13px] font-medium transition-colors ${
+          isActive ? 'bg-surface-2 text-text-primary' : 'text-text-muted hover:bg-surface-2/60 hover:text-text-secondary'
         }`
       }
     >
       {({ isActive }) => (
         <>
           {isActive && (
-            <span className="absolute left-0 top-1/2 h-5 w-[3px] -translate-y-1/2 rounded-r-full bg-brand-gradient" />
+            <span className="absolute left-0 top-1/2 h-4 w-[2px] -translate-y-1/2 rounded-r-full bg-brand-600" />
           )}
-          <Icon size={18} strokeWidth={1.8} className={isActive ? 'text-text-primary' : 'text-text-muted group-hover:text-text-secondary'} />
+          <Icon size={16} strokeWidth={1.9} className={isActive ? 'text-brand-600' : 'text-text-muted group-hover:text-text-secondary'} />
           <span className="flex-1">{item.label}</span>
           {item.soon && (
             <span className="pill-soon">Soon</span>
@@ -86,31 +86,31 @@ export default function DashboardLayout() {
   };
 
   const sidebarContent = (
-    <div className="flex h-full flex-col bg-[#0E1218] text-text-secondary">
-      <div className="flex h-14 items-center px-4">
+    <div className="flex h-full flex-col bg-canvas text-text-secondary">
+      <div className="flex h-14 shrink-0 items-center border-b border-line px-4">
         <Logo size="sm" to="/dashboard" />
       </div>
-      <div className="px-4 pb-1 pt-3">
-        <p className="micro-label px-3">Workspace</p>
+      <div className="px-4 pb-1 pt-4">
+        <p className="micro-label px-2.5">Workspace</p>
       </div>
-      <nav className="flex-1 space-y-0.5 overflow-y-auto px-3 py-2">
+      <nav className="flex-1 space-y-0.5 overflow-y-auto px-3 py-1.5">
         {navItems.map((item) => (
           <SidebarNavItem key={item.to} item={item} onNavigate={() => setMobileOpen(false)} />
         ))}
-        <div className="px-3 pb-1 pt-5">
+        <div className="px-2.5 pb-1 pt-5">
           <p className="micro-label">Coming soon</p>
         </div>
         {soonNavItems.map((item) => (
           <SidebarNavItem key={item.to} item={{ ...item, soon: true }} onNavigate={() => setMobileOpen(false)} />
         ))}
       </nav>
-      <div className="mt-2 border-t border-line p-3">
+      <div className="border-t border-line p-3">
         <button
           onClick={handleLogout}
-          className="group flex w-full items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium text-text-muted transition-colors hover:bg-white/[0.04] hover:text-text-secondary"
+          className="group flex w-full items-center gap-2.5 rounded-control px-2.5 py-[7px] text-[13px] font-medium text-text-muted transition-colors hover:bg-surface-2 hover:text-text-secondary"
         >
-          <LogOut size={18} strokeWidth={1.8} className="text-text-muted group-hover:text-text-secondary" />
-          Sign Out
+          <LogOut size={16} strokeWidth={1.9} className="text-text-muted group-hover:text-text-secondary" />
+          Sign out
         </button>
       </div>
     </div>
@@ -119,7 +119,7 @@ export default function DashboardLayout() {
   return (
     <div className="flex min-h-screen bg-canvas">
       {/* Desktop sidebar */}
-      <aside className="hidden w-[260px] shrink-0 border-r border-line bg-[#0E1218] lg:block">
+      <aside className="hidden w-[232px] shrink-0 border-r border-line bg-canvas lg:block">
         {sidebarContent}
       </aside>
 
@@ -127,16 +127,16 @@ export default function DashboardLayout() {
       {mobileOpen && (
         <>
           <div
-            className="fixed inset-0 z-40 bg-black/60 backdrop-blur-sm lg:hidden"
+            className="fixed inset-0 z-40 bg-ink-900/40 backdrop-blur-sm lg:hidden"
             onClick={() => setMobileOpen(false)}
           />
-          <aside className="fixed left-0 top-0 z-50 h-full w-[260px] border-r border-line bg-[#0E1218] lg:hidden">
+          <aside className="fixed left-0 top-0 z-50 h-full w-[232px] border-r border-line bg-canvas lg:hidden">
             <button
               onClick={() => setMobileOpen(false)}
-              className="absolute right-3 top-3.5 rounded-lg p-1.5 text-text-muted hover:bg-white/[0.06]"
+              className="absolute right-3 top-3.5 rounded-control p-1.5 text-text-muted hover:bg-surface-2"
               aria-label="Close menu"
             >
-              <X size={20} />
+              <X size={18} />
             </button>
             {sidebarContent}
           </aside>
@@ -145,28 +145,28 @@ export default function DashboardLayout() {
 
       {/* Main content */}
       <div className="flex min-w-0 flex-1 flex-col">
-        <header className="flex h-14 items-center justify-between border-b border-line bg-canvas px-4 lg:px-8">
+        <header className="flex h-14 shrink-0 items-center justify-between border-b border-line bg-canvas px-4 lg:px-6">
           <button
             onClick={() => setMobileOpen(true)}
-            className="rounded-lg p-2 text-text-muted hover:bg-white/[0.06] lg:hidden"
+            className="rounded-control p-1.5 text-text-muted hover:bg-surface-2 lg:hidden"
             aria-label="Open menu"
           >
-            <Menu size={20} />
+            <Menu size={18} />
           </button>
           <div className="flex items-center gap-2 lg:hidden">
             <Logo size="sm" to="/dashboard" />
           </div>
-          <div className="ml-auto flex items-center gap-3">
-            <div className="hidden font-mono text-sm text-text-muted sm:block">
+          <div className="ml-auto flex items-center gap-2.5">
+            <span className="hidden font-mono text-xs text-text-muted sm:block">
               {user?.email}
-            </div>
-            <div className="flex h-8 w-8 items-center justify-center rounded-full bg-brand-gradient text-sm font-semibold text-white">
+            </span>
+            <span className="flex h-7 w-7 items-center justify-center rounded-full border border-line bg-surface-2 text-xs font-semibold text-text-secondary">
               {user?.email?.charAt(0).toUpperCase() || 'U'}
-            </div>
+            </span>
           </div>
         </header>
-        <main className="flex-1 overflow-y-auto bg-canvas p-4 sm:p-6 lg:p-10">
-          <div className="mx-auto max-w-[1200px]">
+        <main className="flex-1 overflow-y-auto bg-canvas">
+          <div className="mx-auto max-w-[1120px] px-4 py-6 sm:px-6 lg:px-8 lg:py-8">
             <Outlet />
           </div>
         </main>
@@ -177,7 +177,7 @@ export default function DashboardLayout() {
 
 export function DashboardPageHeader({ title, description, action, soon }: { title: string; description?: string; action?: ReactNode; soon?: boolean }) {
   return (
-    <div className="mb-8 flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
+    <div className="mb-6 flex flex-col gap-3 border-b border-line pb-5 sm:flex-row sm:items-end sm:justify-between">
       <div>
         <h1 className="page-title">
           {title}

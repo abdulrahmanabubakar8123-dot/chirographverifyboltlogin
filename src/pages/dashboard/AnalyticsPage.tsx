@@ -99,7 +99,7 @@ export default function AnalyticsPage() {
               <h3 className="section-title">Verifications by origin</h3>
               <span className="pill-soon">Coming soon</span>
             </div>
-            <div className="flex h-40 items-center justify-center rounded-lg border border-dashed border-white/15">
+            <div className="flex h-40 items-center justify-center rounded-lg border border-dashed border-line">
               <p className="text-sm text-text-muted">No origins yet</p>
             </div>
           </div>
@@ -110,7 +110,7 @@ export default function AnalyticsPage() {
             </div>
             <div className="flex h-40 items-end justify-center gap-1.5 rounded-lg px-4 pb-4">
               {[40, 65, 30, 80, 55, 20, 45, 70, 35, 60].map((h, i) => (
-                <div key={i} className="w-full rounded-t bg-brand-gradient opacity-40" style={{ height: `${h}%` }} />
+                <div key={i} className="w-full rounded-t bg-brand-600 opacity-40" style={{ height: `${h}%` }} />
               ))}
             </div>
           </div>

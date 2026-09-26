@@ -121,7 +121,7 @@ export default function WebhooksPage() {
         <div className="space-y-6">
           {actionError && <ErrorBanner message={actionError} />}
           {successMsg && (
-            <div className="flex items-center gap-2.5 rounded-xl border border-accent-400/35 bg-accent-400/15 px-3.5 py-3 text-sm text-accent-400">
+            <div className="flex items-center gap-2.5 rounded-control border border-accent-200 bg-accent-50 px-3.5 py-2.5 text-[13px] text-accent-700">
               <CheckCircle2 size={18} /> {successMsg}
             </div>
           )}
@@ -144,7 +144,7 @@ export default function WebhooksPage() {
               </button>
             </form>
             {data?.webhook?.active && (
-              <p className="mt-2.5 text-xs font-medium text-accent-400">Webhook is configured and active.</p>
+              <p className="mt-2.5 text-xs font-medium text-accent-700">Webhook is configured and active.</p>
             )}
           </div>
 
@@ -237,7 +237,7 @@ export default function WebhooksPage() {
                     aria-checked="true"
                     aria-label={evt.label}
                     disabled
-                    className="relative h-[22px] w-10 shrink-0 cursor-not-allowed rounded-full opacity-50 bg-brand-gradient transition-opacity"
+                    className="relative h-[22px] w-10 shrink-0 cursor-not-allowed rounded-full opacity-50 bg-brand-600 transition-opacity"
                   >
                     <span className="absolute right-[3px] top-[3px] h-4 w-4 rounded-full bg-white transition-transform" />
                   </button>

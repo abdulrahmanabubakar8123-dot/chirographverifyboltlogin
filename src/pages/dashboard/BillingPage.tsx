@@ -106,23 +106,23 @@ export default function BillingPage() {
               <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
                 <div>
                   <p className="stat-label">Current Plan</p>
-                  <p className="mt-3 stat-value">{currentPlanName}</p>
+                  <p className="mt-2 stat-value">{currentPlanName}</p>
                 </div>
-                <div className="flex items-center gap-4">
+                <div className="flex items-center gap-3">
                   {data?.status && (
-                    <span className={`inline-flex items-center gap-1.5 rounded-full px-3 py-1 text-xs font-medium ${
-                      data.status === 'active' ? 'bg-accent-400/15 text-accent-400' : 'bg-surface-2 text-text-muted'
+                    <span className={`inline-flex items-center gap-1.5 rounded-full px-2.5 py-1 text-2xs font-semibold ${
+                      data.status === 'active' ? 'bg-accent-50 text-accent-700' : 'bg-surface-2 text-text-muted'
                     }`}>
-                      <span className={`h-1.5 w-1.5 rounded-full ${data.status === 'active' ? 'bg-accent-400/30' : 'bg-slate-400'}`} />
+                      <span className={`h-1.5 w-1.5 rounded-full ${data.status === 'active' ? 'bg-accent-500' : 'bg-line-strong'}`} />
                       {data.status}
                     </span>
                   )}
                   {data?.cancelAtPeriodEnd && (
-                    <span className="text-xs text-warning">Cancels at period end</span>
+                    <span className="text-xs font-medium text-warning">Cancels at period end</span>
                   )}
                   {currentPlanName !== 'Free' && (
-                    <button onClick={handleCancel} disabled={busy === 'cancel'} className="btn-secondary text-sm">
-                      {busy === 'cancel' ? <Spinner size={16} /> : 'Cancel Plan'}
+                    <button onClick={handleCancel} disabled={busy === 'cancel'} className="btn-secondary">
+                      {busy === 'cancel' ? <Spinner size={14} /> : 'Cancel plan'}
                     </button>
                   )}
                 </div>
@@ -154,45 +154,45 @@ export default function BillingPage() {
               return (
                 <div
                   key={plan.id}
-                  className={`card relative flex flex-col p-7 ${plan.popular ? 'border-indigo-300 ring-1 ring-brand-500/30 ' : ''}`}
+                  className={`card relative flex flex-col p-5 ${plan.popular ? 'border-primary-300 ' : ''}`}
                 >
                   {plan.popular && (
-                    <span className="absolute -top-3 left-1/2 -translate-x-1/2 rounded-full bg-brand-gradient px-3 py-1 text-[11px] font-semibold text-white shadow-sm">
-                      Most Popular
+                    <span className="absolute -top-2.5 left-1/2 -translate-x-1/2 rounded-full bg-primary-600 px-2.5 py-0.5 text-2xs font-semibold uppercase tracking-wider text-white">
+                      Most popular
                     </span>
                   )}
-                  <h3 className="stat-label">{plan.name || plan.tier || plan.id || 'Plan'}</h3>
-                  <p className="mt-3 stat-value">
+                  <h3 className="section-title">{plan.name || plan.tier || plan.id || 'Plan'}</h3>
+                  <p className="mt-2.5 font-mono text-xl font-semibold tracking-tight text-text-primary">
                     {isCustom ? 'Custom' : `$${plan.price}`}
-                    {!isCustom && <span className="font-sans text-sm font-normal text-text-muted">/mo</span>}
+                    {!isCustom && <span className="font-sans text-xs font-normal text-text-muted">/mo</span>}
                   </p>
                   <p className="mt-1 text-xs text-text-muted">
                     {plan.verifications || (typeof plan.monthly_limit === 'number' ? `${plan.monthly_limit.toLocaleString()} verifications/month` : '')}
                   </p>
-                  <ul className="mt-5 flex-1 space-y-2.5">
+                  <ul className="mt-4 flex-1 space-y-2">
                     {(plan.features || []).map((f) => (
-                      <li key={f} className="flex items-start gap-2.5 text-sm text-text-muted">
-                        <Check size={15} className="mt-0.5 shrink-0 text-accent-400" />
+                      <li key={f} className="flex items-start gap-2 text-[13px] leading-relaxed text-text-secondary">
+                        <Check size={14} className="mt-0.5 shrink-0 text-accent-600" />
                         {f}
                       </li>
                     ))}
                   </ul>
-                  <div className="mt-6">
+                  <div className="mt-5">
                     {isCurrent || (isFree && current === '') ? (
-                      <button disabled className="btn-secondary w-full cursor-default opacity-60">
-                        Current Plan
+                      <button disabled className="btn-secondary w-full cursor-default">
+                        Current plan
                       </button>
                     ) : isFree ? (
                       // Free is the default/no-cost tier: never an upgrade action,
                       // never a sales action. Users move back to Free via Cancel.
-                      <button disabled className="btn-secondary w-full cursor-default opacity-60">
-                        Free Plan
+                      <button disabled className="btn-secondary w-full cursor-default">
+                        Free plan
                       </button>
                     ) : isEnterprise || isCustom || !canSelfServe ? (
                       // Enterprise / non-self-serve tiers must never attempt the
                       // self-serve upgrade endpoint (self_serve: false on backend).
                       <a href="mailto:sales@chirographverify.com" className="btn-secondary w-full">
-                        Contact Sales
+                        Contact sales
                       </a>
                     ) : (
                       <button
@@ -209,21 +209,21 @@ export default function BillingPage() {
             })}
           </div>
 
-          <div className="card border-warning/35 bg-warning/10 p-4">
+          <div className="card border-warning/30 bg-warning/[0.06] p-4">
             <div className="flex gap-2.5">
-              <Zap size={18} className="mt-0.5 shrink-0 text-warning" />
-              <p className="text-sm text-text-primary">
+              <Zap size={16} className="mt-0.5 shrink-0 text-warning" />
+              <p className="text-[13px] leading-relaxed text-text-secondary">
                 Payments are processed securely by Flutterwave. Plan changes are handled by the backend to ensure accurate billing.
               </p>
             </div>
           </div>
 
-          <div className="gradient-border-card p-6">
+          <div className="card p-5">
             <h3 className="section-title mb-4">Invoices</h3>
-            <div className="flex h-48 items-center justify-center">
+            <div className="flex h-40 items-center justify-center">
               <div className="text-center">
-                <div className="gradient-icon-badge mx-auto mb-3 h-12 w-12">
-                  <Check size={20} />
+                <div className="gradient-icon-badge mx-auto mb-3 h-10 w-10">
+                  <Check size={18} />
                 </div>
                 <p className="text-sm text-text-secondary">No invoices yet</p>
                 <p className="mt-1 text-xs text-text-muted">Billing history will appear here</p>

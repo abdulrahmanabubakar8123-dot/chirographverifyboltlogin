@@ -67,64 +67,61 @@ export default function LoginPage() {
 
   return (
     <div className="relative flex min-h-screen overflow-hidden bg-canvas">
-      {/* Ambient background */}
+      {/* Faint technical grid */}
       <div className="grid-bg pointer-events-none absolute inset-0" />
 
-      {/* Left hero */}
-      <div className="relative z-10 hidden flex-1 flex-col justify-center px-12 lg:flex lg:px-16">
-        <div className="mx-auto w-full max-w-lg">
-          <div className="mb-10">
-            <div className="gradient-icon-badge mb-6 h-14 w-14">
-              <svg viewBox="0 0 24 24" fill="none" className="h-7 w-7" stroke="currentColor" strokeWidth={1.8} strokeLinecap="round" strokeLinejoin="round">
-                <path d="M18.9 7a8 8 0 0 0-5.3-3.8A8 8 0 0 0 4.1 8.5" />
-                <path d="M12 21a8 8 0 0 0 7.5-5.2" />
-                <path d="M12 21a8 8 0 0 1-7.8-10" />
-                <path d="M8.6 14a4 4 0 0 1 6.8-2.7" />
-                <circle cx="12" cy="14" r="2.5" />
-                <path d="M12 2v20" />
-              </svg>
-            </div>
-            <h1 className="text-3xl font-bold tracking-tight text-text-primary sm:text-4xl">
-              Verification infrastructure for modern teams
-            </h1>
-            <p className="mt-4 text-base text-text-secondary">
-              Sign in to your Chirograph account
-            </p>
-          </div>
+      {/* Left panel — product framing */}
+      <div className="relative z-10 hidden w-[46%] shrink-0 flex-col justify-between border-r border-line bg-surface-2 px-10 py-10 lg:flex xl:px-14">
+        <Logo size="md" to="/" />
 
-          <div className="card border-white/[0.08] bg-surface/60 p-6 backdrop-blur-sm">
-            <pre className="overflow-x-auto rounded-lg bg-canvas/60 p-4 font-mono text-xs leading-relaxed text-text-secondary">
-              <span className="text-text-muted">$</span> curl https://api.chirographverify.com/v1/verify {'\n'}
-              {'  '}<span className="text-brand-400">"device_id"</span>: <span className="text-accent-400">"dev_9f2k"</span>,{'\n'}
-              {'  '}<span className="text-brand-400">"origin"</span>: <span className="text-accent-400">"https://app.io"</span>{'\n'}
+        <div className="max-w-md">
+          <div className="micro-label mb-5">Developer console</div>
+          <h1 className="text-3xl font-semibold tracking-tight text-text-primary">
+            Verification infrastructure for modern teams
+          </h1>
+          <p className="mt-4 text-[15px] leading-relaxed text-text-secondary">
+            Manage API keys, verifications, webhooks and billing from one console.
+          </p>
+
+          <div className="card mt-8 overflow-hidden">
+            <div className="flex items-center gap-2 border-b border-line bg-surface-2 px-4 py-2.5">
+              <span className="h-2.5 w-2.5 rounded-full bg-line-strong" />
+              <span className="h-2.5 w-2.5 rounded-full bg-line-strong" />
+              <span className="h-2.5 w-2.5 rounded-full bg-line-strong" />
+              <span className="ml-1.5 font-mono text-2xs text-text-muted">POST /v1/challenge</span>
+            </div>
+            <pre className="overflow-x-auto p-4 font-mono text-xs leading-relaxed text-text-secondary">
+              <span className="text-text-muted">$</span> curl https://app.chirographverify.com/v1/challenge {'\n'}
+              {'  '}<span className="text-brand-600">"device_id"</span>: <span className="text-accent-600">"dev_9f2k"</span>,{'\n'}
+              {'  '}<span className="text-brand-600">"origin"</span>: <span className="text-accent-600">"https://app.io"</span>{'\n'}
               {'}'}
             </pre>
           </div>
+        </div>
 
-          <div className="mt-8 flex items-center gap-6">
-            <span className="font-mono text-xs text-text-muted">99.99% uptime</span>
-            <span className="h-1 w-1 rounded-full bg-text-muted" />
-            <span className="font-mono text-xs text-text-muted">12ms median</span>
-            <span className="h-1 w-1 rounded-full bg-text-muted" />
-            <span className="font-mono text-xs text-text-muted">SOC 2</span>
-          </div>
+        <div className="flex items-center gap-6 font-mono text-2xs text-text-muted">
+          <span>99.99% uptime</span>
+          <span className="h-1 w-1 rounded-full bg-line-strong" />
+          <span>12ms median</span>
+          <span className="h-1 w-1 rounded-full bg-line-strong" />
+          <span>SOC 2</span>
         </div>
       </div>
 
       {/* Right auth card */}
       <div className="relative z-10 flex flex-1 flex-col items-center justify-center px-6 py-12">
-        <div className="w-full max-w-md">
-          <div className="mb-8 text-center lg:hidden">
+        <div className="w-full max-w-sm">
+          <div className="mb-8 lg:hidden">
             <Logo size="md" to="/" />
           </div>
 
-          <div className="card border-white/[0.08] bg-surface/80 p-8 shadow-card backdrop-blur-sm">
+          <div className="card p-7">
             <div className="mb-6">
-              <h2 className="text-xl font-bold tracking-tight text-text-primary">Welcome back</h2>
+              <h2 className="text-lg font-semibold tracking-tight text-text-primary">Welcome back</h2>
               <p className="mt-1 text-sm text-text-muted">Sign in to your Chirograph Verify account</p>
             </div>
 
-            <form onSubmit={handleSubmit} noValidate className="space-y-5">
+            <form onSubmit={handleSubmit} noValidate className="space-y-4">
               {error && <ErrorBanner message={error} />}
 
               <div>
@@ -184,27 +181,27 @@ export default function LoginPage() {
               </div>
 
               <button type="submit" disabled={loading} className="btn-primary w-full">
-                {loading ? <Spinner size={18} /> : 'Sign In'}
+                {loading ? <Spinner size={16} /> : 'Sign in'}
               </button>
 
-              <div className="flex items-center gap-3">
+              <div className="flex items-center gap-3 pt-1">
                 <div className="h-px flex-1 bg-line" />
-                <span className="inline-flex items-center gap-1 text-xs text-text-muted">
-                  OR CONTINUE WITH
-                  <span className="pill-soon">Coming soon</span>
+                <span className="inline-flex items-center gap-1.5 text-2xs uppercase tracking-micro text-text-micro">
+                  Or continue with
+                  <span className="pill-soon">Soon</span>
                 </span>
                 <div className="h-px flex-1 bg-line" />
               </div>
 
-              <div className="grid grid-cols-2 gap-3">
-                <button type="button" className="btn-secondary !h-10 cursor-not-allowed opacity-50" disabled>
+              <div className="grid grid-cols-2 gap-2">
+                <button type="button" className="btn-secondary cursor-not-allowed" disabled>
                   <svg className="h-4 w-4" viewBox="0 0 24 24"><path fill="currentColor" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92a5.06 5.06 0 0 1-2.2 3.32v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.1z" /><path fill="currentColor" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84A11 11 0 0 0 12 23z" /><path fill="currentColor" d="M5.84 14.1a6.6 6.6 0 0 1 0-4.2V7.07H2.18a11 11 0 0 0 0 9.86l3.66-2.84z" /><path fill="currentColor" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15A11 11 0 0 0 2.18 7.07l3.66 2.84C6.71 7.31 9.14 5.38 12 5.38z" /></svg>
                   <span className="flex items-center gap-1">
                     <span>Google</span>
                     <span className="pill-soon">Soon</span>
                   </span>
                 </button>
-                <button type="button" className="btn-secondary !h-10 cursor-not-allowed opacity-50" disabled>
+                <button type="button" className="btn-secondary cursor-not-allowed" disabled>
                   <svg className="h-4 w-4" viewBox="0 0 24 24"><path fill="currentColor" d="M12 2A10 10 0 0 0 8.84 21.5c.5.08.66-.23.66-.5v-1.69c-2.77.6-3.36-1.34-3.36-1.34a2.65 2.65 0 0 0-1.11-1.46c-.91-.62.07-.6.07-.6a2.1 2.1 0 0 1 1.53 1 2.15 2.15 0 0 0 2.91.83 2.16 2.16 0 0 1 .63-1.34c-2.22-.25-4.55-1.11-4.55-4.94a3.86 3.86 0 0 1 1-2.71 3.59 3.59 0 0 1 .1-2.64s.84-.27 2.75 1a9.63 9.63 0 0 1 5 0c1.91-1.29 2.75-1 2.75-1a3.59 3.59 0 0 1 .1 2.64 3.86 3.86 0 0 1 1 2.71c0 3.84-2.34 4.68-4.57 4.93a2.39 2.39 0 0 1 .69 1.85V21c0 .27.16.59.67.5A10 10 0 0 0 12 2" /></svg>
                   <span className="flex items-center gap-1">
                     <span>GitHub</span>
@@ -215,9 +212,9 @@ export default function LoginPage() {
             </form>
           </div>
 
-          <p className="mt-6 text-center text-sm text-text-muted">
+          <p className="mt-5 text-center text-sm text-text-muted">
             Don't have an account?{' '}
-            <Link to="/signup" className="font-semibold text-accent-400 hover:text-accent-500">
+            <Link to="/signup" className="font-medium text-brand-600 hover:text-brand-700">
               Sign up
             </Link>
           </p>

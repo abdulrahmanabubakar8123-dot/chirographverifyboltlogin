@@ -13,7 +13,7 @@ const REQUESTS = [
 function statusColor(status: number) {
   if (status >= 500) return 'text-danger';
   if (status >= 400) return 'text-warning';
-  return 'text-accent-400';
+  return 'text-accent-600';
 }
 
 // Inert placeholder: static sample data only. No API calls, no effects, no handlers

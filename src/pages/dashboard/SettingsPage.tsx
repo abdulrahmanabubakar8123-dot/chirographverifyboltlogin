@@ -104,7 +104,7 @@ export default function SettingsPage() {
                     aria-checked="true"
                     aria-label={pref.label}
                     disabled
-                    className="relative h-[22px] w-10 shrink-0 cursor-not-allowed rounded-full opacity-50 bg-brand-gradient transition-opacity"
+                    className="relative h-[22px] w-10 shrink-0 cursor-not-allowed rounded-full opacity-50 bg-brand-600 transition-opacity"
                   >
                     <span className="absolute right-[3px] top-[3px] h-4 w-4 rounded-full bg-white transition-transform" />
                   </button>
