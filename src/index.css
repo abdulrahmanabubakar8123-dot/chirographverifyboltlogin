@@ -52,85 +52,82 @@
 }
 
 @layer components {
-  /* ── Typography ────────────────────────────────────────────── */
+  /* ── Typography: mono-forward, tight, uppercase micro-labels ── */
   .page-title {
-    @apply text-2xl font-semibold tracking-tight text-text-primary;
-    letter-spacing: -0.015em;
+    @apply text-xl font-semibold tracking-tight text-text-primary;
   }
   .page-description {
-    @apply mt-1.5 text-sm leading-relaxed text-text-muted;
+    @apply mt-1 text-[13px] leading-relaxed text-text-muted;
   }
   .section-title {
-    @apply text-sm font-semibold tracking-tight text-text-primary;
+    @apply text-[13px] font-semibold text-text-primary;
   }
   .micro-label {
-    @apply text-[11px] font-semibold uppercase tracking-micro text-text-micro;
+    @apply font-mono text-[10px] font-medium uppercase tracking-micro text-text-micro;
   }
   .gradient-text {
     @apply text-brand-600;
   }
-  /* ── Controls: 34px tall, 6px radius, hairline borders ─────── */
+  /* ── Controls: 30px, 2px radius, hairline ──────────────────── */
   .btn-primary {
-    @apply inline-flex items-center justify-center gap-2 rounded-control bg-brand-600 px-3.5 text-sm font-medium text-white shadow-control transition-colors duration-150 hover:bg-brand-700 focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-500/35 disabled:cursor-not-allowed disabled:opacity-55 active:bg-brand-800;
-    height: 34px;
+    @apply inline-flex items-center justify-center gap-1.5 rounded-control bg-brand-600 px-3 text-[13px] font-medium text-white transition-colors duration-100 hover:bg-brand-700 focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-500/40 focus-visible:ring-offset-1 disabled:cursor-not-allowed disabled:opacity-45;
+    height: 30px;
   }
   .btn-secondary {
-    @apply inline-flex items-center justify-center gap-2 rounded-control border border-line bg-surface px-3.5 text-sm font-medium text-text-primary shadow-control transition-colors duration-150 hover:border-line-strong hover:bg-surface-2 focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-500/35 disabled:cursor-not-allowed disabled:opacity-55;
-    height: 34px;
+    @apply inline-flex items-center justify-center gap-1.5 rounded-control border border-line bg-surface px-3 text-[13px] font-medium text-text-primary transition-colors duration-100 hover:bg-surface-2 focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-500/40 focus-visible:ring-offset-1 disabled:cursor-not-allowed disabled:opacity-45;
+    height: 30px;
   }
   .btn-ghost {
-    @apply inline-flex items-center justify-center gap-2 rounded-control px-2.5 text-sm font-medium text-text-muted transition-colors duration-150 hover:bg-surface-2 hover:text-text-primary focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-500/35 disabled:cursor-not-allowed disabled:opacity-55;
-    height: 34px;
+    @apply inline-flex items-center justify-center gap-1.5 rounded-control px-2 text-[13px] font-medium text-text-muted transition-colors duration-100 hover:bg-surface-2 hover:text-text-primary focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-500/40 disabled:cursor-not-allowed disabled:opacity-45;
+    height: 30px;
   }
   .input-field {
-    @apply w-full rounded-control border border-line bg-surface px-3 font-mono text-sm text-text-primary shadow-control transition-colors duration-150 placeholder:font-sans placeholder:text-text-muted hover:border-line-strong focus:border-brand-500 focus:outline-none focus:ring-2 focus:ring-brand-500/25 disabled:cursor-not-allowed disabled:bg-surface-2 disabled:opacity-60;
-    height: 34px;
+    @apply w-full rounded-control border border-line bg-surface px-2.5 font-mono text-[13px] text-text-primary transition-colors duration-100 placeholder:font-sans placeholder:text-[13px] placeholder:text-text-muted hover:border-line-strong focus:border-brand-500 focus:outline-none focus:ring-1 focus:ring-brand-500/40 disabled:cursor-not-allowed disabled:bg-surface-2 disabled:opacity-60;
+    height: 30px;
   }
-  /* ── Surfaces ──────────────────────────────────────────────── */
+  /* ── Surfaces: hairline boxes, zero shadow ─────────────────── */
   .card {
-    @apply rounded-xl2 border border-line bg-surface shadow-card transition-shadow duration-150;
+    @apply rounded-panel border border-line bg-surface;
   }
   .card-interactive {
-    @apply rounded-xl2 border border-line bg-surface shadow-card transition-all duration-150 hover:border-line-strong hover:shadow-control;
+    @apply rounded-panel border border-line bg-surface transition-colors duration-100 hover:border-line-strong hover:bg-surface-2;
   }
-  /* Panel that must stand out from a white canvas: a soft tinted fill
-     instead of a heavier shadow. (Class was referenced by three dashboard
-     pages but had no definition.) */
+  /* Panel that must read as a distinct region. */
   .contrast-card {
-    @apply rounded-xl2 border border-line bg-surface-2 p-6 shadow-card;
+    @apply rounded-panel border border-line bg-surface-2 p-5;
   }
   .gradient-border-card {
-    @apply rounded-xl2 border border-line bg-surface shadow-card;
+    @apply rounded-panel border border-line bg-surface;
   }
   .gradient-icon-badge {
-    @apply flex items-center justify-center rounded-control bg-brand-50 text-brand-600;
+    @apply flex h-7 w-7 items-center justify-center rounded-control border border-line bg-surface-2 text-text-secondary;
   }
-  /* ── Badges ────────────────────────────────────────────────── */
+  /* ── Badges: square-ish, mono, uppercase ───────────────────── */
   .badge-indigo {
-    @apply inline-flex items-center rounded-full bg-brand-50 px-2 py-0.5 text-[11px] font-semibold text-brand-700;
+    @apply inline-flex items-center rounded-xs border border-brand-200 bg-brand-50 px-1.5 py-0.5 font-mono text-[10px] font-medium uppercase tracking-wide text-brand-700;
   }
   .badge-success {
-    @apply inline-flex items-center rounded-full bg-accent-50 px-2 py-0.5 text-[11px] font-semibold text-accent-600;
+    @apply inline-flex items-center rounded-xs border border-accent-200 bg-accent-50 px-1.5 py-0.5 font-mono text-[10px] font-medium uppercase tracking-wide text-accent-700;
   }
   .badge-muted {
-    @apply inline-flex items-center rounded-full bg-surface-2 px-2 py-0.5 text-[11px] font-semibold text-text-secondary;
+    @apply inline-flex items-center rounded-xs border border-line bg-surface-2 px-1.5 py-0.5 font-mono text-[10px] font-medium uppercase tracking-wide text-text-secondary;
   }
   .pill-soon {
-    @apply inline-flex items-center rounded-full bg-surface-3 px-1.5 py-0.5 text-[10px] font-semibold uppercase tracking-wider text-text-micro;
+    @apply inline-flex items-center rounded-xs border border-line bg-surface-2 px-1 py-px font-mono text-[9px] font-medium uppercase tracking-wide text-text-micro;
   }
   .coming-soon-badge {
-    @apply ml-2 inline-flex items-center rounded-full bg-surface-3 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wider text-text-micro;
+    @apply ml-2 inline-flex items-center rounded-xs border border-line bg-surface-2 px-1.5 py-0.5 font-mono text-[9px] font-medium uppercase tracking-wide text-text-micro;
   }
   /* ── Forms ─────────────────────────────────────────────────── */
   .label-text {
-    @apply mb-1.5 block text-xs font-medium text-text-secondary;
+    @apply mb-1 block font-mono text-[10px] font-medium uppercase tracking-micro text-text-micro;
   }
-  /* ── Data display ──────────────────────────────────────────── */
+  /* ── Data display: tabular, compact ───────────────────────── */
   .stat-label {
     @apply micro-label;
   }
   .stat-value {
-    @apply font-mono text-xl font-semibold tabular-nums tracking-tight text-text-primary;
+    @apply font-mono text-lg font-semibold tabular-nums tracking-tight text-text-primary;
   }
   .mono-value {
     @apply font-mono tabular-nums;
@@ -142,19 +139,11 @@
   .divider {
     @apply border-t border-line;
   }
-  /* ── Backgrounds ───────────────────────────────────────────── */
+  /* ── Backgrounds: no gradient, just a hairline grid ────────── */
   .grid-bg {
-    background-image: radial-gradient(circle at 20% 20%,rgba(79,88,201,0.05),transparent 40%), radial-gradient(circle at 80% 80%,rgba(63,174,135,0.04),transparent 40%);
-  }
-  .grid-bg::after {
-    content: '';
-    position: absolute;
-    inset: 0;
     background-image:
-      linear-gradient(rgba(15,17,21,0.035) 1px, transparent 1px),
-      linear-gradient(90deg, rgba(15,17,21,0.035) 1px, transparent 1px);
-    background-size: 40px 40px;
-    pointer-events: none;
-    z-index: 0;
+      linear-gradient(to right, rgba(15,17,21,0.03) 1px, transparent 1px),
+      linear-gradient(to bottom, rgba(15,17,21,0.03) 1px, transparent 1px);
+    background-size: 32px 32px;
   }
 }

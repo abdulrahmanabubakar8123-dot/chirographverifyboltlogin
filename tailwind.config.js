@@ -64,20 +64,28 @@ export default {
         glow: '0 0 0 3px rgba(79,88,201,0.18)',
       },
       borderRadius: {
-        // 6px controls / 8px cards / 10px panels. `xl2` is retained as an
-        // alias so existing `rounded-xl2` call sites keep compiling.
-        control: '6px',
-        xl2: '8px',
+        // Near-zero radius: a console, not a card deck. 2px controls, 3px
+        // panels. `xl2` is retained as an alias for existing call sites.
+        none: '0px',
+        xs: '2px',
+        control: '2px',
+        xl2: '3px',
+        panel: '3px',
       },
       letterSpacing: {
-        micro: '.08em',
+        micro: '.1em',
+        wide: '.06em',
+      },
+      boxShadow: {
+        // Elevation is expressed through hairlines, not shadows.
+        none: 'none',
+        control: 'none',
+        card: 'none',
       },
       backgroundImage: {
-        // Gradients are de-emphasised: they now read as a faint brand wash
-        // rather than a decorative purple→teal sweep.
-        'brand-gradient': 'linear-gradient(90deg,#4149AE,#4F58C9 60%,#3FAE87)',
-        'card-grid': 'radial-gradient(circle at 20% 20%,rgba(79,88,201,0.06),transparent 40%), radial-gradient(circle at 80% 80%,rgba(63,174,135,0.05),transparent 40%)',
-        'hero-gradient': 'linear-gradient(135deg,#4149AE 0%,#4F58C9 55%,#3FAE87 100%)',
+        'brand-gradient': 'none',
+        'card-grid': 'none',
+        'hero-gradient': 'none',
       },
     },
   },

@@ -71,7 +71,7 @@ export default function SettingsPage() {
               <h2 className="section-title">Allowed Origins</h2>
               <ul className="mt-5 space-y-2">
                 {data.origins.map((origin) => (
-                  <li key={origin} className="rounded-xl border border-line bg-surface-2 px-4 py-2.5 font-mono text-sm text-text-muted">
+                  <li key={origin} className="rounded-panel border border-line bg-surface-2 px-4 py-2.5 font-mono text-sm text-text-muted">
                     {origin}
                   </li>
                 ))}

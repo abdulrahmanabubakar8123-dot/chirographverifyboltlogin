@@ -191,7 +191,7 @@ export default function WebhooksPage() {
             {origins.length > 0 ? (
               <ul className="mt-5 space-y-2">
                 {origins.map((origin) => (
-                  <li key={origin} className="flex items-center justify-between rounded-xl border border-line bg-surface-2 px-4 py-2.5">
+                  <li key={origin} className="flex items-center justify-between rounded-panel border border-line bg-surface-2 px-4 py-2.5">
                     <span className="font-mono text-sm text-text-muted">{origin}</span>
                     <button onClick={() => handleRemoveOrigin(origin)} className="text-text-muted hover:text-danger" aria-label="Remove origin">
                       <Trash2 size={16} />
