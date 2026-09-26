@@ -121,7 +121,7 @@ export default function WebhooksPage() {
         <div className="space-y-6">
           {actionError && <ErrorBanner message={actionError} />}
           {successMsg && (
-            <div className="flex items-center gap-2.5 rounded-full border border-accent-200 bg-accent-50 px-3.5 py-2.5 text-[13px] text-accent-700">
+            <div className="flex items-center gap-2.5 rounded-full border border-accent-500/40 bg-accent-500/10 px-3.5 py-2.5 text-[13px] text-accent-400">
               <CheckCircle2 size={18} /> {successMsg}
             </div>
           )}

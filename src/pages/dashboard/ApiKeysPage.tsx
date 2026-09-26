@@ -80,7 +80,7 @@ export default function ApiKeysPage() {
                   {showKey ? <EyeOff size={18} /> : <Eye size={18} />}
                 </button>
                 <button onClick={handleCopy} className="rounded-full p-1.5 text-muted transition-colors hover:bg-white/[0.06] hover:text-primary" aria-label="Copy key">
-                  {copied ? <Check size={18} className="text-accent-600" /> : <Copy size={18} />}
+                  {copied ? <Check size={18} className="text-accent-400" /> : <Copy size={18} />}
                 </button>
               </div>
             ) : data?.prefix ? (

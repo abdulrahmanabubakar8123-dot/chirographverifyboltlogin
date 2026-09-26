@@ -118,7 +118,7 @@ export default function OverviewPage() {
                 />
               </div>
               {data?.remaining != null && (
-                <p className="mt-2 font-mono text-xs font-medium text-accent-600">{data.remaining} remaining</p>
+                <p className="mt-2 font-mono text-xs font-medium text-accent-400">{data.remaining} remaining</p>
               )}
             </div>
           </div>

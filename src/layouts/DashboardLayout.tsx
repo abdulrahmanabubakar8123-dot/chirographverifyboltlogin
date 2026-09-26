@@ -55,7 +55,7 @@ function SidebarNavItem({ item, onNavigate }: { item: NavItem; onNavigate: () =>
       onClick={onNavigate}
       className={({ isActive }) =>
         `group relative flex items-center gap-2.5 rounded-full py-[7px] pl-3 pr-2 text-[13px] font-medium transition-colors ${
-          isActive ? 'bg-surface-2 text-primary' : 'text-muted hover:bg-white/[0.06]/60 hover:text-secondary'
+          isActive ? 'bg-surface-2 text-primary' : 'text-muted hover:bg-white/[0.06] hover:text-secondary'
         }`
       }
     >
