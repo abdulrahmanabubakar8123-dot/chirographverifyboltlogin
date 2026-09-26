@@ -55,7 +55,7 @@ function SidebarNavItem({ item, onNavigate }: { item: NavItem; onNavigate: () =>
       onClick={onNavigate}
       className={({ isActive }) =>
         `group relative flex items-center gap-2.5 rounded-control py-[7px] pl-3 pr-2 text-[13px] font-medium transition-colors ${
-          isActive ? 'bg-surface-2 text-text-primary' : 'text-text-muted hover:bg-surface-2/60 hover:text-text-secondary'
+          isActive ? 'bg-surface-2 text-text-primary' : 'text-text-muted hover:bg-white/[0.06]/60 hover:text-text-secondary'
         }`
       }
     >
@@ -107,7 +107,7 @@ export default function DashboardLayout() {
       <div className="border-t border-line p-3">
         <button
           onClick={handleLogout}
-          className="group flex w-full items-center gap-2.5 rounded-control px-2.5 py-[7px] text-[13px] font-medium text-text-muted transition-colors hover:bg-surface-2 hover:text-text-secondary"
+          className="group flex w-full items-center gap-2.5 rounded-control px-2.5 py-[7px] text-[13px] font-medium text-text-muted transition-colors hover:bg-white/[0.06] hover:text-text-secondary"
         >
           <LogOut size={16} strokeWidth={1.9} className="text-text-muted group-hover:text-text-secondary" />
           Sign out
@@ -133,7 +133,7 @@ export default function DashboardLayout() {
           <aside className="fixed left-0 top-0 z-50 h-full w-[232px] border-r border-line bg-canvas lg:hidden">
             <button
               onClick={() => setMobileOpen(false)}
-              className="absolute right-3 top-3.5 rounded-control p-1.5 text-text-muted hover:bg-surface-2"
+              className="absolute right-3 top-3.5 rounded-control p-1.5 text-text-muted hover:bg-white/[0.06]"
               aria-label="Close menu"
             >
               <X size={18} />
@@ -148,7 +148,7 @@ export default function DashboardLayout() {
         <header className="flex h-14 shrink-0 items-center justify-between border-b border-line bg-canvas px-4 lg:px-6">
           <button
             onClick={() => setMobileOpen(true)}
-            className="rounded-control p-1.5 text-text-muted hover:bg-surface-2 lg:hidden"
+            className="rounded-control p-1.5 text-text-muted hover:bg-white/[0.06] lg:hidden"
             aria-label="Open menu"
           >
             <Menu size={18} />

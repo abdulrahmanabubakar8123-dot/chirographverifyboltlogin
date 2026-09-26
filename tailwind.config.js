@@ -4,53 +4,55 @@ export default {
   theme: {
     extend: {
       fontFamily: {
+        // X uses Inter for sans and Geist Mono for code.
         sans: ['Inter', 'ui-sans-serif', 'system-ui', 'sans-serif'],
-        mono: ['"JetBrains Mono"', 'ui-monospace', 'SFMono-Regular', 'Menlo', 'Consolas', 'monospace'],
+        mono: ['"Geist Mono"', 'ui-monospace', 'SFMono-Regular', 'Menlo', 'Consolas', 'monospace'],
       },
       colors: {
-        // ── Surfaces (light developer-console scale) ──────────────
-        canvas: '#FFFFFF',
-        surface: '#FFFFFF',
-        'surface-2': '#F7F8FA',
-        'surface-3': '#EFF1F4',
-        // Hairline borders: the primary structural device in this system.
-        line: '#E4E6EB',
-        'line-strong': '#D2D6DD',
-        // ── Brand (restrained indigo) ────────────────────────────
+        // ── Surfaces — pure black canvas, per the X Developer Platform ──
+        canvas: '#000000',
+        surface: '#0E0E0E',
+        'surface-2': '#141414',
+        'surface-3': '#1C1C1C',
+        // Hairline borders: 0 0% 14.9%
+        line: '#262626',
+        'line-strong': '#404040',
+        // ── Brand ──────────────────────────────────────────────
+        // X uses no brand hue: its accent is simply near-white.
         brand: {
-          50: '#EEF1FB',
-          100: '#DFE4F7',
-          200: '#C3CBEF',
-          300: '#A3ADE8',
-          400: '#737FD9',
-          500: '#4F58C9',
-          600: '#4149AE',
-          700: '#333A8C',
-          800: '#272D6E',
-          900: '#1E2340',
+          50: '#F7F7F7',
+          100: '#E9E6E6',
+          200: '#D4D4D4',
+          300: '#B0B0B0',
+          400: '#A3A3A3',
+          500: '#8C8C8C',
+          600: '#737980',
+          700: '#525252',
+          800: '#404040',
+          900: '#262626',
         },
-        // ── Accent: status/trust only, never a second CTA colour ─
+        // ── Accent: trust/verification status only ──────────────
         accent: {
-          50: '#EAF7F1',
-          100: '#D3EFE2',
-          200: '#A7DFC8',
-          300: '#6FC9A8',
-          400: '#3FAE87',
-          500: '#0E8A5F',
-          600: '#0B7450',
-          700: '#095E42',
+          50: '#ECFDF5',
+          100: '#D1FAE5',
+          200: '#A7F3D0',
+          300: '#6EE7B7',
+          400: '#34D399',
+          500: '#10B981',
+          600: '#059669',
+          700: '#047857',
         },
-        // ── Text: four steps, no pure black ─────────────────────
+        // ── Text: white primary, grey body, dimmest micro ──────
         text: {
-          primary: '#0F1115',
-          secondary: '#4A5159',
-          muted: '#6E7681',
-          micro: '#8B939E',
+          primary: '#FFFFFF',
+          secondary: '#B0B0B0',
+          muted: '#A3A3A3',
+          micro: '#737980',
         },
-        // ── Status (muted, AA on white) ─────────────────────────
-        success: '#0E8A5F',
-        warning: '#B45309',
-        danger: '#C4362F',
+        // ── Status ─────────────────────────────────────────────
+        success: '#10B981',
+        warning: '#F59E0B',
+        danger: '#EF4444',
       },
       fontSize: {
         '2xs': ['0.6875rem', { lineHeight: '1rem' }],
@@ -64,13 +66,13 @@ export default {
         glow: '0 0 0 3px rgba(79,88,201,0.18)',
       },
       borderRadius: {
-        // Near-zero radius: a console, not a card deck. 2px controls, 3px
-        // panels. `xl2` is retained as an alias for existing call sites.
+        // X uses --radius: 0.5rem (8px), with 4px and 12px variants.
         none: '0px',
-        xs: '2px',
-        control: '2px',
-        xl2: '3px',
-        panel: '3px',
+        xs: '4px',
+        control: '4px',
+        xl2: '8px',
+        panel: '8px',
+        lg: '12px',
       },
       letterSpacing: {
         micro: '.1em',

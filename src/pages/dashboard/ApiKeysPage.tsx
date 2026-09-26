@@ -76,10 +76,10 @@ export default function ApiKeysPage() {
                 <div className="flex-1 overflow-hidden rounded-control border border-line bg-surface px-3.5 py-2.5 font-mono text-sm text-text-primary">
                   {showKey ? data.key : `${data.key.slice(0, 8)}${'•'.repeat(20)}`}
                 </div>
-                <button onClick={() => setShowKey(!showKey)} className="rounded-control p-1.5 text-text-muted transition-colors hover:bg-surface-2 hover:text-text-primary" aria-label={showKey ? 'Hide key' : 'Show key'}>
+                <button onClick={() => setShowKey(!showKey)} className="rounded-control p-1.5 text-text-muted transition-colors hover:bg-white/[0.06] hover:text-text-primary" aria-label={showKey ? 'Hide key' : 'Show key'}>
                   {showKey ? <EyeOff size={18} /> : <Eye size={18} />}
                 </button>
-                <button onClick={handleCopy} className="rounded-control p-1.5 text-text-muted transition-colors hover:bg-surface-2 hover:text-text-primary" aria-label="Copy key">
+                <button onClick={handleCopy} className="rounded-control p-1.5 text-text-muted transition-colors hover:bg-white/[0.06] hover:text-text-primary" aria-label="Copy key">
                   {copied ? <Check size={18} className="text-accent-600" /> : <Copy size={18} />}
                 </button>
               </div>

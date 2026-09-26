@@ -4,29 +4,30 @@
 
 @layer base {
   :root {
-    /* Surfaces — light developer-console scale */
-    --canvas: #FFFFFF;
-    --surface: #FFFFFF;
-    --surface-2: #F7F8FA;
-    --surface-3: #EFF1F4;
-    /* Hairline borders: the primary structural device in this system. */
-    --line: #E4E6EB;
-    --line-strong: #D2D6DD;
-    /* Brand */
-    --brand: #4F58C9;
-    --brand-800: #4149AE;
-    /* Accent: status/trust only */
-    --accent: #0E8A5F;
-    /* Text — four steps, no pure black */
-    --text-primary: #0F1115;
-    --text-secondary: #4A5159;
-    --text-muted: #6E7681;
-    --text-micro: #8B939E;
+    /* Surfaces — pure black canvas, per the X Developer Platform */
+    --canvas: #000000;
+    --surface: #0E0E0E;
+    --surface-2: #141414;
+    --surface-3: #1C1C1C;
+    /* Hairline borders: 0 0% 14.9% */
+    --line: #262626;
+    --line-strong: #404040;
+    /* X has no brand hue: the accent is near-white (200 8% 91%) */
+    --brand: #E9E6E6;
+    --brand-800: #B0B0B0;
+    /* Accent: trust/status only */
+    --accent: #10B981;
+    /* Text: white primary (0 0% 100%), grey body, dimmest micro */
+    --text-primary: #FFFFFF;
+    --text-secondary: #B0B0B0;
+    --text-muted: #A3A3A3;
+    --text-micro: #737980;
     /* Status */
-    --success: #0E8A5F;
-    --warning: #B45309;
-    --danger: #C4362F;
-    --brand-gradient: linear-gradient(90deg,#4149AE,#4F58C9 60%,#3FAE87);
+    --success: #10B981;
+    --warning: #F59E0B;
+    --danger: #EF4444;
+    --brand-gradient: none;
+    /* X uses --radius: 0.5rem */
     --radius: 8px;
   }
   html {
@@ -44,97 +45,98 @@
   }
   /* Strong, consistent focus treatment across the whole app. */
   :focus-visible {
-    @apply outline-none ring-2 ring-brand-500/35 ring-offset-1 ring-offset-canvas;
+    @apply outline-none ring-2 ring-brand-300/60 ring-offset-2 ring-offset-canvas;
   }
   ::selection {
-    @apply bg-brand-500/20 text-text-primary;
+    @apply bg-brand-300/30 text-text-primary;
   }
 }
 
 @layer components {
   /* ── Typography: mono-forward, tight, uppercase micro-labels ── */
   .page-title {
-    @apply text-xl font-semibold tracking-tight text-text-primary;
+    @apply text-3xl font-bold tracking-tight text-text-primary sm:text-4xl;
+    letter-spacing: -0.025em;
   }
   .page-description {
-    @apply mt-1 text-[13px] leading-relaxed text-text-muted;
+    @apply mt-2 text-base leading-relaxed text-text-muted;
   }
   .section-title {
-    @apply text-[13px] font-semibold text-text-primary;
+    @apply text-base font-semibold tracking-tight text-text-primary;
   }
   .micro-label {
-    @apply font-mono text-[10px] font-medium uppercase tracking-micro text-text-micro;
+    @apply text-xs font-semibold uppercase tracking-[0.1em] text-text-micro;
   }
   .gradient-text {
-    @apply text-brand-600;
+    @apply text-text-primary;
   }
   /* ── Controls: 30px, 2px radius, hairline ──────────────────── */
   .btn-primary {
-    @apply inline-flex items-center justify-center gap-1.5 rounded-control bg-brand-600 px-3 text-[13px] font-medium text-white transition-colors duration-100 hover:bg-brand-700 focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-500/40 focus-visible:ring-offset-1 disabled:cursor-not-allowed disabled:opacity-45;
-    height: 30px;
+    @apply inline-flex items-center justify-center gap-1.5 rounded-full bg-brand-100 px-4 text-[13px] font-semibold text-[#000000] transition-colors duration-150 hover:bg-white focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-300/60 disabled:cursor-not-allowed disabled:opacity-50;
+    height: 36px;
   }
   .btn-secondary {
-    @apply inline-flex items-center justify-center gap-1.5 rounded-control border border-line bg-surface px-3 text-[13px] font-medium text-text-primary transition-colors duration-100 hover:bg-surface-2 focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-500/40 focus-visible:ring-offset-1 disabled:cursor-not-allowed disabled:opacity-45;
-    height: 30px;
+    @apply inline-flex items-center justify-center gap-1.5 rounded-full border border-line-strong bg-transparent px-4 text-[13px] font-semibold text-text-primary transition-colors duration-150 hover:border-brand-300 hover:bg-white/[0.06] focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-300/60 disabled:cursor-not-allowed disabled:opacity-50;
+    height: 36px;
   }
   .btn-ghost {
-    @apply inline-flex items-center justify-center gap-1.5 rounded-control px-2 text-[13px] font-medium text-text-muted transition-colors duration-100 hover:bg-surface-2 hover:text-text-primary focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-500/40 disabled:cursor-not-allowed disabled:opacity-45;
-    height: 30px;
+    @apply inline-flex items-center justify-center gap-1.5 rounded-full px-3 text-[13px] font-medium text-text-secondary transition-colors duration-150 hover:bg-white/[0.08] hover:text-text-primary focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-300/60 disabled:cursor-not-allowed disabled:opacity-50;
+    height: 36px;
   }
   .input-field {
-    @apply w-full rounded-control border border-line bg-surface px-2.5 font-mono text-[13px] text-text-primary transition-colors duration-100 placeholder:font-sans placeholder:text-[13px] placeholder:text-text-muted hover:border-line-strong focus:border-brand-500 focus:outline-none focus:ring-1 focus:ring-brand-500/40 disabled:cursor-not-allowed disabled:bg-surface-2 disabled:opacity-60;
-    height: 30px;
+    @apply w-full rounded-lg border border-line bg-transparent px-3 font-mono text-[13px] text-text-primary transition-colors duration-150 placeholder:font-sans placeholder:text-[13px] placeholder:text-text-micro hover:border-line-strong focus:border-brand-400 focus:outline-none focus:ring-1 focus:ring-brand-300/40 disabled:cursor-not-allowed disabled:opacity-50;
+    height: 38px;
   }
   /* ── Surfaces: hairline boxes, zero shadow ─────────────────── */
   .card {
     @apply rounded-panel border border-line bg-surface;
   }
   .card-interactive {
-    @apply rounded-panel border border-line bg-surface transition-colors duration-100 hover:border-line-strong hover:bg-surface-2;
+    @apply rounded-panel border border-line bg-surface transition-colors duration-150 hover:border-line-strong;
   }
   /* Panel that must read as a distinct region. */
   .contrast-card {
-    @apply rounded-panel border border-line bg-surface-2 p-5;
+    @apply rounded-panel border border-line bg-surface-2 p-6;
   }
   .gradient-border-card {
     @apply rounded-panel border border-line bg-surface;
   }
   .gradient-icon-badge {
-    @apply flex h-7 w-7 items-center justify-center rounded-control border border-line bg-surface-2 text-text-secondary;
+    @apply flex h-8 w-8 items-center justify-center rounded-full border border-line bg-surface-2 text-text-secondary;
   }
-  /* ── Badges: square-ish, mono, uppercase ───────────────────── */
+  /* ── Badges: subtle, low-contrast, hairline ───────────────── */
   .badge-indigo {
-    @apply inline-flex items-center rounded-xs border border-brand-200 bg-brand-50 px-1.5 py-0.5 font-mono text-[10px] font-medium uppercase tracking-wide text-brand-700;
+    @apply inline-flex items-center rounded-full border border-line px-2.5 py-1 text-xs font-medium text-text-secondary;
   }
   .badge-success {
-    @apply inline-flex items-center rounded-xs border border-accent-200 bg-accent-50 px-1.5 py-0.5 font-mono text-[10px] font-medium uppercase tracking-wide text-accent-700;
+    @apply inline-flex items-center rounded-full border border-accent-500/40 bg-accent-500/10 px-2.5 py-1 text-xs font-medium text-accent-400;
   }
   .badge-muted {
-    @apply inline-flex items-center rounded-xs border border-line bg-surface-2 px-1.5 py-0.5 font-mono text-[10px] font-medium uppercase tracking-wide text-text-secondary;
+    @apply inline-flex items-center rounded-full border border-line px-2.5 py-1 text-xs font-medium text-text-muted;
   }
   .pill-soon {
-    @apply inline-flex items-center rounded-xs border border-line bg-surface-2 px-1 py-px font-mono text-[9px] font-medium uppercase tracking-wide text-text-micro;
+    @apply inline-flex items-center rounded-full border border-line px-2 py-0.5 text-[10px] font-medium uppercase tracking-wider text-text-micro;
   }
   .coming-soon-badge {
-    @apply ml-2 inline-flex items-center rounded-xs border border-line bg-surface-2 px-1.5 py-0.5 font-mono text-[9px] font-medium uppercase tracking-wide text-text-micro;
+    @apply ml-2 inline-flex items-center rounded-full border border-line px-2 py-0.5 text-[10px] font-medium uppercase tracking-wider text-text-micro;
   }
   /* ── Forms ─────────────────────────────────────────────────── */
   .label-text {
-    @apply mb-1 block font-mono text-[10px] font-medium uppercase tracking-micro text-text-micro;
+    @apply mb-1.5 block text-sm font-medium text-text-secondary;
   }
-  /* ── Data display: tabular, compact ───────────────────────── */
+  /* ── Data display ──────────────────────────────────────────── */
   .stat-label {
     @apply micro-label;
   }
   .stat-value {
-    @apply font-mono text-lg font-semibold tabular-nums tracking-tight text-text-primary;
+    @apply font-mono text-2xl font-semibold tabular-nums tracking-tight text-text-primary;
   }
   .mono-value {
     @apply font-mono tabular-nums;
   }
   /* ── Navigation ────────────────────────────────────────────── */
   .nav-item-active {
-    @apply bg-surface-2 text-text-primary;
+    @apply bg-white/10 text-text-primary;
   }
   .divider {
     @apply border-t border-line;

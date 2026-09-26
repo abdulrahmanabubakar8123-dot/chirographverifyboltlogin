@@ -106,7 +106,7 @@ export default function SettingsPage() {
                     disabled
                     className="relative h-[22px] w-10 shrink-0 cursor-not-allowed rounded-full opacity-50 bg-brand-600 transition-opacity"
                   >
-                    <span className="absolute right-[3px] top-[3px] h-4 w-4 rounded-full bg-white transition-transform" />
+                    <span className="absolute right-[3px] top-[3px] h-4 w-4 rounded-full bg-surface transition-transform" />
                   </button>
                 </div>
               ))}
