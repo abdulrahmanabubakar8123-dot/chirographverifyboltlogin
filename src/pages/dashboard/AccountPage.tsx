@@ -22,8 +22,8 @@ export default function AccountPage() {
               {user?.email?.charAt(0).toUpperCase() || 'U'}
             </div>
             <div>
-              <h2 className="text-3xl font-extrabold tracking-tight text-text-primary">{user?.name || user?.email || 'Account'}</h2>
-              <p className="mt-1 font-mono text-sm text-text-muted">{user?.email}</p>
+              <h2 className="text-3xl font-extrabold tracking-tight text-primary">{user?.name || user?.email || 'Account'}</h2>
+              <p className="mt-1 font-mono text-sm text-muted">{user?.email}</p>
             </div>
           </div>
         </div>
@@ -33,10 +33,10 @@ export default function AccountPage() {
             const Icon = item.icon;
             return (
               <div key={item.label} className="flex items-center gap-4 px-6 py-5">
-                <Icon size={18} strokeWidth={1.8} className="shrink-0 text-text-muted" />
+                <Icon size={18} strokeWidth={1.8} className="shrink-0 text-muted" />
                 <div className="min-w-0 flex-1">
-                  <p className="text-xs font-medium text-text-muted">{item.label}</p>
-                  <p className={`mt-0.5 text-sm text-text-primary ${item.mono ? 'font-mono' : ''}`}>{item.value}</p>
+                  <p className="text-xs font-medium text-muted">{item.label}</p>
+                  <p className={`mt-0.5 text-sm text-primary ${item.mono ? 'font-mono' : ''}`}>{item.value}</p>
                 </div>
               </div>
             );

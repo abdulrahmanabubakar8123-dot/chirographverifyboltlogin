@@ -111,7 +111,7 @@ export default function BillingPage() {
                 <div className="flex items-center gap-3">
                   {data?.status && (
                     <span className={`inline-flex items-center gap-1.5 rounded-full px-2.5 py-1 text-2xs font-semibold ${
-                      data.status === 'active' ? 'bg-accent-50 text-accent-700' : 'bg-surface-2 text-text-muted'
+                      data.status === 'active' ? 'bg-accent-50 text-accent-700' : 'bg-surface-2 text-muted'
                     }`}>
                       <span className={`h-1.5 w-1.5 rounded-full ${data.status === 'active' ? 'bg-accent-500' : 'bg-line-strong'}`} />
                       {data.status}
@@ -162,16 +162,16 @@ export default function BillingPage() {
                     </span>
                   )}
                   <h3 className="section-title">{plan.name || plan.tier || plan.id || 'Plan'}</h3>
-                  <p className="mt-2.5 font-mono text-xl font-semibold tracking-tight text-text-primary">
+                  <p className="mt-2.5 font-mono text-xl font-semibold tracking-tight text-primary">
                     {isCustom ? 'Custom' : `$${plan.price}`}
-                    {!isCustom && <span className="font-sans text-xs font-normal text-text-muted">/mo</span>}
+                    {!isCustom && <span className="font-sans text-xs font-normal text-muted">/mo</span>}
                   </p>
-                  <p className="mt-1 text-xs text-text-muted">
+                  <p className="mt-1 text-xs text-muted">
                     {plan.verifications || (typeof plan.monthly_limit === 'number' ? `${plan.monthly_limit.toLocaleString()} verifications/month` : '')}
                   </p>
                   <ul className="mt-4 flex-1 space-y-2">
                     {(plan.features || []).map((f) => (
-                      <li key={f} className="flex items-start gap-2 text-[13px] leading-relaxed text-text-secondary">
+                      <li key={f} className="flex items-start gap-2 text-[13px] leading-relaxed text-secondary">
                         <Check size={14} className="mt-0.5 shrink-0 text-accent-600" />
                         {f}
                       </li>
@@ -212,7 +212,7 @@ export default function BillingPage() {
           <div className="card border-warning/30 bg-warning/[0.06] p-4">
             <div className="flex gap-2.5">
               <Zap size={16} className="mt-0.5 shrink-0 text-warning" />
-              <p className="text-[13px] leading-relaxed text-text-secondary">
+              <p className="text-[13px] leading-relaxed text-secondary">
                 Payments are processed securely by Flutterwave. Plan changes are handled by the backend to ensure accurate billing.
               </p>
             </div>
@@ -225,8 +225,8 @@ export default function BillingPage() {
                 <div className="gradient-icon-badge mx-auto mb-3 h-10 w-10">
                   <Check size={18} />
                 </div>
-                <p className="text-sm text-text-secondary">No invoices yet</p>
-                <p className="mt-1 text-xs text-text-muted">Billing history will appear here</p>
+                <p className="text-sm text-secondary">No invoices yet</p>
+                <p className="mt-1 text-xs text-muted">Billing history will appear here</p>
               </div>
             </div>
           </div>

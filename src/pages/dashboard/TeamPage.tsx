@@ -29,8 +29,8 @@ export default function TeamPage() {
               {m.initials}
             </div>
             <div className="min-w-0 flex-1">
-              <p className="text-sm font-medium text-text-primary">{m.name}</p>
-              <p className="mt-0.5 font-mono text-xs text-text-muted">{m.email}</p>
+              <p className="text-sm font-medium text-primary">{m.name}</p>
+              <p className="mt-0.5 font-mono text-xs text-muted">{m.email}</p>
             </div>
             <select disabled value={m.role} className="input-field w-32 cursor-not-allowed opacity-50" aria-label={`${m.name} role`}>
               <option>Admin</option>

@@ -121,7 +121,7 @@ export default function WebhooksPage() {
         <div className="space-y-6">
           {actionError && <ErrorBanner message={actionError} />}
           {successMsg && (
-            <div className="flex items-center gap-2.5 rounded-control border border-accent-200 bg-accent-50 px-3.5 py-2.5 text-[13px] text-accent-700">
+            <div className="flex items-center gap-2.5 rounded-full border border-accent-200 bg-accent-50 px-3.5 py-2.5 text-[13px] text-accent-700">
               <CheckCircle2 size={18} /> {successMsg}
             </div>
           )}
@@ -129,7 +129,7 @@ export default function WebhooksPage() {
           <div className="card p-6">
             <div>
               <h2 className="section-title">Webhook URL</h2>
-              <p className="text-xs text-text-muted">Where verification events will be delivered</p>
+              <p className="text-xs text-muted">Where verification events will be delivered</p>
             </div>
             <form onSubmit={handleSaveUrl} className="mt-5 flex gap-2">
               <input
@@ -151,7 +151,7 @@ export default function WebhooksPage() {
           <div className="card p-6">
             <div>
               <h2 className="section-title">Webhook Secret</h2>
-              <p className="text-xs text-text-muted">Used to verify webhook delivery signatures</p>
+              <p className="text-xs text-muted">Used to verify webhook delivery signatures</p>
             </div>
             <form onSubmit={handleSaveSecret} className="mt-5 flex gap-2">
               <input
@@ -166,14 +166,14 @@ export default function WebhooksPage() {
               </button>
             </form>
             {data?.webhookSecretConfigured && (
-              <p className="mt-2.5 text-xs text-text-muted">A webhook secret is currently configured.</p>
+              <p className="mt-2.5 text-xs text-muted">A webhook secret is currently configured.</p>
             )}
           </div>
 
           <div className="card p-6">
             <div>
               <h2 className="section-title">Allowed Origins</h2>
-              <p className="text-xs text-text-muted">Domains authorized to make verification requests</p>
+              <p className="text-xs text-muted">Domains authorized to make verification requests</p>
             </div>
             <div className="mt-5 flex gap-2">
               <input
@@ -192,8 +192,8 @@ export default function WebhooksPage() {
               <ul className="mt-5 space-y-2">
                 {origins.map((origin) => (
                   <li key={origin} className="flex items-center justify-between rounded-panel border border-line bg-surface-2 px-4 py-2.5">
-                    <span className="font-mono text-sm text-text-muted">{origin}</span>
-                    <button onClick={() => handleRemoveOrigin(origin)} className="text-text-muted hover:text-danger" aria-label="Remove origin">
+                    <span className="font-mono text-sm text-muted">{origin}</span>
+                    <button onClick={() => handleRemoveOrigin(origin)} className="text-muted hover:text-danger" aria-label="Remove origin">
                       <Trash2 size={16} />
                     </button>
                   </li>
@@ -216,7 +216,7 @@ export default function WebhooksPage() {
           <div className="card p-6">
             <div>
               <h2 className="section-title">Event subscriptions</h2>
-              <p className="text-xs text-text-muted">Choose which events trigger webhook deliveries</p>
+              <p className="text-xs text-muted">Choose which events trigger webhook deliveries</p>
             </div>
             <div className="mt-5 divide-y divide border-line">
               {[
@@ -227,8 +227,8 @@ export default function WebhooksPage() {
               ].map((evt) => (
                 <div key={evt.id} className="flex items-center justify-between py-4 first:pt-0 last:pb-0">
                   <div>
-                    <p className="font-mono text-sm text-text-primary">{evt.label}</p>
-                    <p className="mt-0.5 text-xs text-text-muted">{evt.desc}</p>
+                    <p className="font-mono text-sm text-primary">{evt.label}</p>
+                    <p className="mt-0.5 text-xs text-muted">{evt.desc}</p>
                   </div>
                   <span className="pill-soon">Coming soon</span>
                   <button

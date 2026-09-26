@@ -30,8 +30,8 @@ export default function ActivityLogPage() {
             <li key={`${e.timestamp}-${e.action}`} className="flex items-start gap-3 py-3.5 first:pt-1 last:pb-0">
               <span className="mt-1.5 h-2 w-2 shrink-0 rounded-full bg-brand-600" />
               <div className="min-w-0 flex-1">
-                <p className="text-sm text-text-primary">{e.action}</p>
-                <p className="mt-0.5 font-mono text-xs text-text-muted">
+                <p className="text-sm text-primary">{e.action}</p>
+                <p className="mt-0.5 font-mono text-xs text-muted">
                   {e.actor} · {e.timestamp}
                 </p>
               </div>

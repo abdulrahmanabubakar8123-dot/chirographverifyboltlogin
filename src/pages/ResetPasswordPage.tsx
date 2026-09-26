@@ -195,7 +195,7 @@ export default function ResetPasswordPage() {
           <div>
             <label htmlFor="password" className="label-text">New password</label>
             <div className="relative">
-              <Lock size={18} className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-text-muted" />
+              <Lock size={18} className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-muted" />
               <input
                 id="password"
                 type={showPassword ? 'text' : 'password'}
@@ -211,7 +211,7 @@ export default function ResetPasswordPage() {
               <button
                 type="button"
                 onClick={() => setShowPassword(!showPassword)}
-                className="absolute right-3 top-1/2 -translate-y-1/2 text-text-muted hover:text-text-muted"
+                className="absolute right-3 top-1/2 -translate-y-1/2 text-muted hover:text-muted"
                 aria-label={showPassword ? 'Hide password' : 'Show password'}
               >
                 {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
@@ -258,7 +258,7 @@ export default function ResetPasswordPage() {
         <div>
           <label htmlFor="email" className="label-text">Email</label>
           <div className="relative">
-            <Mail size={18} className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-text-muted" />
+            <Mail size={18} className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-muted" />
             <input
               id="email"
               type="email"
@@ -306,7 +306,7 @@ export default function ResetPasswordPage() {
           >
             {codeSent ? 'Resend code' : 'Send code'}
           </button>
-          <p className="text-center text-xs text-text-muted">
+          <p className="text-center text-xs text-muted">
             Next you'll choose a new password.
           </p>
         </div>

@@ -1,4 +1,5 @@
 import type { ReactNode } from 'react';
+import { Fingerprint } from 'lucide-react';
 import Logo from '@/components/Logo';
 
 interface AuthLayoutProps {
@@ -10,25 +11,29 @@ interface AuthLayoutProps {
 
 export default function AuthLayout({ children, title, subtitle, footer }: AuthLayoutProps) {
   return (
-    <div className="relative flex min-h-screen flex-col overflow-hidden bg-canvas">
-      {/* Faint technical grid */}
-      <div className="grid-bg pointer-events-none absolute inset-0" />
-
-      <header className="relative z-10 border-b border-line px-6 py-4">
+    <div className="flex min-h-screen flex-col bg-canvas">
+      <header className="px-6 py-6 lg:px-12">
         <Logo size="md" to="/" />
       </header>
-      <main className="relative z-10 flex flex-1 items-center justify-center px-6 py-12">
-        <div className="w-full max-w-sm">
-          <div className="mb-6">
-            <h1 className="text-lg font-semibold tracking-tight text-text-primary">{title}</h1>
-            {subtitle && <p className="mt-1 text-sm leading-relaxed text-text-muted">{subtitle}</p>}
+      {/* Spec: two-panel — form column left-of-centre, oversized brand mark right */}
+      <main className="flex flex-1 items-center justify-center px-6 pb-16">
+        <div className="flex w-full max-w-5xl items-center justify-center gap-16">
+          <div className="w-full max-w-[400px]">
+            <h1 className="text-headline-lg font-semibold text-primary">{title}</h1>
+            {subtitle && <p className="mt-2 text-body-md text-secondary">{subtitle}</p>}
+            <div className="mt-8">{children}</div>
+            {footer && <div className="mt-6 text-sm text-muted">{footer}</div>}
           </div>
-          <div className="card p-7">{children}</div>
-          {footer && <div className="mt-5 text-center text-sm text-text-muted">{footer}</div>}
+          {/* Oversized brand mark — dramatic, unadorned, per spec */}
+          <div className="hidden lg:block" aria-hidden="true">
+            <div className="flex h-56 w-56 items-center justify-center rounded-full bg-primary">
+              <Fingerprint size={120} strokeWidth={1.5} className="text-neutral" />
+            </div>
+          </div>
         </div>
       </main>
-      <footer className="relative z-10 border-t border-line px-6 py-4">
-        <p className="text-center text-2xs text-text-micro">
+      <footer className="px-6 py-6 lg:px-12">
+        <p className="text-label-md text-muted">
           &copy; {new Date().getFullYear()} Chirograph Verify. All rights reserved.
         </p>
       </footer>

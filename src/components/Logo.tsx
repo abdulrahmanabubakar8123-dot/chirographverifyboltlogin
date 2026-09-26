@@ -8,21 +8,21 @@ interface LogoProps {
 }
 
 const sizeMap = {
-  sm: { box: 'h-7 w-7', icon: 15, text: 'text-[15px]' },
-  md: { box: 'h-8 w-8', icon: 16, text: 'text-base' },
-  lg: { box: 'h-10 w-10', icon: 20, text: 'text-lg' },
+  sm: { box: 'h-8 w-8', icon: 17, text: 'text-body-md' },
+  md: { box: 'h-10 w-10', icon: 20, text: 'text-headline-sm' },
+  lg: { box: 'h-12 w-12', icon: 24, text: 'text-headline-md' },
 };
 
 export default function Logo({ size = 'md', showText = true, to = '/' }: LogoProps) {
   const s = sizeMap[size];
   const content = (
     <div className="flex items-center gap-2">
-      <div className={`${s.box} flex shrink-0 items-center justify-center rounded-control border border-brand-200 bg-brand-50 text-brand-600`}>
+      <div className={`${s.box} flex shrink-0 items-center justify-center rounded-full bg-primary text-neutral`}>
         <Fingerprint size={s.icon} strokeWidth={2.1} />
       </div>
       {showText && (
-        <span className={`${s.text} font-semibold tracking-tight text-text-primary`}>
-          Chirograph<span className="text-brand-600"> Verify</span>
+        <span className={`${s.text} font-semibold text-primary`}>
+          Chirograph<span className="text-muted"> Verify</span>
         </span>
       )}
     </div>

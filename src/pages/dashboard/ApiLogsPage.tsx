@@ -27,7 +27,7 @@ export default function ApiLogsPage() {
         <div className="mt-6 overflow-x-auto">
           <table className="w-full text-left text-sm">
             <thead>
-              <tr className="border-b border-line text-xs uppercase tracking-wide text-text-muted">
+              <tr className="border-b border-line text-xs uppercase tracking-wide text-muted">
                 <th className="pb-3 pr-4 font-semibold">Timestamp</th>
                 <th className="pb-3 pr-4 font-semibold">Endpoint</th>
                 <th className="pb-3 pr-4 font-semibold">Status</th>
@@ -37,10 +37,10 @@ export default function ApiLogsPage() {
             <tbody className="divide-y divide border-line">
               {REQUESTS.map((r) => (
                 <tr key={`${r.timestamp}-${r.endpoint}`}>
-                  <td className="py-3.5 pr-4 font-mono text-xs text-text-muted">{r.timestamp}</td>
-                  <td className="py-3.5 pr-4 font-mono text-xs text-text-primary">{r.endpoint}</td>
+                  <td className="py-3.5 pr-4 font-mono text-xs text-muted">{r.timestamp}</td>
+                  <td className="py-3.5 pr-4 font-mono text-xs text-primary">{r.endpoint}</td>
                   <td className={`py-3.5 pr-4 font-mono text-xs font-semibold ${statusColor(r.status)}`}>{r.status}</td>
-                  <td className="py-3.5 font-mono text-xs text-text-muted">{r.ms} ms</td>
+                  <td className="py-3.5 font-mono text-xs text-muted">{r.ms} ms</td>
                 </tr>
               ))}
             </tbody>

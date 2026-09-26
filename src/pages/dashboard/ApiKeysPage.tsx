@@ -60,8 +60,8 @@ export default function ApiKeysPage() {
                 <Key size={22} />
               </div>
               <div>
-                <h2 className="text-base font-semibold tracking-tight text-text-primary">Your API Key</h2>
-                <p className="text-text-muted mt-1 text-xs">Use this key in the <code className="rounded bg-surface-3 px-1 py-0.5 font-mono text-xs text-text-secondary">Authorization</code> header</p>
+                <h2 className="text-base font-semibold tracking-tight text-primary">Your API Key</h2>
+                <p className="text-muted mt-1 text-xs">Use this key in the <code className="rounded bg-surface-3 px-1 py-0.5 font-mono text-xs text-secondary">Authorization</code> header</p>
               </div>
             </div>
             <button onClick={handleRegenerate} disabled={regenerating} className="btn-secondary shrink-0">
@@ -73,27 +73,27 @@ export default function ApiKeysPage() {
           <div className="mt-6">
             {data?.key ? (
               <div className="flex items-center gap-2">
-                <div className="flex-1 overflow-hidden rounded-control border border-line bg-surface px-3.5 py-2.5 font-mono text-sm text-text-primary">
+                <div className="flex-1 overflow-hidden rounded-full border border-line bg-surface px-3.5 py-2.5 font-mono text-sm text-primary">
                   {showKey ? data.key : `${data.key.slice(0, 8)}${'•'.repeat(20)}`}
                 </div>
-                <button onClick={() => setShowKey(!showKey)} className="rounded-control p-1.5 text-text-muted transition-colors hover:bg-white/[0.06] hover:text-text-primary" aria-label={showKey ? 'Hide key' : 'Show key'}>
+                <button onClick={() => setShowKey(!showKey)} className="rounded-full p-1.5 text-muted transition-colors hover:bg-white/[0.06] hover:text-primary" aria-label={showKey ? 'Hide key' : 'Show key'}>
                   {showKey ? <EyeOff size={18} /> : <Eye size={18} />}
                 </button>
-                <button onClick={handleCopy} className="rounded-control p-1.5 text-text-muted transition-colors hover:bg-white/[0.06] hover:text-text-primary" aria-label="Copy key">
+                <button onClick={handleCopy} className="rounded-full p-1.5 text-muted transition-colors hover:bg-white/[0.06] hover:text-primary" aria-label="Copy key">
                   {copied ? <Check size={18} className="text-accent-600" /> : <Copy size={18} />}
                 </button>
               </div>
             ) : data?.prefix ? (
               <div className="flex items-center gap-2">
-                <div className="flex-1 overflow-hidden rounded-control border border-line bg-surface px-3.5 py-2.5 font-mono text-sm text-text-primary">
+                <div className="flex-1 overflow-hidden rounded-full border border-line bg-surface px-3.5 py-2.5 font-mono text-sm text-primary">
                   {data.prefix}{'•'.repeat(16)}
                 </div>
-                <span className="text-xs text-text-muted">Key prefix only</span>
+                <span className="text-xs text-muted">Key prefix only</span>
               </div>
             ) : (
-              <div className="rounded-control border border-dashed border-line bg-surface px-6 py-8 text-center">
-                <p className="text-sm font-semibold text-text-primary">No API key displayed</p>
-                <p className="text-text-muted mt-1 text-sm">Regenerate your key to view it. For security, the full key is only shown once upon generation.</p>
+              <div className="rounded-full border border-dashed border-line bg-surface px-6 py-8 text-center">
+                <p className="text-sm font-semibold text-primary">No API key displayed</p>
+                <p className="text-muted mt-1 text-sm">Regenerate your key to view it. For security, the full key is only shown once upon generation.</p>
               </div>
             )}
           </div>
@@ -102,13 +102,13 @@ export default function ApiKeysPage() {
             <div className="mt-6 grid grid-cols-1 gap-5 border-t border-line pt-6 sm:grid-cols-2">
               {data.createdAt && (
                 <div>
-                  <p className="text-text-muted text-xs font-medium">Created</p>
-                  <p className="mt-0.5 font-mono text-sm text-text-primary">{new Date(data.createdAt).toLocaleDateString()}</p>
+                  <p className="text-muted text-xs font-medium">Created</p>
+                  <p className="mt-0.5 font-mono text-sm text-primary">{new Date(data.createdAt).toLocaleDateString()}</p>
                 </div>
               )}
               <div>
-                <p className="text-text-muted text-xs font-medium">Status</p>
-                <p className="mt-0.5 flex items-center gap-1.5 text-sm text-text-primary">
+                <p className="text-muted text-xs font-medium">Status</p>
+                <p className="mt-0.5 flex items-center gap-1.5 text-sm text-primary">
                   <span className={`h-2 w-2 rounded-full ${data.active ? 'bg-emerald-400' : 'bg-slate-400'}`} />
                   {data.active ? 'Active' : 'Inactive'}
                 </p>
@@ -120,7 +120,7 @@ export default function ApiKeysPage() {
         <div className="card border-warning/35 bg-warning/10 p-4">
           <div className="flex gap-2.5">
             <AlertCircle size={18} className="mt-0.5 shrink-0 text-warning" />
-            <p className="text-sm text-text-secondary">
+            <p className="text-sm text-secondary">
               Keep your API key secure. Never expose it in client-side code or public repositories. Regenerating the key will immediately invalidate the previous one.
             </p>
           </div>

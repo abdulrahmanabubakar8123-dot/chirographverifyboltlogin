@@ -33,8 +33,8 @@ export default class ErrorBoundary extends Component<Props, State> {
             <div className="gradient-icon-badge mx-auto mb-4 h-12 w-12">
               <span className="text-xl">⚠️</span>
             </div>
-            <h1 className="text-lg font-bold text-text-primary">Something went wrong</h1>
-            <p className="mt-2 text-sm text-text-secondary">
+            <h1 className="text-lg font-bold text-primary">Something went wrong</h1>
+            <p className="mt-2 text-sm text-secondary">
               An unexpected error occurred while loading this page. Please refresh to try again, and check your
               console for details.
             </p>

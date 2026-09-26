@@ -33,8 +33,8 @@ export default function AnalyticsPage() {
                 disabled
                 className={`rounded-lg px-3 py-1.5 text-xs font-semibold transition-colors ${
                   r === activeRange
-                    ? 'bg-brand-500/20 text-text-primary'
-                    : 'cursor-not-allowed opacity-50 text-text-muted'
+                    ? 'bg-brand-500/20 text-primary'
+                    : 'cursor-not-allowed opacity-50 text-muted'
                 }`}
               >
                 {r}
@@ -65,9 +65,9 @@ export default function AnalyticsPage() {
                 <div className="flex items-center justify-between">
                   <p className="micro-label">{kpi.label}</p>
                   <span className="pill-soon">Soon</span>
-                  <Icon size={16} className="text-text-muted" />
+                  <Icon size={16} className="text-muted" />
                 </div>
-                <p className="mt-3 font-mono text-2xl font-semibold tabular-nums tracking-tight text-text-primary">{kpi.value}</p>
+                <p className="mt-3 font-mono text-2xl font-semibold tabular-nums tracking-tight text-primary">{kpi.value}</p>
                 <span className="badge-success mt-2">{kpi.delta}</span>
               </div>
             );
@@ -79,8 +79,8 @@ export default function AnalyticsPage() {
           <div className="mb-6 flex items-center justify-between">
             <h3 className="section-title">Verifications over time</h3>
             <div className="flex items-center gap-4">
-              <span className="flex items-center gap-1.5 text-xs text-text-secondary"><span className="h-2 w-2 rounded-full bg-brand-500" />Verifications</span>
-              <span className="flex items-center gap-1.5 text-xs text-text-secondary"><span className="h-2 w-2 rounded-full bg-accent-400" />Flagged</span>
+              <span className="flex items-center gap-1.5 text-xs text-secondary"><span className="h-2 w-2 rounded-full bg-brand-500" />Verifications</span>
+              <span className="flex items-center gap-1.5 text-xs text-secondary"><span className="h-2 w-2 rounded-full bg-accent-400" />Flagged</span>
             </div>
           </div>
           <div className="flex h-64 items-center justify-center">
@@ -100,7 +100,7 @@ export default function AnalyticsPage() {
               <span className="pill-soon">Coming soon</span>
             </div>
             <div className="flex h-40 items-center justify-center rounded-lg border border-dashed border-line">
-              <p className="text-sm text-text-muted">No origins yet</p>
+              <p className="text-sm text-muted">No origins yet</p>
             </div>
           </div>
           <div className="card p-6">

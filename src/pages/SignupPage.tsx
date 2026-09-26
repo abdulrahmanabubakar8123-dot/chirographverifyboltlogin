@@ -162,8 +162,8 @@ export default function SignupPage() {
           <div className="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-full border border-indigo-100 bg-brand-500/15">
             <Mail size={28} className="text-brand-400" />
           </div>
-          <p className="text-sm text-text-muted">
-            We've sent a verification code to <span className="font-medium text-text-primary">{email}</span>. Enter it below to verify your account and finish signing up.
+          <p className="text-sm text-muted">
+            We've sent a verification code to <span className="font-medium text-primary">{email}</span>. Enter it below to verify your account and finish signing up.
           </p>
 
           <div className="mt-5">
@@ -200,7 +200,7 @@ export default function SignupPage() {
             {resending ? 'Resending…' : 'Resend code'}
           </button>
 
-          <p className="mt-4 text-xs text-text-muted">
+          <p className="mt-4 text-xs text-muted">
             Didn't get a code? Check your spam folder.
           </p>
         </div>
@@ -225,9 +225,9 @@ export default function SignupPage() {
         {error && <ErrorBanner message={error} />}
 
         <div>
-          <label htmlFor="name" className="label-text">Full name <span className="text-text-muted">(optional)</span></label>
+          <label htmlFor="name" className="label-text">Full name <span className="text-muted">(optional)</span></label>
           <div className="relative">
-            <User size={18} className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-text-muted" />
+            <User size={18} className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-muted" />
             <input
               id="name"
               type="text"
@@ -243,7 +243,7 @@ export default function SignupPage() {
         <div>
           <label htmlFor="email" className="label-text">Email</label>
           <div className="relative">
-            <Mail size={18} className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-text-muted" />
+            <Mail size={18} className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-muted" />
             <input
               id="email"
               type="email"
@@ -263,7 +263,7 @@ export default function SignupPage() {
         <div>
           <label htmlFor="password" className="label-text">Password</label>
           <div className="relative">
-            <Lock size={18} className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-text-muted" />
+            <Lock size={18} className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-muted" />
             <input
               id="password"
               type={showPassword ? 'text' : 'password'}
@@ -278,7 +278,7 @@ export default function SignupPage() {
             <button
               type="button"
               onClick={() => setShowPassword(!showPassword)}
-              className="absolute right-3 top-1/2 -translate-y-1/2 text-text-muted hover:text-text-muted"
+              className="absolute right-3 top-1/2 -translate-y-1/2 text-muted hover:text-muted"
               aria-label={showPassword ? 'Hide password' : 'Show password'}
             >
               {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
@@ -290,7 +290,7 @@ export default function SignupPage() {
         <div>
           <label htmlFor="confirm-password" className="label-text">Confirm password</label>
           <div className="relative">
-            <Lock size={18} className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-text-muted" />
+            <Lock size={18} className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-muted" />
             <input
               id="confirm-password"
               type={showPassword ? 'text' : 'password'}
@@ -309,7 +309,7 @@ export default function SignupPage() {
         <button type="submit" disabled={loading} className="btn-primary w-full">
           {loading ? <Spinner size={18} /> : 'Create Account'}
         </button>
-        <p className="text-center text-xs text-text-muted">
+        <p className="text-center text-xs text-muted">
           By signing up, you agree to our Terms of Service and Privacy Policy.
         </p>
       </form>

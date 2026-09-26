@@ -10,7 +10,7 @@ function AuthLoadingScreen() {
   return (
     <div className="flex min-h-screen flex-col items-center justify-center gap-4 bg-canvas">
       <Logo size="md" showText={false} to="" />
-      <div className="flex items-center gap-2 text-sm text-text-muted">
+      <div className="flex items-center gap-2 text-sm text-muted">
         <Spinner size={18} /> Loading...
       </div>
     </div>
@@ -54,7 +54,7 @@ export default function ProtectedRoute({ children }: { children: ReactNode }) {
             <button
               type="button"
               onClick={() => void logout()}
-              className="w-full text-sm font-medium text-text-muted transition-colors hover:text-text-secondary"
+              className="w-full text-sm font-medium text-muted transition-colors hover:text-secondary"
             >
               Sign out and sign in again
             </button>

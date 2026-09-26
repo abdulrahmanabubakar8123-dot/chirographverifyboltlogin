@@ -74,7 +74,7 @@ export default function ForgotPasswordPage() {
           <div className="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-full border border-accent-400/35 bg-accent-400/15">
             <CheckCircle2 size={28} className="text-accent-400" />
           </div>
-          <p className="text-sm text-text-muted">
+          <p className="text-sm text-muted">
             We've sent a 6-digit reset code to <strong>{email}</strong>. Enter it on the next page along with your new
             password.
           </p>
@@ -104,7 +104,7 @@ export default function ForgotPasswordPage() {
         <div>
           <label htmlFor="email" className="label-text">Email</label>
           <div className="relative">
-            <Mail size={18} className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-text-muted" />
+            <Mail size={18} className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-muted" />
             <input
               id="email"
               type="email"

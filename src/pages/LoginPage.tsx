@@ -1,6 +1,6 @@
 import { useState, type FormEvent } from 'react';
 import { Link, Navigate, useNavigate, useLocation } from 'react-router-dom';
-import { Mail, Lock, Eye, EyeOff } from 'lucide-react';
+import { Mail, Lock, Eye, EyeOff, Fingerprint } from 'lucide-react';
 import AuthLayout from '@/layouts/AuthLayout';
 import { useSignIn, useAuth } from '@clerk/react';
 import { ErrorBanner } from '@/components/Feedback';
@@ -66,68 +66,27 @@ export default function LoginPage() {
   };
 
   return (
-    <div className="relative flex min-h-screen overflow-hidden bg-canvas">
-      {/* Faint technical grid */}
-      <div className="grid-bg pointer-events-none absolute inset-0" />
-
-      {/* Left panel — product framing */}
-      <div className="relative z-10 hidden w-[46%] shrink-0 flex-col justify-between border-r border-line bg-surface-2 px-10 py-10 lg:flex xl:px-14">
+    <div className="flex min-h-screen flex-col bg-canvas">
+      <header className="px-6 py-6 lg:px-12">
         <Logo size="md" to="/" />
+      </header>
 
-        <div className="max-w-md">
-          <div className="micro-label mb-5">Developer console</div>
-          <h1 className="text-3xl font-semibold tracking-tight text-text-primary">
-            Verification infrastructure for modern teams
-          </h1>
-          <p className="mt-4 text-[15px] leading-relaxed text-text-secondary">
-            Manage API keys, verifications, webhooks and billing from one console.
-          </p>
+      {/* Spec: two-panel — form column left-of-centre, oversized mark right */}
+      <main className="flex flex-1 items-center justify-center px-6 pb-16">
+        <div className="flex w-full max-w-5xl items-center justify-center gap-16">
+          <div className="w-full max-w-[400px]">
+            <h1 className="text-headline-lg font-semibold text-primary">Welcome back</h1>
+            <p className="mt-2 text-body-md text-secondary">
+              Sign in to your Chirograph Verify account
+            </p>
 
-          <div className="card mt-8 overflow-hidden">
-            <div className="flex items-center gap-2 border-b border-line bg-surface-2 px-4 py-2.5">
-              <span className="h-2.5 w-2.5 rounded-full bg-line-strong" />
-              <span className="h-2.5 w-2.5 rounded-full bg-line-strong" />
-              <span className="h-2.5 w-2.5 rounded-full bg-line-strong" />
-              <span className="ml-1.5 font-mono text-2xs text-text-muted">POST /v1/challenge</span>
-            </div>
-            <pre className="overflow-x-auto p-4 font-mono text-xs leading-relaxed text-text-secondary">
-              <span className="text-text-muted">$</span> curl https://app.chirographverify.com/v1/challenge {'\n'}
-              {'  '}<span className="text-brand-600">"device_id"</span>: <span className="text-accent-600">"dev_9f2k"</span>,{'\n'}
-              {'  '}<span className="text-brand-600">"origin"</span>: <span className="text-accent-600">"https://app.io"</span>{'\n'}
-              {'}'}
-            </pre>
-          </div>
-        </div>
-
-        <div className="flex items-center gap-6 font-mono text-2xs text-text-muted">
-          <span>99.99% uptime</span>
-          <span className="h-1 w-1 rounded-full bg-line-strong" />
-          <span>12ms median</span>
-          <span className="h-1 w-1 rounded-full bg-line-strong" />
-          <span>SOC 2</span>
-        </div>
-      </div>
-
-      {/* Right auth card */}
-      <div className="relative z-10 flex flex-1 flex-col items-center justify-center px-6 py-12">
-        <div className="w-full max-w-sm">
-          <div className="mb-8 lg:hidden">
-            <Logo size="md" to="/" />
-          </div>
-
-          <div className="card p-7">
-            <div className="mb-6">
-              <h2 className="text-lg font-semibold tracking-tight text-text-primary">Welcome back</h2>
-              <p className="mt-1 text-sm text-text-muted">Sign in to your Chirograph Verify account</p>
-            </div>
-
-            <form onSubmit={handleSubmit} noValidate className="space-y-4">
+            <form onSubmit={handleSubmit} noValidate className="mt-8 space-y-4">
               {error && <ErrorBanner message={error} />}
 
               <div>
                 <label htmlFor="email" className="label-text">Email</label>
                 <div className="relative">
-                  <Mail size={18} className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-text-muted" />
+                  <Mail size={18} className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-muted" />
                   <input
                     id="email"
                     type="email"
@@ -154,7 +113,7 @@ export default function LoginPage() {
                   </Link>
                 </div>
                 <div className="relative">
-                  <Lock size={18} className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-text-muted" />
+                  <Lock size={18} className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-muted" />
                   <input
                     id="password"
                     type={showPassword ? 'text' : 'password'}
@@ -169,7 +128,7 @@ export default function LoginPage() {
                   <button
                     type="button"
                     onClick={() => setShowPassword(!showPassword)}
-                    className="absolute right-3 top-1/2 -translate-y-1/2 text-text-muted hover:text-text-secondary"
+                    className="absolute right-3 top-1/2 -translate-y-1/2 text-muted hover:text-secondary"
                     aria-label={showPassword ? 'Hide password' : 'Show password'}
                   >
                     {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
@@ -186,7 +145,7 @@ export default function LoginPage() {
 
               <div className="flex items-center gap-3 pt-1">
                 <div className="h-px flex-1 bg-line" />
-                <span className="inline-flex items-center gap-1.5 text-2xs uppercase tracking-micro text-text-micro">
+                <span className="inline-flex items-center gap-1.5 text-2xs uppercase tracking-micro text-muted">
                   Or continue with
                   <span className="pill-soon">Soon</span>
                 </span>
@@ -210,16 +169,29 @@ export default function LoginPage() {
                 </button>
               </div>
             </form>
+
+            <p className="mt-6 text-body-md text-muted">
+              Don't have an account?{' '}
+              <Link to="/signup" className="text-primary hover:text-accent">
+                Sign up
+              </Link>
+            </p>
           </div>
 
-          <p className="mt-5 text-center text-sm text-text-muted">
-            Don't have an account?{' '}
-            <Link to="/signup" className="font-medium text-brand-600 hover:text-brand-700">
-              Sign up
-            </Link>
-          </p>
+          {/* Oversized brand mark — dramatic and unadorned, per spec */}
+          <div className="hidden lg:block" aria-hidden="true">
+            <div className="flex h-56 w-56 items-center justify-center rounded-full bg-primary">
+              <Fingerprint size={120} strokeWidth={1.5} className="text-neutral" />
+            </div>
+          </div>
         </div>
-      </div>
+      </main>
+
+      <footer className="px-6 py-6 lg:px-12">
+        <p className="text-label-md text-muted">
+          &copy; {new Date().getFullYear()} Chirograph Verify. All rights reserved.
+        </p>
+      </footer>
     </div>
   );
 }

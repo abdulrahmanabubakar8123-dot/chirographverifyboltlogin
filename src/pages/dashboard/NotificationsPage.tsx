@@ -17,8 +17,8 @@ export default function NotificationsPage() {
         {ALERTS.map((a) => (
           <div key={a.title} className="flex items-center gap-4 px-6 py-5">
             <div className="min-w-0 flex-1">
-              <p className="text-sm font-medium text-text-primary">{a.title}</p>
-              <p className="mt-0.5 text-sm text-text-muted">{a.description}</p>
+              <p className="text-sm font-medium text-primary">{a.title}</p>
+              <p className="mt-0.5 text-sm text-muted">{a.description}</p>
             </div>
             <button
               type="button"

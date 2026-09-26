@@ -54,8 +54,8 @@ function SidebarNavItem({ item, onNavigate }: { item: NavItem; onNavigate: () =>
       end={item.end}
       onClick={onNavigate}
       className={({ isActive }) =>
-        `group relative flex items-center gap-2.5 rounded-control py-[7px] pl-3 pr-2 text-[13px] font-medium transition-colors ${
-          isActive ? 'bg-surface-2 text-text-primary' : 'text-text-muted hover:bg-white/[0.06]/60 hover:text-text-secondary'
+        `group relative flex items-center gap-2.5 rounded-full py-[7px] pl-3 pr-2 text-[13px] font-medium transition-colors ${
+          isActive ? 'bg-surface-2 text-primary' : 'text-muted hover:bg-white/[0.06]/60 hover:text-secondary'
         }`
       }
     >
@@ -64,7 +64,7 @@ function SidebarNavItem({ item, onNavigate }: { item: NavItem; onNavigate: () =>
           {isActive && (
             <span className="absolute left-0 top-1/2 h-4 w-[2px] -translate-y-1/2 rounded-r-full bg-brand-600" />
           )}
-          <Icon size={16} strokeWidth={1.9} className={isActive ? 'text-brand-600' : 'text-text-muted group-hover:text-text-secondary'} />
+          <Icon size={16} strokeWidth={1.9} className={isActive ? 'text-brand-600' : 'text-muted group-hover:text-secondary'} />
           <span className="flex-1">{item.label}</span>
           {item.soon && (
             <span className="pill-soon">Soon</span>
@@ -86,7 +86,7 @@ export default function DashboardLayout() {
   };
 
   const sidebarContent = (
-    <div className="flex h-full flex-col bg-canvas text-text-secondary">
+    <div className="flex h-full flex-col bg-canvas text-secondary">
       <div className="flex h-14 shrink-0 items-center border-b border-line px-4">
         <Logo size="sm" to="/dashboard" />
       </div>
@@ -107,9 +107,9 @@ export default function DashboardLayout() {
       <div className="border-t border-line p-3">
         <button
           onClick={handleLogout}
-          className="group flex w-full items-center gap-2.5 rounded-control px-2.5 py-[7px] text-[13px] font-medium text-text-muted transition-colors hover:bg-white/[0.06] hover:text-text-secondary"
+          className="group flex w-full items-center gap-2.5 rounded-full px-2.5 py-[7px] text-[13px] font-medium text-muted transition-colors hover:bg-white/[0.06] hover:text-secondary"
         >
-          <LogOut size={16} strokeWidth={1.9} className="text-text-muted group-hover:text-text-secondary" />
+          <LogOut size={16} strokeWidth={1.9} className="text-muted group-hover:text-secondary" />
           Sign out
         </button>
       </div>
@@ -133,7 +133,7 @@ export default function DashboardLayout() {
           <aside className="fixed left-0 top-0 z-50 h-full w-[232px] border-r border-line bg-canvas lg:hidden">
             <button
               onClick={() => setMobileOpen(false)}
-              className="absolute right-3 top-3.5 rounded-control p-1.5 text-text-muted hover:bg-white/[0.06]"
+              className="absolute right-3 top-3.5 rounded-full p-1.5 text-muted hover:bg-white/[0.06]"
               aria-label="Close menu"
             >
               <X size={18} />
@@ -148,7 +148,7 @@ export default function DashboardLayout() {
         <header className="flex h-14 shrink-0 items-center justify-between border-b border-line bg-canvas px-4 lg:px-6">
           <button
             onClick={() => setMobileOpen(true)}
-            className="rounded-control p-1.5 text-text-muted hover:bg-white/[0.06] lg:hidden"
+            className="rounded-full p-1.5 text-muted hover:bg-white/[0.06] lg:hidden"
             aria-label="Open menu"
           >
             <Menu size={18} />
@@ -157,10 +157,10 @@ export default function DashboardLayout() {
             <Logo size="sm" to="/dashboard" />
           </div>
           <div className="ml-auto flex items-center gap-2.5">
-            <span className="hidden font-mono text-xs text-text-muted sm:block">
+            <span className="hidden font-mono text-xs text-muted sm:block">
               {user?.email}
             </span>
-            <span className="flex h-7 w-7 items-center justify-center rounded-full border border-line bg-surface-2 text-xs font-semibold text-text-secondary">
+            <span className="flex h-7 w-7 items-center justify-center rounded-full border border-line bg-surface-2 text-xs font-semibold text-secondary">
               {user?.email?.charAt(0).toUpperCase() || 'U'}
             </span>
           </div>

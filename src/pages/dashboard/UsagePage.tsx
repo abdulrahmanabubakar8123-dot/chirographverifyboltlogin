@@ -62,19 +62,19 @@ export default function UsagePage() {
             <div className="flex flex-col gap-5 sm:flex-row sm:items-end sm:justify-between">
               <div>
                 <p className="badge-indigo mb-4">Monthly allowance</p>
-                <h2 className="text-xl font-semibold tracking-tight text-text-primary">
+                <h2 className="text-xl font-semibold tracking-tight text-primary">
                   {usage.toLocaleString()} <span className="gradient-text">used</span>
                 </h2>
-                <p className="text-text-muted mt-2 font-mono text-xs">{limit > 0 ? `${pct}% of ${limit.toLocaleString()} used` : 'Unlimited plan'}</p>
+                <p className="text-muted mt-2 font-mono text-xs">{limit > 0 ? `${pct}% of ${limit.toLocaleString()} used` : 'Unlimited plan'}</p>
               </div>
               <div className="flex shrink-0 items-center gap-6">
                 <div>
-                  <p className="text-text-muted text-xs font-semibold uppercase tracking-wide">Flagged</p>
-                  <p className="mt-1 font-mono text-lg font-semibold text-text-primary">{flagged.toLocaleString()}</p>
+                  <p className="text-muted text-xs font-semibold uppercase tracking-wide">Flagged</p>
+                  <p className="mt-1 font-mono text-lg font-semibold text-primary">{flagged.toLocaleString()}</p>
                 </div>
                 <div>
-                  <p className="text-text-muted text-xs font-semibold uppercase tracking-wide">Remaining</p>
-                  <p className="mt-1 font-mono text-lg font-semibold text-text-primary">{remaining.toLocaleString()}</p>
+                  <p className="text-muted text-xs font-semibold uppercase tracking-wide">Remaining</p>
+                  <p className="mt-1 font-mono text-lg font-semibold text-primary">{remaining.toLocaleString()}</p>
                 </div>
               </div>
             </div>
@@ -102,8 +102,8 @@ export default function UsagePage() {
             </div>
             <div className="mt-5">
               <div className="flex items-baseline justify-between gap-3 text-sm">
-                <span className="font-mono text-2xl font-bold tabular-nums tracking-tight text-text-primary">{usage.toLocaleString()}<span className="ml-1 font-sans text-sm font-normal text-text-muted">used</span></span>
-                <span className="text-text-muted">{limit > 0 ? `${limit.toLocaleString()} limit` : 'Unlimited'}</span>
+                <span className="font-mono text-2xl font-bold tabular-nums tracking-tight text-primary">{usage.toLocaleString()}<span className="ml-1 font-sans text-sm font-normal text-muted">used</span></span>
+                <span className="text-muted">{limit > 0 ? `${limit.toLocaleString()} limit` : 'Unlimited'}</span>
               </div>
               <div className="mt-4 h-2 w-full overflow-hidden rounded-full bg-surface-3">
                 <div
@@ -118,7 +118,7 @@ export default function UsagePage() {
             <div className="card p-6">
               <div className="flex items-center justify-between">
                 <h2 className="section-title">Usage History</h2>
-                <span className="text-xs text-text-muted">Per day</span>
+                <span className="text-xs text-muted">Per day</span>
               </div>
               <div className="mt-5 space-y-2.5">
                 {data.history.map((item) => {
@@ -126,11 +126,11 @@ export default function UsagePage() {
                   const w = Math.max(2, Math.round((item.count / max) * 100));
                   return (
                     <div key={item.date} className="flex items-center gap-4">
-                      <span className="w-24 shrink-0 font-mono text-xs text-text-muted">{new Date(item.date).toLocaleDateString()}</span>
+                      <span className="w-24 shrink-0 font-mono text-xs text-muted">{new Date(item.date).toLocaleDateString()}</span>
                       <div className="h-6 flex-1 overflow-hidden rounded bg-surface-3">
                         <div className="h-full rounded bg-brand-600 transition-all" style={{ width: `${w}%` }} />
                       </div>
-                      <span className="w-12 shrink-0 text-right font-mono text-xs font-medium text-text-muted">{item.count}</span>
+                      <span className="w-12 shrink-0 text-right font-mono text-xs font-medium text-muted">{item.count}</span>
                     </div>
                   );
                 })}
