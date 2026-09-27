@@ -33,7 +33,6 @@ interface NavItem {
   label: string;
   icon: Icon;
   end?: boolean;
-  badge?: number;
   soon?: boolean;
 }
 
@@ -46,7 +45,7 @@ const navGroups: { label: string; items: NavItem[] }[] = [
     label: 'Access',
     items: [
       { to: '/dashboard', label: 'Dashboard', icon: LayoutGrid, end: true },
-      { to: '/dashboard/notifications', label: 'Notifications', icon: Bell, badge: 1 },
+      { to: '/dashboard/notifications', label: 'Notifications', icon: Bell },
       { to: '/dashboard/activity-log', label: 'Agent', icon: Activity, soon: true },
     ],
   },
@@ -89,11 +88,6 @@ function SidebarNavItem({ item, onNavigate }: { item: NavItem; onNavigate: () =>
           )}
           <Icon size={18} strokeWidth={1.7} className="shrink-0" />
           <span className="flex-1 truncate">{item.label}</span>
-          {item.badge ? (
-            <span className="flex h-[18px] min-w-[18px] items-center justify-center rounded-full bg-primary px-1 text-[11px] font-semibold text-canvas">
-              {item.badge}
-            </span>
-          ) : null}
           {item.soon && <span className="pill-soon">Soon</span>}
         </>
       )}
@@ -254,14 +248,11 @@ export default function DashboardLayout() {
 
             <button
               onClick={() => navigate('/dashboard/notifications')}
-              className="relative rounded-md p-2 text-secondary transition-colors hover:bg-surface-3 hover:text-primary"
+              className="rounded-md p-2 text-secondary transition-colors hover:bg-surface-3 hover:text-primary"
               aria-label="Notifications"
               title="Notifications"
             >
               <Bell size={18} strokeWidth={1.7} />
-              <span className="absolute right-1 top-1 flex h-[15px] min-w-[15px] items-center justify-center rounded-full bg-primary px-1 text-[10px] font-semibold text-canvas">
-                1
-              </span>
             </button>
 
             {/* Theme toggle */}
