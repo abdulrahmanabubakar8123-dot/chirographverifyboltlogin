@@ -222,7 +222,7 @@ export default function DashboardLayout() {
 
           <div className="ml-auto flex items-center gap-1">
             <a
-              href="https://chirographverify.com/developers"
+              href="https://chirographverify.com/#/docs"
               target="_blank"
               rel="noreferrer"
               className="hidden items-center gap-1 rounded-md px-2.5 py-1.5 text-[14px] text-secondary transition-colors hover:bg-surface-3 hover:text-primary sm:flex"
@@ -283,7 +283,7 @@ export default function DashboardLayout() {
             <span>© 2026 Chirograph Verify. All rights reserved.</span>
             <div className="flex flex-wrap items-center gap-x-6 gap-y-2">
               <a
-                href="https://chirographverify.com/developers"
+                href="https://chirographverify.com/#/docs"
                 target="_blank"
                 rel="noreferrer"
                 className="transition-colors hover:text-secondary"
@@ -294,7 +294,7 @@ export default function DashboardLayout() {
                 </span>
               </a>
               <a
-                href="https://chirographverify.com/pricing"
+                href="https://chirographverify.com/#/pricing"
                 target="_blank"
                 rel="noreferrer"
                 className="transition-colors hover:text-secondary"
