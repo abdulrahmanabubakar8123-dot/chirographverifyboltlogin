@@ -8,7 +8,8 @@
     "build": "vite build",
     "lint": "eslint .",
     "preview": "vite preview",
-    "typecheck": "tsc --noEmit -p tsconfig.app.json"
+    "typecheck": "tsc --noEmit -p tsconfig.app.json",
+    "test:theme": "node scripts/verify-theme-contrast.mjs src/index.css"
   },
   "dependencies": {
     "@clerk/react": "^6.15.1",

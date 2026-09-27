@@ -3,108 +3,88 @@
 @tailwind utilities;
 
 @layer base {
+  /*
+   * The single source of truth for the console palette.
+   *
+   * Every value is stored as space-separated RGB channels so Tailwind can emit
+   * `rgb(var(--token) / <alpha-value>)` and keep its opacity modifiers working.
+   * The light theme is therefore a complete, atomic swap of this block — there
+   * is no per-component override list to fall out of sync, which is what made
+   * the previous attempt render dark-on-dark text.
+   */
   :root {
     /* X Developer Platform system — true-black canvas. */
-    --primary: #FFFFFF;
-    --accent: #FFFFFF;
-    --secondary: #A3A3A3;
-    --tertiary: #262626;
-    --muted: #8C8C8C;
-    --neutral: #FFFFFF;
-    --canvas: #000000;
-    --surface: #0A0A0A;
-    --surface-2: #141414;
-    --surface-3: #1F1F1F;
-    --line: #1F1F1F;
-    --line-strong: #2E2E2E;
-    --error: #EF4444;
-    --success: #10B981;
-    --warning: #F59E0B;
-    --text-primary: #FFFFFF;
-    --text-secondary: #A3A3A3;
-    --text-muted: #8C8C8C;
-    --text-micro: #737980;
-    --radius: 8px;
+    --cv-primary: 255 255 255;      /* headings & strong text (ink) */
+    --cv-secondary: 163 163 163;    /* secondary body text */
+    --cv-muted: 140 140 140;         /* muted body text */
+    --cv-text-micro: 152 158 165;   /* micro labels (>=4.5:1 on surface-2) */
+
+    --cv-canvas: 0 0 0;             /* page background */
+    --cv-surface: 10 10 10;         /* raised surface */
+    --cv-surface-2: 22 22 22;       /* panel fill (cards, tables) */
+    --cv-surface-3: 31 31 31;       /* hovered / inset rows */
+    --cv-line: 31 31 31;            /* hairline border */
+    --cv-line-strong: 46 46 46;
+
+    /* Green is the single chromatic accent, reserved for positive states. */
+    --cv-success: 16 185 129;
+    --cv-success-ink: 52 211 153;    /* legible green text on dark surfaces */
+    --cv-success-bg: 4 20 14;       /* translucent banner fill */
+    --cv-success-line: 11 61 42;
+    --cv-warning: 245 158 11;
+    --cv-danger: 239 68 68;
+
+    /* Brand blue — see the documented exception in BrandMark.tsx. */
+    --cv-blue-ink: 59 91 255;
+    --cv-blue-text: 140 164 255;    /* legible blue on dark */
+    --cv-blue-line: 59 91 255;
+    --cv-blue-soft: 59 91 255;
+    --cv-blue-glow: 59 91 255;
   }
+
+  /*
+   * Light theme. The header toggle flips `.light` on <html>; because every
+   * token above is a variable, this one block repaints the entire console —
+   * canvas, panels, hairlines and ink together, so contrast can never split.
+   */
+  html.light {
+    --cv-primary: 10 10 10;
+    --cv-secondary: 75 75 75;
+    --cv-muted: 102 102 102;
+    --cv-text-micro: 99 99 99;       /* micro labels (>=4.5:1 on surface-2) */
+
+    --cv-canvas: 255 255 255;
+    --cv-surface: 247 247 247;
+    --cv-surface-2: 255 255 255;
+    --cv-surface-3: 239 239 239;
+    --cv-line: 228 228 228;
+    --cv-line-strong: 208 208 208;
+
+    /* Darker green/blue read correctly on white; the pale dark-mode tints
+       would be invisible. */
+    --cv-success: 5 150 105;
+    --cv-success-ink: 4 120 87;
+    --cv-success-bg: 236 253 245;
+    --cv-success-line: 167 243 208;
+    --cv-warning: 180 83 9;
+    --cv-danger: 220 38 38;
+
+    --cv-blue-ink: 59 91 255;
+    --cv-blue-text: 43 65 184;
+    --cv-blue-line: 59 91 255;
+    --cv-blue-soft: 59 91 255;
+    --cv-blue-glow: 59 91 255;
+  }
+
   html {
     font-family: 'Inter', ui-sans-serif, system-ui, sans-serif;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
-    background-color: var(--canvas);
+    background-color: rgb(var(--cv-canvas));
+    color-scheme: dark;
   }
-  /*
-   * Light theme. The console is dark-first (the X system is true-black), but
-   * the header toggle flips this class on <html>.
-   *
-   * Tailwind resolves theme colors to static hex at build time, so the
-   * utilities (bg-surface-2, text-primary, border-line …) CANNOT be repainted
-   * with CSS variables alone. These overrides target the generated utilities
-   * directly and re-declare them against the light palette. The green accent
-   * and the hairlines keep their meaning; only surfaces and ink invert.
-   */
-  html.light body {
-    @apply bg-white text-[#4B4B4B];
-  }
-  html.light .x-sidebar,
-  html.light .x-panel,
-  html.light .x-stat,
-  html.light .x-table-wrap {
-    @apply bg-white border-[#E4E4E4];
-  }
-  html.light .x-table-head {
-    @apply bg-[#EFEFEF] text-[#4B4B4B];
-  }
-  html.light .x-table-cell {
-    @apply border-[#E4E4E4] text-[#4B4B4B];
-  }
-  html.light .x-nav-group {
-    @apply text-[#8C8C8C];
-  }
-  html.light .x-nav-item {
-    @apply text-[#4B4B4B];
-  }
-  html.light .x-nav-item:hover {
-    @apply bg-[#EFEFEF] text-[#0A0A0A];
-  }
-  html.light .x-filter,
-  html.light .x-banner {
-    @apply bg-white border-[#E4E4E4] text-[#4B4B4B];
-  }
-  html.light .x-panel-inset {
-    @apply border-[#E4E4E4] bg-[#FAFAFA];
-  }
-  html.light h1,
-  html.light h2,
-  html.light h3,
-  html.light h4,
-  html.light .text-primary {
-    @apply text-[#0A0A0A];
-  }
-  html.light .text-secondary {
-    @apply text-[#4B4B4B];
-  }
-  html.light .text-muted,
-  html.light .text-text-micro {
-    @apply text-[#6E6E6E];
-  }
-  /*
-   * Premium plan surfaces in light mode. Brand blue darkens so the tinted
-   * fills keep contrast against white instead of washing out.
-   */
-  html.light .plan-card-current {
-    @apply border-[#3B5BFF]/35 bg-[#3B5BFF]/[0.06];
-  }
-  html.light .plan-card-featured {
-    @apply border-[#3B5BFF]/45 bg-white;
-  }
-  html.light .plan-badge-current {
-    @apply bg-[#3B5BFF]/10 text-[#2B41B8];
-  }
-  html.light .plan-cta-primary {
-    @apply bg-[#0A0A0A] text-white;
-  }
-  html.light .plan-glow {
-    background: radial-gradient(120% 80% at 50% 0%, rgb(59 91 255 / 0.10) 0%, transparent 62%);
+  html.light {
+    color-scheme: light;
   }
   body {
     @apply bg-canvas text-text-secondary;
@@ -288,24 +268,24 @@
   }
   /* The current plan: tinted fill, blue hairline, blue-tinted label. */
   .plan-card-current {
-    @apply border-[#3B5BFF]/45 bg-[#3B5BFF]/[0.07];
+    @apply border-blue-line/45 bg-blue-soft/[0.07];
   }
   /* The recommended plan: the strongest treatment on the page. */
   .plan-card-featured {
-    @apply border-[#3B5BFF]/70 bg-surface-3;
+    @apply border-blue-line/70 bg-surface-3;
   }
   /* Soft blue bloom behind the featured card's price. */
   .plan-glow {
     position: absolute;
     inset: 0;
     pointer-events: none;
-    background: radial-gradient(120% 80% at 50% 0%, rgb(59 91 255 / 0.16) 0%, transparent 62%);
+    background: radial-gradient(120% 80% at 50% 0%, rgb(var(--cv-blue-glow) / 0.16) 0%, transparent 62%);
   }
   .plan-badge {
     @apply inline-flex items-center gap-1.5 rounded-full px-2.5 py-1 text-2xs font-semibold uppercase tracking-wider;
   }
   .plan-badge-current {
-    @apply bg-[#3B5BFF]/15 text-[#8CA4FF];
+    @apply bg-blue-soft/15 text-blue-text;
   }
   .plan-badge-featured {
     @apply bg-primary text-canvas;

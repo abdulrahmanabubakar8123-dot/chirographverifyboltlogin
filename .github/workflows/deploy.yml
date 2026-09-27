@@ -30,6 +30,12 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
+      # Gate on theme contrast. Because every Tailwind color resolves to a CSS
+      # variable, a palette edit can silently make one theme unreadable; this
+      # asserts WCAG AA for both dark and light before anything ships.
+      - name: Verify theme contrast
+        run: npm run test:theme
+
       - name: Build
         run: npm run build
         env:

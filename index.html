@@ -12,6 +12,21 @@
     <meta property="og:image" content="https://bolt.new/static/og_default.png">
     <meta name="twitter:card" content="summary_large_image">
     <meta name="twitter:image" content="https://bolt.new/static/og_default.png">
+    <script>
+      /*
+       * Apply the persisted theme before first paint. The React effect in
+       * DashboardLayout only runs after hydration, so without this a light-mode
+       * user briefly sees the true-black canvas — a visible flash. This must
+       * stay inline and synchronous; an external module would be too late.
+       */
+      try {
+        if (localStorage.getItem('cv-theme') === 'light') {
+          document.documentElement.classList.add('light');
+        }
+      } catch (e) {
+        /* private mode — fall back to the dark-first default */
+      }
+    </script>
 </head>
   <body>
     <div id="root"></div>

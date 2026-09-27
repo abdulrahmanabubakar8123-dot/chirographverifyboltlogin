@@ -139,8 +139,8 @@ export default function BillingPage() {
           {currentPlanName && (
             <div className="plan-card plan-card-current flex-row flex-wrap items-center justify-between gap-4">
               <div className="flex items-center gap-4">
-                <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl border border-[#3B5BFF]/30 bg-[#3B5BFF]/10">
-                  <ShieldCheck size={20} strokeWidth={1.7} className="text-[#8CA4FF]" />
+                <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl border border-blue-line/30 bg-blue-soft/10">
+                  <ShieldCheck size={20} strokeWidth={1.7} className="text-blue-text" />
                 </span>
                 <div>
                   <p className="text-[13px] text-secondary">Current plan</p>

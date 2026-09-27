@@ -10,55 +10,68 @@ export default {
       },
       colors: {
         // ── Chirograph Verify console — X Developer Platform system ──
-        // True-black canvas; depth from hairlines and near-black surface
-        // steps. `primary` is the text/ink token, so it resolves to white.
-        primary: '#FFFFFF',      // headings & strong text
-        neutral: '#FFFFFF',
-        secondary: '#A3A3A3',    // secondary body text
-        tertiary: '#262626',     // legacy alias for a hairline border
-        muted: '#8C8C8C',        // muted body text
-        canvas: '#000000',       // page background
-        surface: '#0A0A0A',      // raised surface
-        'surface-2': '#161616',   // X panel fill (cards, tables, menus)
-        'surface-3': '#1F1F1F',   // hovered / inset rows
-        line: '#1F1F1F',         // hairline border
-        'line-strong': '#2E2E2E',
-        // Accent = white, matching the reference's white focus ring.
-        accent: '#FFFFFF',
+        //
+        // Every semantic token resolves to a CSS variable so the light theme
+        // is a single variable swap on <html> rather than a hand-maintained
+        // list of class overrides. Using `rgb(var(--x) / <alpha-value>)` keeps
+        // Tailwind's opacity modifiers (/10, /45 …) working, which a plain
+        // `var(--x)` would silently break.
+        //
+        // The values live in src/index.css under :root and html.light.
+        primary: 'rgb(var(--cv-primary) / <alpha-value>)',   // headings & strong text
+        neutral: 'rgb(var(--cv-primary) / <alpha-value>)',
+        secondary: 'rgb(var(--cv-secondary) / <alpha-value>)', // secondary body text
+        tertiary: 'rgb(var(--cv-line-strong) / <alpha-value>)', // legacy hairline alias
+        muted: 'rgb(var(--cv-muted) / <alpha-value>)',       // muted body text
+        canvas: 'rgb(var(--cv-canvas) / <alpha-value>)',    // page background
+        surface: 'rgb(var(--cv-surface) / <alpha-value>)',   // raised surface
+        'surface-2': 'rgb(var(--cv-surface-2) / <alpha-value>)', // X panel fill
+        'surface-3': 'rgb(var(--cv-surface-3) / <alpha-value>)', // hovered / inset rows
+        line: 'rgb(var(--cv-line) / <alpha-value>)',        // hairline border
+        'line-strong': 'rgb(var(--cv-line-strong) / <alpha-value>)',
+        // Accent = ink, matching the reference's focus ring.
+        accent: 'rgb(var(--cv-primary) / <alpha-value>)',
         // The numeric accent steps exist for success/positive states
         // (verified calls, active webhooks, sent notices) and resolve to
         // the single green chromatic accent used across the console.
-        'accent-50': '#04140E',
-        'accent-100': '#06251A',
-        'accent-200': '#0B3D2A',
-        'accent-300': '#10B981',
-        'accent-400': '#34D399',
-        'accent-500': '#10B981',
-        'accent-600': '#059669',
-        'accent-700': '#047857',
+        'accent-50': 'rgb(var(--cv-success-bg) / <alpha-value>)',
+        'accent-100': 'rgb(var(--cv-success-bg) / <alpha-value>)',
+        'accent-200': 'rgb(var(--cv-success-line) / <alpha-value>)',
+        'accent-300': 'rgb(var(--cv-success) / <alpha-value>)',
+        'accent-400': 'rgb(var(--cv-success-ink) / <alpha-value>)',
+        'accent-500': 'rgb(var(--cv-success) / <alpha-value>)',
+        'accent-600': 'rgb(var(--cv-success-ink) / <alpha-value>)',
+        'accent-700': 'rgb(var(--cv-success-ink) / <alpha-value>)',
         // Green is the single chromatic accent, reserved for positive
         // figures and success states.
-        success: '#10B981',
-        warning: '#F59E0B',
-        danger: '#EF4444',
-        error: '#EF4444',
-        'text-primary': '#FFFFFF',
-        'text-secondary': '#A3A3A3',
-        'text-muted': '#8C8C8C',
-        'text-micro': '#737980',
+        success: 'rgb(var(--cv-success) / <alpha-value>)',
+        warning: 'rgb(var(--cv-warning) / <alpha-value>)',
+        danger: 'rgb(var(--cv-danger) / <alpha-value>)',
+        error: 'rgb(var(--cv-danger) / <alpha-value>)',
+        'text-primary': 'rgb(var(--cv-primary) / <alpha-value>)',
+        'text-secondary': 'rgb(var(--cv-secondary) / <alpha-value>)',
+        'text-muted': 'rgb(var(--cv-muted) / <alpha-value>)',
+        'text-micro': 'rgb(var(--cv-text-micro) / <alpha-value>)',
+        // Brand blue. Per the documented exception in BrandMark.tsx this is the
+        // ONLY place blue is allowed in the UI, and only on plan surfaces.
+        'blue-ink': 'rgb(var(--cv-blue-ink) / <alpha-value>)',
+        'blue-line': 'rgb(var(--cv-blue-line) / <alpha-value>)',
+        'blue-soft': 'rgb(var(--cv-blue-soft) / <alpha-value>)',
+        'blue-text': 'rgb(var(--cv-blue-text) / <alpha-value>)',
+        'blue-glow': 'rgb(var(--cv-blue-glow) / <alpha-value>)',
         // Legacy brand ramp retained for components that still reference it;
-        // it now resolves to greys so nothing renders in the old blue.
+        // it resolves to ink/surface greys so nothing renders in the old blue.
         brand: {
-          50: '#141414',
-          100: '#1F1F1F',
-          200: '#2E2E2E',
-          300: '#B8B8B8',
-          400: '#D4D4D4',
-          500: '#E0E0E0',
-          600: '#FFFFFF',
-          700: '#A3A3A3',
-          800: '#8C8C8C',
-          900: '#737980',
+          50: 'rgb(var(--cv-surface-2) / <alpha-value>)',
+          100: 'rgb(var(--cv-surface-3) / <alpha-value>)',
+          200: 'rgb(var(--cv-line-strong) / <alpha-value>)',
+          300: 'rgb(var(--cv-muted) / <alpha-value>)',
+          400: 'rgb(var(--cv-secondary) / <alpha-value>)',
+          500: 'rgb(var(--cv-secondary) / <alpha-value>)',
+          600: 'rgb(var(--cv-primary) / <alpha-value>)',
+          700: 'rgb(var(--cv-secondary) / <alpha-value>)',
+          800: 'rgb(var(--cv-muted) / <alpha-value>)',
+          900: 'rgb(var(--cv-text-micro) / <alpha-value>)',
         },
       },
       fontFamily: {
@@ -120,8 +133,10 @@ export default {
         none: 'none',
         control: 'none',
         card: 'none',
-        glow: '0 0 34px 2px rgb(255 255 255 / 0.20)',
-        'glow-sm': '0 0 18px 0 rgb(255 255 255 / 0.12)',
+        // glow is the soft halo on the primary action, keyed to the ink token
+        // so it follows the active theme instead of baking in white.
+        glow: '0 0 34px 2px rgb(var(--cv-primary) / 0.20)',
+        'glow-sm': '0 0 18px 0 rgb(var(--cv-primary) / 0.12)',
       },
       backgroundImage: {
         'brand-gradient': 'none',
