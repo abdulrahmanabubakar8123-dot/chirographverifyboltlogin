@@ -239,10 +239,10 @@ export default function SettingsPage() {
           <h2 className="text-base font-semibold tracking-tight text-primary">Integrations</h2>
           <p className="mt-1 text-sm text-muted">Managed from their own pages.</p>
           <div className="mt-4 flex flex-wrap gap-2">
-            <a href="#/dashboard/webhooks" className="btn-secondary">
+            <a href="/dashboard/webhooks" className="btn-secondary">
               <Webhook size={15} aria-hidden="true" /> Webhooks
             </a>
-            <a href="#/dashboard/api-keys" className="btn-secondary">
+            <a href="/dashboard/api-keys" className="btn-secondary">
               <Globe size={15} aria-hidden="true" /> API keys
             </a>
           </div>

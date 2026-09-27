@@ -1,8 +1,8 @@
 import { useEffect, useState } from 'react';
-import { AlertCircle, RefreshCw, X, BarChart3, Boxes, ArrowRight } from 'lucide-react';
+import { AlertCircle, RefreshCw, X, BarChart3, Boxes, ArrowRight, CreditCard } from 'lucide-react';
 import { LoadingState } from '@/components/Feedback';
 import { getOverview, getUsage } from '@/lib/dashboard';
-import { ApiError } from '@/lib/apiClient';
+import { describeError } from '@/lib/errors';
 import type { Overview as OverviewType, Usage as UsageType } from '@/lib/types';
 
 /** Title-cases a tier key: "developer" -> "Developer". */
@@ -27,7 +27,7 @@ export default function OverviewPage() {
       if (o.status === 'fulfilled') setData(o.value);
       if (u.status === 'fulfilled') setUsage(u.value);
       const failure = [o, u].find((r) => r.status === 'rejected') as PromiseRejectedResult | undefined;
-      if (failure) setError(failure.reason instanceof ApiError ? failure.reason.message : 'Failed to load dashboard.');
+      if (failure) setError(describeError(failure.reason, 'the dashboard'));
       setLoading(false);
     })();
     return () => { cancelled = true; };
@@ -82,9 +82,13 @@ export default function OverviewPage() {
         </div>
       )}
 
-      {/* Greeting */}
+      {/* Greeting + primary action, as in the reference. */}
       <div className="flex flex-wrap items-center justify-between gap-4">
-        <h1 className="text-headline-lg font-semibold text-primary">Hello, {handle}</h1>
+        <h1 className="text-headline-lg font-normal text-primary">Hello, {handle}</h1>
+        <a href="/dashboard/billing" className="btn-primary">
+          <CreditCard size={16} strokeWidth={1.8} aria-hidden="true" />
+          Manage plan
+        </a>
       </div>
 
       {/* Three stat tiles */}

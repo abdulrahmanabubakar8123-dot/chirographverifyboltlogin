@@ -26,6 +26,7 @@ import {
 import { useAuth } from '@/context/AuthContext';
 import Logo from '@/components/Logo';
 import { BrandMark } from '@/components/BrandMark';
+import { getNotifications } from '@/lib/dashboard';
 
 type Icon = typeof LayoutGrid;
 
@@ -83,9 +84,12 @@ function SidebarNavItem({ item, onNavigate }: { item: NavItem; onNavigate: () =>
     >
       {({ isActive }) => (
         <>
-          {/* Active marker: a 2px white rail flush to the sidebar edge */}
+          {/* Active marker: a rounded white rail, as in the reference. */}
           {isActive && (
-            <span className="absolute -left-3 top-1/2 h-5 w-[2px] -translate-y-1/2 bg-primary" />
+            <span
+              aria-hidden="true"
+              className="absolute -left-3 top-1/2 h-6 w-[3px] -translate-y-1/2 rounded-full bg-primary"
+            />
           )}
           <Icon size={18} strokeWidth={1.7} className="shrink-0" />
           <span className="flex-1 truncate">{item.label}</span>
@@ -131,6 +135,27 @@ export default function DashboardLayout() {
   };
 
   const handle = (user?.email || '').split('@')[0] || 'account';
+
+  // Attention pip on the bell. These rows are DELIVERY records (pending /
+  // sent / failed), not an inbox with read/unread flags, so "unread" would be
+  // an invented concept. The badge therefore counts genuine delivery
+  // problems. Best-effort: a failure must never break the shell.
+  const [unread, setUnread] = useState(0);
+  useEffect(() => {
+    let cancelled = false;
+    void (async () => {
+      try {
+        const page = await getNotifications();
+        const n = (page?.notifications ?? []).filter(
+          (row) => row.status === 'failed',
+        ).length;
+        if (!cancelled) setUnread(n);
+      } catch {
+        /* notifications unavailable -- leave the badge hidden */
+      }
+    })();
+    return () => { cancelled = true; };
+  }, []);
 
   const sidebarContent = (
     <div className="x-sidebar text-secondary">
@@ -178,9 +203,9 @@ export default function DashboardLayout() {
   );
 
   return (
-    <div className="flex min-h-screen bg-canvas">
-      {/* Desktop sidebar */}
-      <aside className="hidden w-[300px] shrink-0 border-r border-line lg:block">
+    <div className="flex min-h-screen gap-3 bg-canvas p-3">
+      {/* Desktop sidebar — an inset rounded panel, as in the reference. */}
+      <aside className="hidden w-[300px] shrink-0 overflow-hidden rounded-2xl border border-line lg:block">
         {sidebarContent}
       </aside>
 
@@ -204,9 +229,9 @@ export default function DashboardLayout() {
         </>
       )}
 
-      {/* Main content */}
-      <div className="flex min-w-0 flex-1 flex-col">
-        <header className="sticky top-0 z-30 flex h-[60px] shrink-0 items-center justify-between border-b border-line bg-canvas px-4 lg:px-6">
+      {/* Main content — second inset panel, rounded on every corner. */}
+      <div className="flex min-w-0 flex-1 flex-col overflow-hidden rounded-2xl border border-line bg-surface">
+        <header className="sticky top-0 z-30 flex h-[60px] shrink-0 items-center justify-between border-b border-line bg-surface px-4 lg:px-6">
           <button
             onClick={() => setMobileOpen(true)}
             className="rounded-md p-1.5 text-muted hover:bg-surface-3 lg:hidden"
@@ -231,6 +256,15 @@ export default function DashboardLayout() {
               Documentation
               <ExternalLink size={13} strokeWidth={1.8} className="text-text-micro" />
             </a>
+            <a
+              href="https://chirographverify.com/#/docs#support"
+              target="_blank"
+              rel="noreferrer"
+              className="hidden items-center gap-1 rounded-md px-2.5 py-1.5 text-[14px] text-secondary transition-colors hover:bg-surface-3 hover:text-primary md:flex"
+            >
+              Support
+              <ExternalLink size={13} strokeWidth={1.8} className="text-text-micro" />
+            </a>
             <span className="mx-1 hidden h-5 w-px bg-line sm:block" />
 
             {/*
@@ -249,11 +283,19 @@ export default function DashboardLayout() {
 
             <button
               onClick={() => navigate('/dashboard/notifications')}
-              className="rounded-md p-2 text-secondary transition-colors hover:bg-surface-3 hover:text-primary"
-              aria-label="Notifications"
-              title="Notifications"
+              className="relative rounded-md p-2 text-secondary transition-colors hover:bg-surface-3 hover:text-primary"
+              aria-label={unread ? `Notifications, ${unread} failed delivery` : 'Notifications'}
+              title={unread ? `${unread} failed delivery` : 'Notifications'}
             >
               <Bell size={18} strokeWidth={1.7} />
+              {unread > 0 && (
+                <span
+                  aria-hidden="true"
+                  className="absolute -right-0.5 -top-0.5 flex h-[17px] min-w-[17px] items-center justify-center rounded-full bg-blue-ink px-1 text-[10px] font-bold leading-none text-white"
+                >
+                  {unread > 9 ? '9+' : unread}
+                </span>
+              )}
             </button>
 
             {/* Theme toggle */}
@@ -273,14 +315,14 @@ export default function DashboardLayout() {
         </header>
 
         <main className="flex-1 bg-canvas">
-          <div className="mx-auto max-w-[1400px] px-4 py-6 sm:px-6 lg:px-10 lg:py-8">
+          <div className="mx-auto max-w-[1400px] px-4 py-6 sm:px-6 lg:px-8 lg:py-7">
             <Outlet />
           </div>
         </main>
 
         {/* Footer — present on every dashboard route */}
-        <footer className="shrink-0 border-t border-line bg-canvas">
-          <div className="mx-auto flex max-w-[1400px] flex-col gap-3 px-4 py-6 text-[13px] text-text-micro sm:flex-row sm:items-center sm:justify-between sm:px-6 lg:px-10">
+        <footer className="shrink-0 border-t border-line bg-surface px-0">
+          <div className="mx-auto flex max-w-[1400px] flex-col gap-3 px-4 py-5 text-[13px] text-text-micro sm:flex-row sm:items-center sm:justify-between sm:px-6 lg:px-8">
             <span>© 2026 Chirograph Verify. All rights reserved.</span>
             <div className="flex flex-wrap items-center gap-x-6 gap-y-2">
               <a

@@ -140,16 +140,16 @@
   }
   /* Surfaces: flat, hairline, no shadow */
   .card {
-    @apply rounded-md border border-line bg-surface;
+    @apply rounded-xl border border-line bg-surface;
   }
   .card-interactive {
-    @apply rounded-md border border-line bg-surface transition-colors duration-150 hover:border-line-strong;
+    @apply rounded-xl border border-line bg-surface transition-colors duration-150 hover:border-line-strong;
   }
   .contrast-card {
-    @apply rounded-md border border-line bg-surface-2 p-4;
+    @apply rounded-xl border border-line bg-surface-2 p-4;
   }
   .gradient-border-card {
-    @apply rounded-md border border-line bg-surface;
+    @apply rounded-xl border border-line bg-surface;
   }
   .gradient-icon-badge {
     @apply flex h-8 w-8 items-center justify-center rounded-full border border-line bg-surface text-primary;
@@ -194,7 +194,7 @@
   /* ── X console primitives ──────────────────────────────────────────── */
   /* Sidebar rail: 300px, panel fill, hairline right edge. */
   .x-sidebar {
-    @apply flex h-full flex-col bg-surface-2;
+    @apply flex h-full flex-col bg-surface;
   }
   /* Group heading (Access / Toolbox / Billing) */
   .x-nav-group {
