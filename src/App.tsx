@@ -13,6 +13,7 @@ import UsagePage from '@/pages/dashboard/UsagePage';
 import AnalyticsPage from '@/pages/dashboard/AnalyticsPage';
 import WebhooksPage from '@/pages/dashboard/WebhooksPage';
 import BillingPage from '@/pages/dashboard/BillingPage';
+import PaymentsPage from '@/pages/dashboard/PaymentsPage';
 import SettingsPage from '@/pages/dashboard/SettingsPage';
 import AccountPage from '@/pages/dashboard/AccountPage';
 import TeamPage from '@/pages/dashboard/TeamPage';
@@ -46,6 +47,7 @@ function App() {
             <Route path="analytics" element={<AnalyticsPage />} />
             <Route path="webhooks" element={<WebhooksPage />} />
             <Route path="billing" element={<BillingPage />} />
+            <Route path="billing/payments" element={<PaymentsPage />} />
             <Route path="settings" element={<SettingsPage />} />
             <Route path="account" element={<AccountPage />} />
             <Route path="team" element={<TeamPage />} />

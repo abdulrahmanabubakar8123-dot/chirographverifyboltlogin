@@ -25,18 +25,65 @@ export interface SignupResponse {
   requiresEmailVerification?: boolean;
 }
 
+/**
+ * GET /api/dashboard/overview
+ *
+ * The backend speaks snake_case and returns no usage figures on this route —
+ * it reports account/tenant identity only. Usage lives on /dashboard/usage.
+ * These types mirror the wire format exactly; nothing is renamed in transit
+ * (apiClient does a straight pass-through, no case transform).
+ */
 export interface Overview {
-  plan?: string;
-  planName?: string;
-  usage?: number;
-  usageLimit?: number;
-  remaining?: number;
-  apiKeyStatus?: string;
-  apiKeyActive?: boolean;
-  webhookStatus?: string;
-  webhookConfigured?: boolean;
-  accountStatus?: string;
-  recentActivity?: ActivityItem[];
+  email: string;
+  tenant: {
+    id: string;
+    name: string;
+    billing_tier: string;
+  };
+  webhook_url: string | null;
+}
+
+/** GET /api/dashboard/usage — rolling 30-day window. */
+export interface Usage {
+  window: string;
+  usage: {
+    total: number;
+    verified: number;
+    failed: number;
+  };
+  flagged_devices: UsageFlaggedDevice[];
+}
+
+export interface UsageFlaggedDevice {
+  fingerprint_hash_masked: string;
+  verification_count: number;
+  flagged_reason: string | null;
+  last_seen_at: string;
+  first_seen_by_this_tenant: boolean;
+}
+
+/**
+ * GET /api/dashboard/billing/payments
+ *
+ * Added for the Payments screen. Amounts are returned in MINOR units
+ * (cents) exactly as stored; divide by 100 for display, or use amount_label
+ * which the server preformats in BILLING_CURRENCY.
+ */
+export interface PaymentTransaction {
+  id: string;
+  tx_ref: string;
+  /** Minor units (cents). Null when the provider reported no amount. */
+  amount_minor: number | null;
+  /** Preformatted display amount in BILLING_CURRENCY, e.g. "USD 29.00". */
+  amount_label: string;
+  status: string;
+  tier: string;
+  created_at: string;
+}
+
+export interface PaymentsResponse {
+  currency: string;
+  transactions: PaymentTransaction[];
 }
 
 export interface ActivityItem {
@@ -44,23 +91,6 @@ export interface ActivityItem {
   type: string;
   description: string;
   timestamp: string;
-}
-
-export interface Usage {
-  verificationCount?: number;
-  monthlyCount?: number;
-  thirtyDayCount?: number;
-  flaggedDevices?: number;
-  monthlyAllowance?: number;
-  remaining?: number;
-  usage?: number;
-  usageLimit?: number;
-  history?: UsageHistoryItem[];
-}
-
-export interface UsageHistoryItem {
-  date: string;
-  count: number;
 }
 
 export interface ApiKey {
@@ -107,13 +137,22 @@ export interface BillingPlan {
   custom?: boolean;
 }
 
+/**
+ * GET /api/dashboard/billing
+ *
+ * Mirrors the wire format: snake_case, and prices already resolved
+ * server-side (never from browser input). `plans` is the canonical catalog.
+ */
 export interface Billing {
-  currentPlan?: string;
-  currentPlanName?: string;
-  status?: string;
-  plans?: BillingPlan[];
-  renewalDate?: string;
-  cancelAtPeriodEnd?: boolean;
+  currency: string;
+  billing_status: string;
+  billing_tier: string;
+  effective_tier: string;
+  period_end: string | null;
+  used: number;
+  limit: number;
+  has_pending_payment: boolean;
+  plans: BillingPlan[];
 }
 
 /**

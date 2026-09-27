@@ -88,11 +88,14 @@ export default function BillingPage() {
   }
 
   const plans = data?.plans?.length ? data.plans : FALLBACK_PLANS;
-  const currentPlanName = data?.currentPlanName || data?.currentPlan || '';
+  // Server-authoritative: the tier name comes from the plans catalog keyed by
+  // effective_tier, never invented client-side.
+  const effectiveTier = data?.effective_tier || data?.billing_tier || '';
+  const currentPlanName = plans.find((p) => p.id === effectiveTier)?.name || effectiveTier;
 
   return (
     <>
-      <DashboardPageHeader title="Billing" description="Manage your subscription and plan" />
+      <DashboardPageHeader title="Plans" description="Manage your subscription and plan" />
       {error ? (
         <div className="card p-6">
           <EmptyState icon={<AlertCircle size={24} />} title="Couldn't load billing info" description={error} />
@@ -109,16 +112,16 @@ export default function BillingPage() {
                   <p className="mt-2 stat-value">{currentPlanName}</p>
                 </div>
                 <div className="flex items-center gap-3">
-                  {data?.status && (
+                  {data?.billing_status && (
                     <span className={`inline-flex items-center gap-1.5 rounded-full px-2.5 py-1 text-2xs font-semibold ${
-                      data.status === 'active' ? 'bg-accent-50 text-accent-700' : 'bg-surface-2 text-muted'
+                      data.billing_status === 'active' ? 'bg-accent-500/10 text-accent-400' : 'bg-surface-2 text-muted'
                     }`}>
-                      <span className={`h-1.5 w-1.5 rounded-full ${data.status === 'active' ? 'bg-accent-500' : 'bg-line-strong'}`} />
-                      {data.status}
+                      <span className={`h-1.5 w-1.5 rounded-full ${data.billing_status === 'active' ? 'bg-accent-500' : 'bg-line-strong'}`} />
+                      {data.billing_status}
                     </span>
                   )}
-                  {data?.cancelAtPeriodEnd && (
-                    <span className="text-xs font-medium text-warning">Cancels at period end</span>
+                  {data?.has_pending_payment && (
+                    <span className="text-xs font-medium text-warning">Payment pending</span>
                   )}
                   {currentPlanName !== 'Free' && (
                     <button onClick={handleCancel} disabled={busy === 'cancel'} className="btn-secondary">

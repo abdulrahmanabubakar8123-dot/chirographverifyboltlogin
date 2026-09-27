@@ -32,6 +32,61 @@
     -moz-osx-font-smoothing: grayscale;
     background-color: var(--canvas);
   }
+  /*
+   * Light theme. The console is dark-first (the X system is true-black), but
+   * the header toggle flips this class on <html>.
+   *
+   * Tailwind resolves theme colors to static hex at build time, so the
+   * utilities (bg-surface-2, text-primary, border-line …) CANNOT be repainted
+   * with CSS variables alone. These overrides target the generated utilities
+   * directly and re-declare them against the light palette. The green accent
+   * and the hairlines keep their meaning; only surfaces and ink invert.
+   */
+  html.light body {
+    @apply bg-white text-[#4B4B4B];
+  }
+  html.light .x-sidebar,
+  html.light .x-panel,
+  html.light .x-stat,
+  html.light .x-table-wrap {
+    @apply bg-white border-[#E4E4E4];
+  }
+  html.light .x-table-head {
+    @apply bg-[#EFEFEF] text-[#4B4B4B];
+  }
+  html.light .x-table-cell {
+    @apply border-[#E4E4E4] text-[#4B4B4B];
+  }
+  html.light .x-nav-group {
+    @apply text-[#8C8C8C];
+  }
+  html.light .x-nav-item {
+    @apply text-[#4B4B4B];
+  }
+  html.light .x-nav-item:hover {
+    @apply bg-[#EFEFEF] text-[#0A0A0A];
+  }
+  html.light .x-filter,
+  html.light .x-banner {
+    @apply bg-white border-[#E4E4E4] text-[#4B4B4B];
+  }
+  html.light .x-panel-inset {
+    @apply border-[#E4E4E4] bg-[#FAFAFA];
+  }
+  html.light h1,
+  html.light h2,
+  html.light h3,
+  html.light h4,
+  html.light .text-primary {
+    @apply text-[#0A0A0A];
+  }
+  html.light .text-secondary {
+    @apply text-[#4B4B4B];
+  }
+  html.light .text-muted,
+  html.light .text-text-micro {
+    @apply text-[#6E6E6E];
+  }
   body {
     @apply bg-canvas text-text-secondary;
     font-feature-settings: 'cv02', 'cv03', 'cv04', 'cv11';
@@ -136,6 +191,68 @@
   }
   .divider {
     @apply border-t border-line;
+  }
+  /* ── X console primitives ──────────────────────────────────────────── */
+  /* Sidebar rail: 300px, panel fill, hairline right edge. */
+  .x-sidebar {
+    @apply flex h-full flex-col bg-surface-2;
+  }
+  /* Group heading (Access / Toolbox / Billing) */
+  .x-nav-group {
+    @apply px-3 pb-1.5 pt-5 text-[13px] font-medium text-text-micro;
+  }
+  /* Nav row — flat, left rail marks the active item */
+  .x-nav-item {
+    @apply relative flex items-center gap-2.5 rounded-md px-3 py-[9px] text-[14px] font-normal text-secondary transition-colors duration-150;
+  }
+  .x-nav-item:hover {
+    @apply bg-surface-3 text-primary;
+  }
+  .x-nav-item-active {
+    @apply bg-transparent text-primary;
+  }
+  .x-nav-item-active:hover {
+    @apply bg-surface-3 text-primary;
+  }
+  /* Primary panel: the large rounded container used for every section */
+  .x-panel {
+    @apply rounded-2xl border border-line bg-surface-2;
+  }
+  /* Flush sub-panel sitting inside a panel (the "Link your X team" strip) */
+  .x-panel-inset {
+    @apply border-t border-line bg-canvas/40;
+  }
+  /* Stat card */
+  .x-stat {
+    @apply rounded-2xl border border-line bg-surface-2 p-5;
+  }
+  /* Densely padded table container */
+  .x-table-wrap {
+    @apply overflow-hidden rounded-2xl border border-line bg-surface-2;
+  }
+  .x-table-head {
+    @apply bg-surface-3/60 text-[13px] font-normal text-text-secondary;
+  }
+  .x-table-cell {
+    @apply border-t border-line px-4 py-3.5 text-[14px] text-secondary;
+  }
+  /* Header filter controls */
+  .x-filter {
+    @apply inline-flex h-9 items-center gap-2 rounded-md border border-line bg-surface-2 px-3 text-[14px] text-secondary transition-colors duration-150 hover:border-line-strong hover:text-primary;
+  }
+  /* Recommended / informational banner */
+  .x-banner {
+    @apply flex items-center gap-3 rounded-2xl border border-line bg-surface-2 px-4 py-3;
+  }
+  /* Promotional hatch fill (the striped promo strip) */
+  .x-hatch {
+    background-image: repeating-linear-gradient(
+      45deg,
+      rgba(255, 255, 255, 0.045) 0px,
+      rgba(255, 255, 255, 0.045) 1px,
+      transparent 1px,
+      transparent 7px
+    );
   }
   /* ── Backgrounds: no gradient, just a hairline grid ────────── */
   .grid-bg {

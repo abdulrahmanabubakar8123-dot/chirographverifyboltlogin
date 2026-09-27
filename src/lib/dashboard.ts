@@ -5,6 +5,7 @@ import type {
   ApiKey,
   WebhooksResponse,
   Billing,
+  PaymentsResponse,
   Settings,
   UpgradeResult,
 } from './types';
@@ -18,19 +19,20 @@ export async function getUsage(): Promise<Usage> {
 }
 
 /**
- * Extracts a numeric usage value from the API response. The backend may
- * return `usage` as a direct number or as a nested object (e.g. { count: N }).
- * Calling .toLocaleString() on an object yields "[object Object]", so we
- * normalize to a number here.
+ * Extracts the total verification count from the /dashboard/usage payload.
+ *
+ * The route returns `usage` as a nested object ({ total, verified, failed }).
+ * Guarded because the field is absent entirely on a 401/partial response —
+ * returning 0 keeps callers rendering an honest "no data" state rather than
+ * rendering NaN.
  */
 export function extractUsageValue(data: Usage | null | undefined): number {
-  const raw = data?.usage;
-  if (typeof raw === 'number') return raw;
-  if (raw && typeof raw === 'object') {
-    const obj = raw as Record<string, unknown>;
-    return Number(obj.count ?? obj.total ?? obj.value ?? 0);
-  }
-  return data?.monthlyCount ?? data?.verificationCount ?? 0;
+  return data?.usage?.total ?? 0;
+}
+
+/** GET /api/dashboard/billing/payments — transaction history for Payments. */
+export async function getPayments(): Promise<PaymentsResponse> {
+  return apiRequest<PaymentsResponse>('/api/dashboard/billing/payments');
 }
 
 export async function regenerateApiKey(): Promise<ApiKey> {

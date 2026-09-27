@@ -19,8 +19,8 @@ export default {
         muted: '#8C8C8C',        // muted body text
         canvas: '#000000',       // page background
         surface: '#0A0A0A',      // raised surface
-        'surface-2': '#141414',
-        'surface-3': '#1F1F1F',
+        'surface-2': '#161616',   // X panel fill (cards, tables, menus)
+        'surface-3': '#1F1F1F',   // hovered / inset rows
         line: '#1F1F1F',         // hairline border
         'line-strong': '#2E2E2E',
         // Accent = white, matching the reference's white focus ring.
@@ -88,15 +88,17 @@ export default {
         glow: 'none',
       },
       borderRadius: {
-        // Spec: none 0 / sm 4 / md 8 / lg 12 / xl 24 / full 9999
+        // X console: 16px panels/cards, 8px inputs, full pills.
         none: '0px',
         sm: '4px',
-        control: '9999px',
         md: '8px',
         xl2: '8px',
-        panel: '8px',
+        panel: '16px',
         lg: '12px',
-        xl: '24px',
+        xl: '16px',
+        '2xl': '16px',
+        '3xl': '24px',
+        control: '9999px',
         full: '9999px',
       },
       spacing: {
