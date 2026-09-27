@@ -17,7 +17,6 @@ import {
   SquareTerminal,
   Users,
   Receipt,
-  Globe,
   Sun,
   Moon,
   BookOpen,
@@ -115,7 +114,6 @@ export default function DashboardLayout() {
       return 'dark';
     }
   });
-  const [langOpen, setLangOpen] = useState(false);
 
   useEffect(() => {
     document.documentElement.classList.toggle('light', theme === 'light');
@@ -230,7 +228,7 @@ export default function DashboardLayout() {
 
           <div className="ml-auto flex items-center gap-1">
             <a
-              href="https://chirographverify.com/docs"
+              href="https://chirographverify.com/developers"
               target="_blank"
               rel="noreferrer"
               className="hidden items-center gap-1 rounded-md px-2.5 py-1.5 text-[14px] text-secondary transition-colors hover:bg-surface-3 hover:text-primary sm:flex"
@@ -240,11 +238,16 @@ export default function DashboardLayout() {
             </a>
             <span className="mx-1 hidden h-5 w-px bg-line sm:block" />
 
+            {/*
+              This control navigates to the Usage screen — it is not a search
+              affordance (no search backend exists), so it is labelled for what
+              it actually does.
+            */}
             <button
               onClick={() => navigate('/dashboard/usage')}
               className="rounded-md p-2 text-secondary transition-colors hover:bg-surface-3 hover:text-primary"
-              aria-label="Search"
-              title="Search"
+              aria-label="Usage"
+              title="Usage"
             >
               <Search size={18} strokeWidth={1.7} />
             </button>
@@ -261,6 +264,7 @@ export default function DashboardLayout() {
               </span>
             </button>
 
+            {/* Theme toggle */}
             <button
               onClick={() => applyTheme(theme === 'dark' ? 'light' : 'dark')}
               className="rounded-md p-2 text-secondary transition-colors hover:bg-surface-3 hover:text-primary"
@@ -273,46 +277,6 @@ export default function DashboardLayout() {
                 <Moon size={18} strokeWidth={1.7} />
               )}
             </button>
-
-            {/* Language menu */}
-            <div className="relative">
-              <button
-                onClick={() => setLangOpen((v) => !v)}
-                className="flex items-center gap-1.5 rounded-md px-2.5 py-1.5 text-[14px] text-secondary transition-colors hover:bg-surface-3 hover:text-primary"
-                aria-haspopup="menu"
-                aria-expanded={langOpen}
-              >
-                <Globe size={17} strokeWidth={1.7} />
-                <span className="hidden sm:inline">English</span>
-                <span className={`hidden transition-transform sm:inline ${langOpen ? 'rotate-180' : ''}`}>
-                  <svg width="10" height="6" viewBox="0 0 10 6" fill="none" aria-hidden="true">
-                    <path d="M1 1L5 5L9 1" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
-                  </svg>
-                </span>
-              </button>
-              {langOpen && (
-                <>
-                  <div className="fixed inset-0 z-10" onClick={() => setLangOpen(false)} />
-                  <div
-                    role="menu"
-                    className="absolute right-0 top-full z-20 mt-1 w-40 overflow-hidden rounded-xl border border-line bg-surface-2 py-1"
-                  >
-                    {['English', 'Français', 'Español', 'العربية'].map((l) => (
-                      <button
-                        key={l}
-                        role="menuitem"
-                        onClick={() => setLangOpen(false)}
-                        className={`block w-full px-3 py-2 text-left text-[14px] transition-colors hover:bg-surface-3 ${
-                          l === 'English' ? 'text-primary' : 'text-secondary'
-                        }`}
-                      >
-                        {l}
-                      </button>
-                    ))}
-                  </div>
-                </>
-              )}
-            </div>
           </div>
         </header>
 
@@ -328,7 +292,7 @@ export default function DashboardLayout() {
             <span>© 2026 Chirograph Verify. All rights reserved.</span>
             <div className="flex flex-wrap items-center gap-x-6 gap-y-2">
               <a
-                href="https://chirographverify.com/docs"
+                href="https://chirographverify.com/developers"
                 target="_blank"
                 rel="noreferrer"
                 className="transition-colors hover:text-secondary"
@@ -339,12 +303,12 @@ export default function DashboardLayout() {
                 </span>
               </a>
               <a
-                href="https://chirographverify.com/status"
+                href="https://chirographverify.com/pricing"
                 target="_blank"
                 rel="noreferrer"
                 className="transition-colors hover:text-secondary"
               >
-                Status
+                Pricing
               </a>
             </div>
           </div>

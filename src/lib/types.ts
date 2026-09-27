@@ -108,13 +108,6 @@ export interface Webhook {
   createdAt?: string;
 }
 
-export interface WebhooksResponse {
-  webhook?: Webhook;
-  webhookConfigured?: boolean;
-  webhookSecretConfigured?: boolean;
-  origins?: string[];
-}
-
 export interface BillingPlan {
   id: string;
   /** Backend tier key — identical to `id` (e.g. "developer"). Sent as `tier` in upgrade requests. */
@@ -168,13 +161,56 @@ export interface UpgradeResult {
   checkout_url: string;
 }
 
+/**
+ * GET /api/dashboard/settings — snake_case exactly as the backend sends it.
+ *
+ * The backend also emits a legacy `webhookUrl` alias for older clients; the
+ * canonical field is `webhook_url`. `name` is always null for Clerk-provisioned
+ * tenants (no per-user display name is stored) — it is typed as such rather
+ * than optional so a missing field is a visible type error, not silent undefined.
+ */
 export interface Settings {
-  email?: string;
-  name?: string;
-  organizationName?: string;
-  webhookUrl?: string;
-  webhookSecretConfigured?: boolean;
-  origins?: string[];
+  tenant: { id: string; name: string };
+  email: string;
+  name: string | null;
+  organizationName: string;
+  webhook_url: string | null;
+  webhook_secret_configured: boolean;
+  allowed_origins: string[];
+  csrf_token: string;
+}
+
+/**
+ * GET /api/dashboard/webhook
+ *
+ * Flat snake_case body. Note there is NO nested `webhook` object and NO
+ * `origins` key on this route — allowed origins come from
+ * GET /api/dashboard/settings as `allowed_origins`.
+ */
+export interface WebhookSettings {
+  webhook_url: string | null;
+  webhook_secret_configured: boolean;
+  deliveries: WebhookDelivery[];
+}
+
+export interface WebhookDelivery {
+  id?: string;
+  url?: string;
+  event_type?: string;
+  status_code?: number | null;
+  status?: string;
+  error?: string | null;
+  created_at?: string;
+}
+
+/**
+ * POST /api/dashboard/settings/webhook-secret
+ *
+ * The secret is generated server-side and returned in plaintext EXACTLY ONCE.
+ * The request body is ignored by the backend — the client cannot supply a value.
+ */
+export interface WebhookSecretResponse {
+  webhook_secret: string;
 }
 
 

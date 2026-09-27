@@ -37,9 +37,9 @@ export default function SettingsPage() {
 
   const fields = [
     { label: 'Email', value: data?.email },
-    { label: 'Full name', value: data?.name },
+    { label: 'Full name', value: data?.name ?? 'Not set' },
     { label: 'Organization', value: data?.organizationName },
-    { label: 'Webhook URL', value: data?.webhookUrl },
+    { label: 'Webhook URL', value: data?.webhook_url ?? 'Not set' },
   ];
 
   return (
@@ -66,11 +66,11 @@ export default function SettingsPage() {
             </div>
           </div>
 
-          {data?.origins && data.origins.length > 0 && (
+          {data?.allowed_origins && data.allowed_origins.length > 0 && (
             <div className="card p-6">
               <h2 className="section-title">Allowed Origins</h2>
               <ul className="mt-5 space-y-2">
-                {data.origins.map((origin) => (
+                {data.allowed_origins.map((origin) => (
                   <li key={origin} className="rounded-panel border border-line bg-surface-2 px-4 py-2.5 font-mono text-sm text-muted">
                     {origin}
                   </li>

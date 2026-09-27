@@ -1,38 +1,50 @@
 import { useEffect, useState, type FormEvent } from 'react';
-import { AlertCircle, Plus, Trash2, CheckCircle2, Globe } from 'lucide-react';
+import { AlertCircle, Plus, Trash2, CheckCircle2, Globe, Copy, Check, KeyRound } from 'lucide-react';
 import { DashboardPageHeader } from '@/layouts/DashboardLayout';
 import { LoadingState, EmptyState, ErrorBanner } from '@/components/Feedback';
 import Spinner from '@/components/Spinner';
-import { getWebhooks, updateWebhookUrl, updateWebhookSecret, updateOrigins } from '@/lib/dashboard';
+import { getWebhooks, getSettings, updateWebhookUrl, rotateWebhookSecret, updateOrigins } from '@/lib/dashboard';
 import { ApiError } from '@/lib/apiClient';
-import type { WebhooksResponse } from '@/lib/types';
+import type { WebhookSettings } from '@/lib/types';
 
 export default function WebhooksPage() {
-  const [data, setData] = useState<WebhooksResponse | null>(null);
+  const [data, setData] = useState<WebhookSettings | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
 
   const [webhookUrl, setWebhookUrl] = useState('');
-  const [webhookSecret, setWebhookSecret] = useState('');
   const [originInput, setOriginInput] = useState('');
   const [origins, setOrigins] = useState<string[]>([]);
 
   const [savingUrl, setSavingUrl] = useState(false);
-  const [savingSecret, setSavingSecret] = useState(false);
+  const [rotating, setRotating] = useState(false);
   const [savingOrigins, setSavingOrigins] = useState(false);
   const [actionError, setActionError] = useState('');
   const [successMsg, setSuccessMsg] = useState('');
+
+  /**
+   * The newly rotated plaintext secret, held in component state only.
+   *
+   * The server reveals it exactly once and never returns it again, so this
+   * value cannot be re-fetched. It is deliberately NOT written to
+   * localStorage/sessionStorage, never placed in the URL, and never logged.
+   * It is cleared when the user dismisses the panel, rotates again, or
+   * leaves the page (see the unmount cleanup below).
+   */
+  const [newSecret, setNewSecret] = useState<string | null>(null);
+  const [secretCopied, setSecretCopied] = useState(false);
 
   useEffect(() => {
     let cancelled = false;
     (async () => {
       try {
-        const res = await getWebhooks();
-        if (!cancelled) {
-          setData(res);
-          setWebhookUrl(res.webhook?.url || '');
-          setOrigins(res.origins || []);
-        }
+        // Webhook config from /dashboard/webhook; the allowlist is only
+        // exposed by /dashboard/settings, so both are needed.
+        const [webhooks, settings] = await Promise.all([getWebhooks(), getSettings()]);
+        if (cancelled) return;
+        setData(webhooks);
+        setWebhookUrl(webhooks.webhook_url || '');
+        setOrigins(settings.allowed_origins || []);
       } catch (err) {
         if (!cancelled) setError(err instanceof ApiError ? err.message : 'Failed to load webhook settings.');
       } finally {
@@ -41,6 +53,9 @@ export default function WebhooksPage() {
     })();
     return () => { cancelled = true; };
   }, []);
+
+  // Drop the one-time secret from memory when the page unmounts.
+  useEffect(() => () => { setNewSecret(null); }, []);
 
   const showSuccess = (msg: string) => {
     setSuccessMsg(msg);
@@ -52,7 +67,10 @@ export default function WebhooksPage() {
     setActionError('');
     setSavingUrl(true);
     try {
-      await updateWebhookUrl(webhookUrl);
+      await updateWebhookUrl(webhookUrl.trim());
+      // Reflect the server's authoritative value rather than assuming the
+      // save took effect (an empty string clears the URL server-side).
+      setData((prev) => (prev ? { ...prev, webhook_url: webhookUrl.trim() || null } : prev));
       showSuccess('Webhook URL saved.');
     } catch (err) {
       setActionError(err instanceof ApiError ? err.message : 'Failed to save webhook URL.');
@@ -61,19 +79,35 @@ export default function WebhooksPage() {
     }
   };
 
-  const handleSaveSecret = async (e: FormEvent) => {
-    e.preventDefault();
+  const handleRotateSecret = async () => {
     setActionError('');
-    setSavingSecret(true);
+    setSecretCopied(false);
+    setRotating(true);
     try {
-      await updateWebhookSecret(webhookSecret);
-      setWebhookSecret('');
-      showSuccess('Webhook secret updated.');
+      const secret = await rotateWebhookSecret();
+      setNewSecret(secret);
+      // The secret now exists server-side, so the "configured" flag is true.
+      setData((prev) => (prev ? { ...prev, webhook_secret_configured: true } : prev));
     } catch (err) {
-      setActionError(err instanceof ApiError ? err.message : 'Failed to save webhook secret.');
+      setActionError(err instanceof ApiError ? err.message : 'Failed to rotate webhook secret.');
     } finally {
-      setSavingSecret(false);
+      setRotating(false);
     }
+  };
+
+  const handleCopySecret = async () => {
+    if (!newSecret) return;
+    try {
+      await navigator.clipboard.writeText(newSecret);
+      setSecretCopied(true);
+    } catch {
+      setActionError('Could not copy to the clipboard. Select the secret and copy it manually.');
+    }
+  };
+
+  const dismissSecret = () => {
+    setNewSecret(null);
+    setSecretCopied(false);
   };
 
   const handleAddOrigin = () => {
@@ -93,6 +127,10 @@ export default function WebhooksPage() {
     setSavingOrigins(true);
     try {
       await updateOrigins(origins);
+      // The server de-duplicates the list; re-read it so the UI matches
+      // exactly what was persisted.
+      const settings = await getSettings();
+      setOrigins(settings.allowed_origins || []);
       showSuccess('Allowed origins saved.');
     } catch (err) {
       setActionError(err instanceof ApiError ? err.message : 'Failed to save origins.');
@@ -143,8 +181,10 @@ export default function WebhooksPage() {
                 {savingUrl ? <Spinner size={16} /> : 'Save'}
               </button>
             </form>
-            {data?.webhook?.active && (
-              <p className="mt-2.5 text-xs font-medium text-accent-700">Webhook is configured and active.</p>
+            {data?.webhook_url && (
+              <p className="mt-2.5 flex items-center gap-1.5 text-xs font-medium text-accent-700">
+                <CheckCircle2 size={14} /> Webhook is configured and active.
+              </p>
             )}
           </div>
 
@@ -153,20 +193,55 @@ export default function WebhooksPage() {
               <h2 className="section-title">Webhook Secret</h2>
               <p className="text-xs text-muted">Used to verify webhook delivery signatures</p>
             </div>
-            <form onSubmit={handleSaveSecret} className="mt-5 flex gap-2">
-              <input
-                type="password"
-                value={webhookSecret}
-                onChange={(e) => setWebhookSecret(e.target.value)}
-                className="input-field font-mono"
-                placeholder={data?.webhookSecretConfigured ? 'Enter new secret to replace' : 'Enter webhook secret'}
-              />
-              <button type="submit" disabled={savingSecret || !webhookSecret} className="btn-primary shrink-0">
-                {savingSecret ? <Spinner size={16} /> : 'Update'}
+
+            {/*
+              The secret is generated server-side and revealed exactly once, so
+              there is no "enter your secret" field — rotating is the only action.
+            */}
+            <div className="mt-5 flex flex-col gap-3 sm:flex-row sm:items-center">
+              <button
+                type="button"
+                onClick={handleRotateSecret}
+                disabled={rotating}
+                className="btn-primary shrink-0"
+              >
+                {rotating ? <Spinner size={16} /> : <KeyRound size={16} />}
+                {data?.webhook_secret_configured ? 'Rotate secret' : 'Generate secret'}
               </button>
-            </form>
-            {data?.webhookSecretConfigured && (
-              <p className="mt-2.5 text-xs text-muted">A webhook secret is currently configured.</p>
+              <p className="text-xs text-muted">
+                {data?.webhook_secret_configured
+                  ? 'A webhook secret is currently configured. Rotating invalidates the previous one immediately.'
+                  : 'No secret configured. Generate one to sign your webhook deliveries.'}
+              </p>
+            </div>
+
+            {newSecret && (
+              <div className="mt-5 rounded-panel border border-warning/40 bg-warning/[0.06] p-4">
+                <p className="flex items-center gap-2 text-[13px] font-semibold text-warning">
+                  <AlertCircle size={15} /> Copy this secret now — it will not be shown again
+                </p>
+                <div className="mt-3 flex items-center gap-2">
+                  <code className="min-w-0 flex-1 overflow-x-auto rounded-md border border-line bg-surface px-3 py-2.5 font-mono text-sm text-primary">
+                    {newSecret}
+                  </code>
+                  <button
+                    type="button"
+                    onClick={handleCopySecret}
+                    className="btn-secondary shrink-0"
+                    aria-label="Copy webhook secret"
+                  >
+                    {secretCopied ? <Check size={16} /> : <Copy size={16} />}
+                    {secretCopied ? 'Copied' : 'Copy'}
+                  </button>
+                </div>
+                <button
+                  type="button"
+                  onClick={dismissSecret}
+                  className="mt-3 text-xs text-muted underline hover:text-secondary"
+                >
+                  I have saved it — hide this
+                </button>
+              </div>
             )}
           </div>
 

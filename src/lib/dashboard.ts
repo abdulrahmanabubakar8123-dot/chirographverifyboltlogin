@@ -3,7 +3,8 @@ import type {
   Overview,
   Usage,
   ApiKey,
-  WebhooksResponse,
+  WebhookSettings,
+  WebhookSecretResponse,
   Billing,
   PaymentsResponse,
   Settings,
@@ -53,27 +54,53 @@ export async function regenerateApiKey(): Promise<ApiKey> {
   };
 }
 
-export async function getWebhooks(): Promise<WebhooksResponse> {
-  return apiRequest<WebhooksResponse>('/api/dashboard/webhook');
+/**
+ * GET /api/dashboard/webhook — flat snake_case body; see WebhookSettings.
+ * The backend aliases this handler at /dashboard/webhooks and /webhook too.
+ */
+export async function getWebhooks(): Promise<WebhookSettings> {
+  return apiRequest<WebhookSettings>('/api/dashboard/webhook');
 }
 
+/**
+ * Saves the outbound webhook URL.
+ *
+ * The backend reads `webhook_url` from the body (see api-routes.ts); the
+ * previous `{ url }` shape was silently ignored, so saves appeared to succeed
+ * while changing nothing. An empty string clears the URL server-side.
+ */
 export async function updateWebhookUrl(url: string): Promise<void> {
-  await apiRequest('/api/dashboard/webhook', {
+  await apiRequest('/api/dashboard/settings/webhook', {
     method: 'POST',
-    body: JSON.stringify({ url }),
+    body: JSON.stringify({ webhook_url: url }),
   });
 }
 
-// NOTE: These two endpoints do not exist on the backend. Left as-is per
-// explicit instruction — do not remove or "fix" until a build-vs-scale-back
-// decision is made.
-export async function updateWebhookSecret(secret: string): Promise<void> {
-  await apiRequest('/api/dashboard/settings/webhook-secret', {
-    method: 'POST',
-    body: JSON.stringify({ secret }),
-  });
+/**
+ * Rotates the outbound webhook signing secret.
+ *
+ * The secret is generated SERVER-SIDE: this endpoint ignores any request body
+ * and returns the new plaintext secret exactly once. There is deliberately no
+ * `secret` parameter — the client cannot choose the value, so the secret is
+ * always generated with the server's CSPRNG.
+ *
+ * Callers must display the returned value once and then discard it. It is
+ * never persisted client-side.
+ */
+export async function rotateWebhookSecret(): Promise<string> {
+  const res = await apiRequest<WebhookSecretResponse>(
+    '/api/dashboard/settings/webhook-secret',
+    { method: 'POST', body: JSON.stringify({}) }
+  );
+  return res.webhook_secret;
 }
 
+/**
+ * Replaces the tenant's allowed-origin allowlist.
+ *
+ * Origins are read back from GET /api/dashboard/settings (`allowed_origins`);
+ * GET /api/dashboard/webhook does not return them.
+ */
 export async function updateOrigins(origins: string[]): Promise<void> {
   await apiRequest('/api/dashboard/settings/origins', {
     method: 'POST',
