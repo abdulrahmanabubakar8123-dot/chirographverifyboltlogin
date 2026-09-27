@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { AlertCircle, Check, Zap } from 'lucide-react';
+import { AlertCircle, Check, Zap, ArrowRight, ShieldCheck } from 'lucide-react';
 import { DashboardPageHeader } from '@/layouts/DashboardLayout';
 import { LoadingState, EmptyState, ErrorBanner } from '@/components/Feedback';
 import Spinner from '@/components/Spinner';
@@ -14,6 +14,33 @@ const FALLBACK_PLANS: BillingPlan[] = [
   { id: 'scale', name: 'Scale', price: 299, verifications: '250,000 verifications/month', features: ['250,000 verifications/month', 'Custom rules', 'SLA', 'Dedicated support'], custom: false },
   { id: 'enterprise', name: 'Enterprise', price: null, verifications: 'Configurable', features: ['Configurable volume', 'Custom SLA', 'On-premise option', 'Dedicated engineer'], custom: true },
 ];
+
+/**
+ * Per-tier feature bullets.
+ *
+ * The billing endpoint returns only the enforced catalog (id, name, price,
+ * price_minor, price_label, monthly_limit, self_serve) — it sends no
+ * `features` or `verifications` array, so plan.features is always undefined
+ * at runtime and the cards rendered empty. These bullets are display copy
+ * keyed by the same tier ids the server enforces; prices and limits always
+ * come from the server payload and are never read from here.
+ */
+const TIER_FEATURES: Record<string, string[]> = {
+  free: ['1,000 verifications / month', 'Device intelligence', 'Community support'],
+  developer: ['10,000 verifications / month', 'Full device intelligence', 'Webhook delivery', 'Email support'],
+  growth: ['50,000 verifications / month', 'Advanced analytics', 'Priority webhooks', 'Priority support'],
+  scale: ['250,000 verifications / month', 'Custom verification rules', 'Uptime SLA', 'Dedicated support'],
+  enterprise: ['Custom verification volume', 'Custom SLA', 'On-premise deployment', 'Dedicated engineer'],
+};
+
+/** Short line under the price. Falls back to the server's monthly_limit. */
+function planAllowance(plan: BillingPlan): string {
+  if (plan.verifications) return plan.verifications;
+  if (typeof plan.monthly_limit === 'number') {
+    return `${plan.monthly_limit.toLocaleString()} verifications / month`;
+  }
+  return '';
+}
 
 export default function BillingPage() {
   const [data, setData] = useState<BillingType | null>(null);
@@ -81,21 +108,26 @@ export default function BillingPage() {
   if (loading) {
     return (
       <>
-        <DashboardPageHeader title="Billing" description="Manage your subscription and plan" />
+        <DashboardPageHeader title="Plans" description="Choose the plan that fits your verification volume" />
         <LoadingState />
       </>
     );
   }
 
   const plans = data?.plans?.length ? data.plans : FALLBACK_PLANS;
-  // Server-authoritative: the tier name comes from the plans catalog keyed by
-  // effective_tier, never invented client-side.
-  const effectiveTier = data?.effective_tier || data?.billing_tier || '';
-  const currentPlanName = plans.find((p) => p.id === effectiveTier)?.name || effectiveTier;
+  // Server-authoritative: the tier id comes from the session's effective
+  // entitlement, never derived client-side from the catalog.
+  const effectiveTier = (data?.effective_tier || data?.billing_tier || '').toLowerCase();
+  const currentPlan = plans.find((p) => (p.tier || p.id || '').toLowerCase() === effectiveTier);
+  const currentPlanName = currentPlan?.name || (data?.effective_tier || data?.billing_tier || '');
+  const isPaidTier = effectiveTier !== '' && effectiveTier !== 'free';
 
   return (
     <>
-      <DashboardPageHeader title="Plans" description="Manage your subscription and plan" />
+      <DashboardPageHeader
+        title="Plans"
+        description="Choose the plan that fits your verification volume"
+      />
       {error ? (
         <div className="card p-6">
           <EmptyState icon={<AlertCircle size={24} />} title="Couldn't load billing info" description={error} />
@@ -105,105 +137,144 @@ export default function BillingPage() {
           {actionError && <ErrorBanner message={actionError} />}
 
           {currentPlanName && (
-            <div className="card p-5">
-              <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+            <div className="plan-card plan-card-current flex-row flex-wrap items-center justify-between gap-4">
+              <div className="flex items-center gap-4">
+                <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl border border-[#3B5BFF]/30 bg-[#3B5BFF]/10">
+                  <ShieldCheck size={20} strokeWidth={1.7} className="text-[#8CA4FF]" />
+                </span>
                 <div>
-                  <p className="stat-label">Current Plan</p>
-                  <p className="mt-2 stat-value">{currentPlanName}</p>
+                  <p className="text-[13px] text-secondary">Current plan</p>
+                  <p className="mt-1 text-[19px] font-medium leading-none text-primary">{currentPlanName}</p>
                 </div>
-                <div className="flex items-center gap-3">
-                  {data?.billing_status && (
-                    <span className={`inline-flex items-center gap-1.5 rounded-full px-2.5 py-1 text-2xs font-semibold ${
-                      data.billing_status === 'active' ? 'bg-accent-500/10 text-accent-400' : 'bg-surface-2 text-muted'
-                    }`}>
-                      <span className={`h-1.5 w-1.5 rounded-full ${data.billing_status === 'active' ? 'bg-accent-500' : 'bg-line-strong'}`} />
-                      {data.billing_status}
-                    </span>
-                  )}
-                  {data?.has_pending_payment && (
-                    <span className="text-xs font-medium text-warning">Payment pending</span>
-                  )}
-                  {currentPlanName !== 'Free' && (
-                    <button onClick={handleCancel} disabled={busy === 'cancel'} className="btn-secondary">
-                      {busy === 'cancel' ? <Spinner size={14} /> : 'Cancel plan'}
-                    </button>
-                  )}
-                </div>
+              </div>
+
+              <div className="flex flex-wrap items-center gap-3">
+                {data?.billing_status && (
+                  <span className={`inline-flex items-center gap-1.5 rounded-full px-2.5 py-1 text-2xs font-semibold capitalize ${
+                    data.billing_status === 'active'
+                      ? 'bg-accent-500/10 text-accent-400'
+                      : 'bg-surface-3 text-secondary'
+                  }`}>
+                    <span className={`h-1.5 w-1.5 rounded-full ${
+                      data.billing_status === 'active' ? 'bg-accent-500' : 'bg-line-strong'
+                    }`} />
+                    {data.billing_status}
+                  </span>
+                )}
+                {data?.has_pending_payment && (
+                  <span className="text-[13px] font-medium text-warning">Payment pending</span>
+                )}
+                {isPaidTier && (
+                  <button onClick={handleCancel} disabled={busy === 'cancel'} className="plan-cta plan-cta-secondary h-9 w-auto px-4">
+                    {busy === 'cancel' ? <Spinner size={14} /> : 'Cancel plan'}
+                  </button>
+                )}
               </div>
             </div>
           )}
 
-          <div className="grid grid-cols-1 gap-5 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5">
+          <div className="grid grid-cols-1 gap-5 md:grid-cols-2 xl:grid-cols-3">
             {plans.map((plan) => {
-              const planName = (plan.name || '').toLowerCase();
-              const current = (currentPlanName || '').toLowerCase();
-              // Guard against a plan missing its `name` field so the comparison
-              // degrades gracefully instead of throwing on .toLowerCase().
-              const isCurrent = current !== '' && planName === current;
+              const planKey = (plan.tier || plan.id || '').toLowerCase();
+              const isCurrent = planKey !== '' && planKey === effectiveTier.toLowerCase();
               // Backend contract: plan.name is the card title, plan.price is the
               // display price. Only an unknown price (null/undefined) means
               // custom/quote pricing (Enterprise) -> render "Custom".
               // self_serve must NOT feed this check: Free has self_serve false
               // but a real price of 0, so it must render $0/mo, not "Custom".
-              // self_serve still controls button behavior below (canSelfServe).
-              // typeof check covers both null and undefined without a TS
-              // no-overlap complaint (price is typed `number | null`).
               const isCustom = typeof plan.price !== 'number';
-              const planKey = (plan.tier || plan.id || '').toLowerCase();
               const isEnterprise = planKey === 'enterprise';
               const isFree = planKey === 'free';
               // Only self-serve tiers may attempt the upgrade endpoint.
               const canSelfServe = !isEnterprise && !isFree && plan.self_serve !== false;
+              // The recommended card is the most popular paid tier that is
+              // not already the current one, so the badge always points at a
+              // plan the reader can actually act on.
+              const isFeatured = planKey === 'growth' && !isCurrent;
+              const features = TIER_FEATURES[planKey] || plan.features || [];
+              const allowance = planAllowance(plan);
               return (
                 <div
                   key={plan.id}
-                  className={`card relative flex flex-col p-5 ${plan.popular ? 'border-white ' : ''}`}
+                  className={`plan-card ${
+                    isFeatured ? 'plan-card-featured' : isCurrent ? 'plan-card-current' : ''
+                  }`}
                 >
-                  {plan.popular && (
-                    <span className="absolute -top-2.5 left-1/2 -translate-x-1/2 rounded-full bg-primary px-2.5 py-0.5 text-2xs font-semibold uppercase tracking-wider text-canvas">
-                      Most popular
-                    </span>
-                  )}
-                  <h3 className="section-title">{plan.name || plan.tier || plan.id || 'Plan'}</h3>
-                  <p className="mt-2.5 font-mono text-xl font-semibold tracking-tight text-primary">
+                  {isFeatured && <span className="plan-glow" aria-hidden="true" />}
+
+                  <div className="relative flex items-start justify-between gap-3">
+                    <h3 className="plan-name">{plan.name || plan.tier || plan.id || 'Plan'}</h3>
+                    {isCurrent && (
+                      <span className="plan-badge plan-badge-current">
+                        <Check size={11} strokeWidth={2.5} />
+                        Current
+                      </span>
+                    )}
+                    {isFeatured && (
+                      <span className="plan-badge plan-badge-featured">Popular</span>
+                    )}
+                  </div>
+
+                  <p className="plan-price relative">
                     {isCustom ? 'Custom' : `$${plan.price}`}
-                    {!isCustom && <span className="font-sans text-xs font-normal text-muted">/mo</span>}
+                    {!isCustom && (
+                      <span className="ml-1 align-baseline text-[14px] font-normal text-text-micro">/mo</span>
+                    )}
                   </p>
-                  <p className="mt-1 text-xs text-muted">
-                    {plan.verifications || (typeof plan.monthly_limit === 'number' ? `${plan.monthly_limit.toLocaleString()} verifications/month` : '')}
-                  </p>
-                  <ul className="mt-4 flex-1 space-y-2">
-                    {(plan.features || []).map((f) => (
-                      <li key={f} className="flex items-start gap-2 text-[13px] leading-relaxed text-secondary">
-                        <Check size={14} className="mt-0.5 shrink-0 text-accent-400" />
-                        {f}
-                      </li>
-                    ))}
-                  </ul>
-                  <div className="mt-5">
-                    {isCurrent || (isFree && current === '') ? (
-                      <button disabled className="btn-secondary w-full cursor-default">
-                        Current plan
+
+                  {allowance && (
+                    <p className="relative mt-2.5 text-[13px] text-secondary">{allowance}</p>
+                  )}
+
+                  {features.length > 0 && (
+                    <>
+                      <div className="plan-divider relative my-5" />
+                      <ul className="relative flex-1 space-y-2.5">
+                        {features.map((f) => (
+                          <li key={f} className="flex items-start gap-2.5 text-[13px] leading-relaxed text-secondary">
+                            <Check
+                              size={14}
+                              strokeWidth={2.2}
+                              className="mt-[3px] shrink-0 text-accent-400"
+                            />
+                            {f}
+                          </li>
+                        ))}
+                      </ul>
+                    </>
+                  )}
+
+                  <div className="relative mt-6">
+                    {isCurrent ? (
+                      <button disabled className="plan-cta plan-cta-secondary">
+                        Your current plan
                       </button>
                     ) : isFree ? (
                       // Free is the default/no-cost tier: never an upgrade action,
                       // never a sales action. Users move back to Free via Cancel.
-                      <button disabled className="btn-secondary w-full cursor-default">
-                        Free plan
+                      <button disabled className="plan-cta plan-cta-secondary">
+                        Included by default
                       </button>
                     ) : isEnterprise || isCustom || !canSelfServe ? (
                       // Enterprise / non-self-serve tiers must never attempt the
                       // self-serve upgrade endpoint (self_serve: false on backend).
-                      <a href="mailto:sales@chirographverify.com" className="btn-secondary w-full">
+                      <a href="mailto:sales@chirographverify.com" className="plan-cta plan-cta-secondary">
                         Contact sales
                       </a>
                     ) : (
                       <button
                         onClick={() => handleUpgrade(plan.tier || plan.id)}
                         disabled={busy === plan.id}
-                        className={`w-full ${plan.popular ? 'btn-primary' : 'btn-secondary'}`}
+                        className={`plan-cta ${isFeatured ? 'plan-cta-primary' : 'plan-cta-secondary'}`}
                       >
-                        {busy === plan.id ? <Spinner size={16} /> : isCurrent ? 'Current Plan' : `Choose ${plan.name || plan.tier || plan.id || 'this plan'}`}
+                        {busy === plan.id ? (
+                          <Spinner size={15} />
+                        ) : (
+                          <>
+                            {isFeatured ? `Upgrade to ${plan.name || plan.tier}` : 'Upgrade'}
+                            <ArrowRight size={14} />
+                          </>
+                        )}
                       </button>
                     )}
                   </div>
@@ -212,24 +283,39 @@ export default function BillingPage() {
             })}
           </div>
 
-          <div className="card border-warning/30 bg-warning/[0.06] p-4">
-            <div className="flex gap-2.5">
-              <Zap size={16} className="mt-0.5 shrink-0 text-warning" />
-              <p className="text-[13px] leading-relaxed text-secondary">
-                Payments are processed securely by Flutterwave. Plan changes are handled by the backend to ensure accurate billing.
-              </p>
-            </div>
+          <div className="x-banner">
+            <Zap size={16} className="shrink-0 text-warning" />
+            <p className="flex-1 text-[13px] leading-relaxed text-secondary">
+              Payments are processed securely by Flutterwave. Plan changes are applied by the backend
+              once payment is confirmed, so your allowance never changes early.
+            </p>
           </div>
 
-          <div className="card p-5">
-            <h3 className="section-title mb-4">Invoices</h3>
-            <div className="flex h-40 items-center justify-center">
+          <div className="x-panel flex flex-col p-6">
+            <div className="flex flex-wrap items-center justify-between gap-3">
+              <div>
+                <h3 className="section-title">Invoices</h3>
+                <p className="mt-1 text-[13px] text-secondary">
+                  Every charge and receipt for this account.
+                </p>
+              </div>
+              <a
+                href="/dashboard/billing/payments"
+                className="inline-flex items-center gap-1 text-[13px] text-secondary transition-colors hover:text-primary"
+              >
+                View payments
+                <ArrowRight size={13} />
+              </a>
+            </div>
+            <div className="flex flex-1 items-center justify-center py-12">
               <div className="text-center">
-                <div className="gradient-icon-badge mx-auto mb-3 h-10 w-10">
-                  <Check size={18} />
+                <div className="mx-auto mb-3 flex h-11 w-11 items-center justify-center rounded-xl border border-line bg-surface-3 text-secondary">
+                  <Check size={18} strokeWidth={1.8} />
                 </div>
-                <p className="text-sm text-secondary">No invoices yet</p>
-                <p className="mt-1 text-xs text-muted">Billing history will appear here</p>
+                <p className="text-[14px] text-secondary">No invoices yet</p>
+                <p className="mt-1 text-[13px] text-text-micro">
+                  Payment history will appear here after your first purchase
+                </p>
               </div>
             </div>
           </div>

@@ -21,7 +21,6 @@ import {
   Sun,
   Moon,
   BookOpen,
-  MessageSquare,
   ExternalLink,
 } from 'lucide-react';
 import { useAuth } from '@/context/AuthContext';
@@ -239,16 +238,6 @@ export default function DashboardLayout() {
               Documentation
               <ExternalLink size={13} strokeWidth={1.8} className="text-text-micro" />
             </a>
-            <a
-              href="https://chirographverify.com/forum"
-              target="_blank"
-              rel="noreferrer"
-              className="hidden items-center gap-1 rounded-md px-2.5 py-1.5 text-[14px] text-secondary transition-colors hover:bg-surface-3 hover:text-primary sm:flex"
-            >
-              Forum
-              <ExternalLink size={13} strokeWidth={1.8} className="text-text-micro" />
-            </a>
-
             <span className="mx-1 hidden h-5 w-px bg-line sm:block" />
 
             <button
@@ -347,17 +336,6 @@ export default function DashboardLayout() {
                 <span className="inline-flex items-center gap-1.5">
                   <BookOpen size={14} strokeWidth={1.7} />
                   Documentation
-                </span>
-              </a>
-              <a
-                href="https://chirographverify.com/forum"
-                target="_blank"
-                rel="noreferrer"
-                className="transition-colors hover:text-secondary"
-              >
-                <span className="inline-flex items-center gap-1.5">
-                  <MessageSquare size={14} strokeWidth={1.7} />
-                  Forum
                 </span>
               </a>
               <a
