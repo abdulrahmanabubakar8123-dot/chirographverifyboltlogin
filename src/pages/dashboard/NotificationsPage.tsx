@@ -3,7 +3,7 @@ import { Bell, AlertCircle } from 'lucide-react';
 import { DashboardPageHeader } from '@/layouts/DashboardLayout';
 import { LoadingState, EmptyState, ErrorBanner } from '@/components/Feedback';
 import { getNotifications, type NotificationRow } from '@/lib/dashboard';
-import { ApiError } from '@/lib/apiClient';
+import { describeError } from '@/lib/errors';
 
 const PAGE_SIZE = 50;
 
@@ -45,7 +45,7 @@ export default function NotificationsPage() {
         setError('');
       } catch (err) {
         if (!cancelled) {
-          setError(err instanceof ApiError ? err.message : 'Failed to load notifications.');
+          setError(describeError(err, 'notifications'));
         }
       } finally {
         if (!cancelled) setLoading(false);
@@ -86,7 +86,7 @@ export default function NotificationsPage() {
           />
         </div>
       ) : (
-        <div className="card divide-y divide border-line p-0">
+        <div className="card divide-y divide-line p-0">
           {rows.map((n) => (
             <div key={n.id} className="px-6 py-5">
               <div className="flex flex-wrap items-center justify-between gap-2">

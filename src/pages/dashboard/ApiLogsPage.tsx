@@ -3,7 +3,7 @@ import { SquareTerminal } from 'lucide-react';
 import { DashboardPageHeader } from '@/layouts/DashboardLayout';
 import { LoadingState, EmptyState, ErrorBanner } from '@/components/Feedback';
 import { getApiLogs, type ApiRequestLogRow } from '@/lib/dashboard';
-import { ApiError } from '@/lib/apiClient';
+import { describeError } from '@/lib/errors';
 
 const PAGE_SIZE = 50;
 
@@ -40,7 +40,7 @@ export default function ApiLogsPage() {
         setError('');
       } catch (err) {
         if (!cancelled) {
-          setError(err instanceof ApiError ? err.message : 'Failed to load API logs.');
+          setError(describeError(err, 'API logs'));
         }
       } finally {
         if (!cancelled) setLoading(false);
@@ -121,7 +121,7 @@ export default function ApiLogsPage() {
                   <th className="px-5 py-3 text-right font-semibold">Duration</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide border-line">
+              <tbody className="divide-y divide-line">
                 {rows.map((r) => (
                   <tr key={r.id}>
                     <td className="whitespace-nowrap px-5 py-3.5 font-mono text-xs text-muted">

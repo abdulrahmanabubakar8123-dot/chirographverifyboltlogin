@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import { AlertCircle, BarChart3, Flag } from 'lucide-react';
 import { LoadingState } from '@/components/Feedback';
 import { getUsage, extractUsageValue } from '@/lib/dashboard';
-import { ApiError } from '@/lib/apiClient';
+import { describeError } from '@/lib/errors';
 import type { Usage as UsageType } from '@/lib/types';
 
 export default function UsagePage() {
@@ -17,7 +17,7 @@ export default function UsagePage() {
         const res = await getUsage();
         if (!cancelled) setData(res);
       } catch (err) {
-        if (!cancelled) setError(err instanceof ApiError ? err.message : 'Failed to load usage data.');
+        if (!cancelled) setError(describeError(err, 'usage data'));
       } finally {
         if (!cancelled) setLoading(false);
       }

@@ -4,7 +4,7 @@ import { DashboardPageHeader } from '@/layouts/DashboardLayout';
 import { LoadingState, EmptyState, ErrorBanner } from '@/components/Feedback';
 import Spinner from '@/components/Spinner';
 import { getWebhooks, getSettings, updateWebhookUrl, rotateWebhookSecret, updateOrigins } from '@/lib/dashboard';
-import { ApiError } from '@/lib/apiClient';
+import { describeError } from '@/lib/errors';
 import type { WebhookSettings } from '@/lib/types';
 
 export default function WebhooksPage() {
@@ -46,7 +46,7 @@ export default function WebhooksPage() {
         setWebhookUrl(webhooks.webhook_url || '');
         setOrigins(settings.allowed_origins || []);
       } catch (err) {
-        if (!cancelled) setError(err instanceof ApiError ? err.message : 'Failed to load webhook settings.');
+        if (!cancelled) setError(describeError(err, 'webhook settings'));
       } finally {
         if (!cancelled) setLoading(false);
       }
@@ -73,7 +73,7 @@ export default function WebhooksPage() {
       setData((prev) => (prev ? { ...prev, webhook_url: webhookUrl.trim() || null } : prev));
       showSuccess('Webhook URL saved.');
     } catch (err) {
-      setActionError(err instanceof ApiError ? err.message : 'Failed to save webhook URL.');
+      setActionError(describeError(err, 'saving the webhook URL'));
     } finally {
       setSavingUrl(false);
     }
@@ -89,7 +89,7 @@ export default function WebhooksPage() {
       // The secret now exists server-side, so the "configured" flag is true.
       setData((prev) => (prev ? { ...prev, webhook_secret_configured: true } : prev));
     } catch (err) {
-      setActionError(err instanceof ApiError ? err.message : 'Failed to rotate webhook secret.');
+      setActionError(describeError(err, 'rotating the webhook secret'));
     } finally {
       setRotating(false);
     }
@@ -133,7 +133,7 @@ export default function WebhooksPage() {
       setOrigins(settings.allowed_origins || []);
       showSuccess('Allowed origins saved.');
     } catch (err) {
-      setActionError(err instanceof ApiError ? err.message : 'Failed to save origins.');
+      setActionError(describeError(err, 'saving the allowed origins'));
     } finally {
       setSavingOrigins(false);
     }
@@ -293,7 +293,7 @@ export default function WebhooksPage() {
               <h2 className="section-title">Events</h2>
               <p className="text-xs text-muted">Delivered to your webhook URL with an HMAC signature</p>
             </div>
-            <ul className="mt-5 divide-y divide border-line">
+            <ul className="mt-5 divide-y divide-line">
               {(data?.supported_events ?? []).map((e) => (
                 <li key={e.type} className="flex items-start justify-between gap-4 py-4 first:pt-0 last:pb-0">
                   <div className="min-w-0">

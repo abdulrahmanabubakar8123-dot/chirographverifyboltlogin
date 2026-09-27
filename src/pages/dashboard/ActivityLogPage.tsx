@@ -3,7 +3,7 @@ import { Activity } from 'lucide-react';
 import { DashboardPageHeader } from '@/layouts/DashboardLayout';
 import { LoadingState, EmptyState, ErrorBanner } from '@/components/Feedback';
 import { getActivity, type AuditEvent } from '@/lib/dashboard';
-import { ApiError } from '@/lib/apiClient';
+import { describeError } from '@/lib/errors';
 
 const PAGE_SIZE = 50;
 
@@ -45,7 +45,7 @@ export default function ActivityLogPage() {
         setError('');
       } catch (err) {
         if (!cancelled) {
-          setError(err instanceof ApiError ? err.message : 'Failed to load activity log.');
+          setError(describeError(err, 'the activity log'));
         }
       } finally {
         if (!cancelled) setLoading(false);
@@ -110,7 +110,7 @@ export default function ActivityLogPage() {
           </div>
         ) : (
           <div className="card p-6">
-            <ul className="divide-y divide border-line">
+            <ul className="divide-y divide-line">
               {rows.map((e) => (
                 <li key={e.id} className="flex items-start gap-3 py-3.5 first:pt-0 last:pb-0">
                   <span className="mt-1.5 h-2 w-2 shrink-0 rounded-full bg-brand-600" />

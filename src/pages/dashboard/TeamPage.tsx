@@ -7,7 +7,7 @@ import {
   getTeam, inviteMember, revokeInvitation, updateMemberRole, removeMember,
   type TeamMember, type TeamInvitation, type TeamRole,
 } from '@/lib/dashboard';
-import { ApiError } from '@/lib/apiClient';
+import { describeError } from '@/lib/errors';
 
 function initials(email: string): string {
   const name = email.split('@')[0] || '?';
@@ -41,7 +41,7 @@ export default function TeamPage() {
       setInvitations(res.invitations);
       setError('');
     } catch (err) {
-      setError(err instanceof ApiError ? err.message : 'Failed to load the team.');
+      setError(describeError(err, 'the team'));
     } finally {
       setLoading(false);
     }
@@ -67,7 +67,7 @@ export default function TeamPage() {
       showSuccess('Invitation created. Share the link below.');
       await load();
     } catch (err) {
-      setActionError(err instanceof ApiError ? err.message : 'Failed to create invitation.');
+      setActionError(describeError(err, 'creating the invitation'));
     } finally {
       setInviting(false);
     }
@@ -89,7 +89,7 @@ export default function TeamPage() {
       await updateMemberRole(id, next);
       await load();
     } catch (err) {
-      setActionError(err instanceof ApiError ? err.message : 'Failed to update role.');
+      setActionError(describeError(err, 'updating the role'));
     }
   };
 
@@ -101,7 +101,7 @@ export default function TeamPage() {
       showSuccess('Member removed.');
       await load();
     } catch (err) {
-      setActionError(err instanceof ApiError ? err.message : 'Failed to remove member.');
+      setActionError(describeError(err, 'removing the member'));
     }
   };
 
@@ -112,7 +112,7 @@ export default function TeamPage() {
       showSuccess('Invitation revoked.');
       await load();
     } catch (err) {
-      setActionError(err instanceof ApiError ? err.message : 'Failed to revoke invitation.');
+      setActionError(describeError(err, 'revoking the invitation'));
     }
   };
 
@@ -187,7 +187,7 @@ export default function TeamPage() {
           {members.length === 0 ? (
             <EmptyState icon={<Users size={24} />} title="No members" description="Invite your first teammate above." />
           ) : (
-            <div className="mt-5 divide-y divide border-line">
+            <div className="mt-5 divide-y divide-line">
               {members.map((m) => (
                 <div key={m.id} className="flex items-center gap-4 py-4 first:pt-0 last:pb-0">
                   <div className="gradient-icon-badge h-10 w-10 shrink-0 font-mono text-sm font-semibold">
@@ -228,7 +228,7 @@ export default function TeamPage() {
         {invitations.length > 0 && (
           <div className="card p-6">
             <h2 className="section-title">Pending invitations</h2>
-            <div className="mt-5 divide-y divide border-line">
+            <div className="mt-5 divide-y divide-line">
               {invitations.map((i) => (
                 <div key={i.id} className="flex items-center justify-between gap-4 py-4 first:pt-0 last:pb-0">
                   <div className="min-w-0">

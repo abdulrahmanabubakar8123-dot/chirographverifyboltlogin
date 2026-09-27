@@ -2,7 +2,7 @@ import { useEffect, useMemo, useState } from 'react';
 import { AlertCircle, Calendar, Receipt, ChevronDown } from 'lucide-react';
 import { LoadingState } from '@/components/Feedback';
 import { getPayments } from '@/lib/dashboard';
-import { ApiError } from '@/lib/apiClient';
+import { describeError } from '@/lib/errors';
 import type { PaymentsResponse } from '@/lib/types';
 
 /** Statuses the backend writes to billing_payments.status. */
@@ -47,7 +47,7 @@ export default function PaymentsPage() {
         const res = await getPayments();
         if (!cancelled) setData(res);
       } catch (err) {
-        if (!cancelled) setError(err instanceof ApiError ? err.message : 'Failed to load payments.');
+        if (!cancelled) setError(describeError(err, 'payments'));
       } finally {
         if (!cancelled) setLoading(false);
       }

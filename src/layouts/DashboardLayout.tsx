@@ -12,6 +12,7 @@ import {
   X,
   KeyRound,
   BarChart3,
+  Gauge,
   Webhook,
   Activity,
   SquareTerminal,
@@ -46,18 +47,18 @@ const navGroups: { label: string; items: NavItem[] }[] = [
     items: [
       { to: '/dashboard', label: 'Dashboard', icon: LayoutGrid, end: true },
       { to: '/dashboard/notifications', label: 'Notifications', icon: Bell },
-      { to: '/dashboard/activity-log', label: 'Agent', icon: Activity, soon: true },
+      { to: '/dashboard/activity-log', label: 'Activity Log', icon: Activity },
     ],
   },
   {
     label: 'Toolbox',
     items: [
       { to: '/dashboard/api-keys', label: 'API Keys', icon: KeyRound },
-      { to: '/dashboard/analytics', label: 'Apps', icon: BarChart3, soon: true },
-      { to: '/dashboard/usage', label: 'Usage', icon: BarChart3 },
+      { to: '/dashboard/analytics', label: 'Analytics', icon: BarChart3 },
+      { to: '/dashboard/usage', label: 'Usage', icon: Gauge },
       { to: '/dashboard/webhooks', label: 'Webhooks', icon: Webhook },
-      { to: '/dashboard/api-logs', label: 'API Logs', icon: SquareTerminal, soon: true },
-      { to: '/dashboard/team', label: 'Team', icon: Users, soon: true },
+      { to: '/dashboard/api-logs', label: 'API Logs', icon: SquareTerminal },
+      { to: '/dashboard/team', label: 'Team', icon: Users },
     ],
   },
   {

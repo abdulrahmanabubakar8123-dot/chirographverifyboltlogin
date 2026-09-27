@@ -4,7 +4,7 @@ import { DashboardPageHeader } from '@/layouts/DashboardLayout';
 import { LoadingState, EmptyState, ErrorBanner } from '@/components/Feedback';
 import Spinner from '@/components/Spinner';
 import { getBilling, upgradePlan, cancelPlan } from '@/lib/dashboard';
-import { ApiError } from '@/lib/apiClient';
+import { describeError } from '@/lib/errors';
 import type { Billing as BillingType, BillingPlan } from '@/lib/types';
 
 const FALLBACK_PLANS: BillingPlan[] = [
@@ -56,7 +56,7 @@ export default function BillingPage() {
         const res = await getBilling();
         if (!cancelled) setData(res);
       } catch (err) {
-        if (!cancelled) setError(err instanceof ApiError ? err.message : 'Failed to load billing info.');
+        if (!cancelled) setError(describeError(err, 'billing information'));
       } finally {
         if (!cancelled) setLoading(false);
       }
@@ -84,7 +84,7 @@ export default function BillingPage() {
       // Defensive: a 200 without a checkout link means checkout never started.
       setActionError('Checkout could not be started. Please try again.');
     } catch (err) {
-      setActionError(err instanceof ApiError ? err.message : 'Failed to change plan.');
+      setActionError(describeError(err, 'changing the plan'));
     } finally {
       setBusy(null);
     }
@@ -99,7 +99,7 @@ export default function BillingPage() {
       const res = await getBilling();
       setData(res);
     } catch (err) {
-      setActionError(err instanceof ApiError ? err.message : 'Failed to cancel plan.');
+      setActionError(describeError(err, 'cancelling the plan'));
     } finally {
       setBusy(null);
     }

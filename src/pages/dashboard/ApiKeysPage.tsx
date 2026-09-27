@@ -4,7 +4,7 @@ import { DashboardPageHeader } from '@/layouts/DashboardLayout';
 import { ErrorBanner } from '@/components/Feedback';
 import Spinner from '@/components/Spinner';
 import { regenerateApiKey } from '@/lib/dashboard';
-import { ApiError } from '@/lib/apiClient';
+import { describeError } from '@/lib/errors';
 import type { ApiKey as ApiKeyType } from '@/lib/types';
 
 export default function ApiKeysPage() {
@@ -23,7 +23,7 @@ export default function ApiKeysPage() {
       setData(res);
       setShowKey(true);
     } catch (err) {
-      setRegenError(err instanceof ApiError ? err.message : 'Failed to regenerate API key.');
+      setRegenError(describeError(err, 'regenerating the API key'));
     } finally {
       setRegenerating(false);
     }

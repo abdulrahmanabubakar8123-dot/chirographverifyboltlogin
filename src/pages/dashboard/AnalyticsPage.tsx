@@ -3,7 +3,7 @@ import { TrendingUp, Clock, AlertTriangle, Activity, Download, BarChart3 } from 
 import { DashboardPageHeader } from '@/layouts/DashboardLayout';
 import { LoadingState, EmptyState, ErrorBanner } from '@/components/Feedback';
 import { getAnalytics, analyticsCsvUrl, type Analytics, type AnalyticsRange } from '@/lib/dashboard';
-import { ApiError } from '@/lib/apiClient';
+import { describeError } from '@/lib/errors';
 
 const RANGES: AnalyticsRange[] = ['24h', '7d', '30d', '90d'];
 
@@ -29,7 +29,7 @@ export default function AnalyticsPage() {
         if (!cancelled) { setData(res); setError(''); }
       } catch (err) {
         if (!cancelled) {
-          setError(err instanceof ApiError ? err.message : 'Failed to load analytics.');
+          setError(describeError(err, 'analytics'));
         }
       } finally {
         if (!cancelled) setLoading(false);
@@ -40,23 +40,25 @@ export default function AnalyticsPage() {
 
   const maxBucket = Math.max(1, ...(data?.points ?? []).map((p) => p.total));
 
-  const kpis = [
-    { label: 'Requests', value: (data?.total ?? 0).toLocaleString(), icon: Activity },
+  // Every card renders a real value in the same typographic slot, or a short
+  // muted em-dash when there is nothing to show. The placeholders used to be
+  // variable-length words ("--", "No data yet") in the same slot as the
+  // numbers, so the longest one dominated the row and broke the visual rhythm.
+  const kpis: { label: string; value: string; empty: boolean; icon: typeof Activity }[] = [
+    { label: 'Requests', value: (data?.total ?? 0).toLocaleString(), empty: false, icon: Activity },
     {
       label: 'Success rate',
-      value: data?.success_rate === null || data === null
-        ? '--'
-        : `${Math.round(data.success_rate * 100)}%`,
+      value: data && data.success_rate !== null ? `${Math.round(data.success_rate * 100)}%` : '\u2014',
+      empty: !data || data.success_rate === null,
       icon: TrendingUp,
     },
     {
       label: 'Avg latency (p50)',
-      value: data?.p50_latency_ms === null || data === null
-        ? 'No data yet'
-        : `${data.p50_latency_ms} ms`,
+      value: data && data.p50_latency_ms !== null ? `${data.p50_latency_ms} ms` : '\u2014',
+      empty: !data || data.p50_latency_ms === null,
       icon: Clock,
     },
-    { label: 'Flagged', value: (data?.flagged_devices ?? 0).toLocaleString(), icon: AlertTriangle },
+    { label: 'Flagged', value: (data?.flagged_devices ?? 0).toLocaleString(), empty: false, icon: AlertTriangle },
   ];
 
   return (
@@ -101,11 +103,22 @@ export default function AnalyticsPage() {
               <div key={kpi.label} className="card p-5">
                 <div className="flex items-center justify-between">
                   <p className="micro-label">{kpi.label}</p>
-                  <Icon size={16} className="text-muted" />
+                  <Icon size={16} className="text-muted" aria-hidden="true" />
                 </div>
-                <p className="mt-3 font-mono text-2xl font-semibold tabular-nums tracking-tight text-primary">
-                  {loading ? '--' : kpi.value}
-                </p>
+                {loading ? (
+                  /* Reserve the row height so the grid does not reflow when
+                     the real values land. */
+                  <div className="mt-3 h-8 w-24 animate-pulse rounded-lg bg-line/40" />
+                ) : (
+                  <p
+                    className={`mt-3 truncate text-2xl font-semibold tabular-nums tracking-tight ${
+                      kpi.empty ? 'text-muted' : 'font-mono text-primary'
+                    }`}
+                    title={kpi.empty ? 'No data for this period' : undefined}
+                  >
+                    {kpi.value}
+                  </p>
+                )}
               </div>
             );
           })}

@@ -4,16 +4,28 @@ import Spinner from './Spinner';
 
 interface ErrorBannerProps {
   message: string;
+  /** Optional retry affordance, shown only when the caller supplies one. */
+  onRetry?: () => void;
+  retryLabel?: string;
 }
 
-export function ErrorBanner({ message }: ErrorBannerProps) {
+export function ErrorBanner({ message, onRetry, retryLabel = 'Retry' }: ErrorBannerProps) {
   return (
     <div
       role="alert"
-      className="flex items-start gap-2.5 rounded-xl2 border border-danger/30 bg-danger/[0.06] px-3.5 py-2.5 text-sm text-primary"
+      className="flex flex-wrap items-start gap-2.5 rounded-xl border border-danger/30 bg-danger/[0.06] px-3.5 py-2.5 text-sm text-primary"
     >
-      <AlertCircle size={16} className="mt-0.5 shrink-0 text-danger" />
-      <span className="leading-relaxed">{message}</span>
+      <AlertCircle size={16} className="mt-0.5 shrink-0 text-danger" aria-hidden="true" />
+      <span className="min-w-0 flex-1 leading-relaxed">{message}</span>
+      {onRetry && (
+        <button
+          type="button"
+          onClick={onRetry}
+          className="shrink-0 rounded-lg border border-line px-2.5 py-1 text-xs font-medium text-primary transition-colors hover:bg-surface-2"
+        >
+          {retryLabel}
+        </button>
+      )}
     </div>
   );
 }

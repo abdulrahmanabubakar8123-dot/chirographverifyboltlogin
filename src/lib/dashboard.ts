@@ -328,6 +328,21 @@ export async function getPreferences(): Promise<Preferences> {
   return apiRequest<Preferences>('/api/dashboard/preferences');
 }
 
+/**
+ * Rename the organization.
+ *
+ * This is the ONLY writable field on the profile endpoint. The backend
+ * deliberately refuses to store a display name or email (no column holds
+ * them), so the UI must not present them as editable fields -- doing so
+ * collected input that was silently discarded on save.
+ */
+export async function updateProfile(input: { name: string }): Promise<{ organizationName: string }> {
+  return apiRequest<{ organizationName: string }>('/api/dashboard/settings/profile', {
+    method: 'POST',
+    body: JSON.stringify({ name: input.name }),
+  });
+}
+
 export async function updatePreferences(patch: Partial<Preferences>): Promise<Preferences> {
   return apiRequest<Preferences>('/api/dashboard/preferences', {
     method: 'POST',
