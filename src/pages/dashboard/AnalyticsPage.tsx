@@ -1,62 +1,99 @@
-import { BarChart3, TrendingUp, Clock, AlertTriangle, Activity } from 'lucide-react';
+import { useEffect, useState } from 'react';
+import { TrendingUp, Clock, AlertTriangle, Activity, Download, BarChart3 } from 'lucide-react';
 import { DashboardPageHeader } from '@/layouts/DashboardLayout';
-import { EmptyState } from '@/components/Feedback';
+import { LoadingState, EmptyState, ErrorBanner } from '@/components/Feedback';
+import { getAnalytics, analyticsCsvUrl, type Analytics, type AnalyticsRange } from '@/lib/dashboard';
+import { ApiError } from '@/lib/apiClient';
 
-const ranges = ['24h', '7d', '30d', '90d'];
+const RANGES: AnalyticsRange[] = ['24h', '7d', '30d', '90d'];
 
-const kpis = [
-  { label: 'Requests', value: '—', icon: Activity, delta: '+0%' },
-  { label: 'Success rate', value: '—', icon: TrendingUp, delta: '+0%' },
-  { label: 'Avg latency', value: '—', icon: Clock, delta: '+0%' },
-  { label: 'Flagged', value: '—', icon: AlertTriangle, delta: '+0%' },
-];
-
+/**
+ * Analytics - real data from GET /api/dashboard/analytics.
+ *
+ * Replaces the hardcoded KPI placeholders. Latency is only populated once the
+ * API request log has samples; until then it shows "no data yet" rather than a
+ * misleading 0.
+ */
 export default function AnalyticsPage() {
-  const activeRange = '7d';
+  const [range, setRange] = useState<AnalyticsRange>('7d');
+  const [data, setData] = useState<Analytics | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState('');
+
+  useEffect(() => {
+    let cancelled = false;
+    setLoading(true);
+    (async () => {
+      try {
+        const res = await getAnalytics(range);
+        if (!cancelled) { setData(res); setError(''); }
+      } catch (err) {
+        if (!cancelled) {
+          setError(err instanceof ApiError ? err.message : 'Failed to load analytics.');
+        }
+      } finally {
+        if (!cancelled) setLoading(false);
+      }
+    })();
+    return () => { cancelled = true; };
+  }, [range]);
+
+  const maxBucket = Math.max(1, ...(data?.points ?? []).map((p) => p.total));
+
+  const kpis = [
+    { label: 'Requests', value: (data?.total ?? 0).toLocaleString(), icon: Activity },
+    {
+      label: 'Success rate',
+      value: data?.success_rate === null || data === null
+        ? '--'
+        : `${Math.round(data.success_rate * 100)}%`,
+      icon: TrendingUp,
+    },
+    {
+      label: 'Avg latency (p50)',
+      value: data?.p50_latency_ms === null || data === null
+        ? 'No data yet'
+        : `${data.p50_latency_ms} ms`,
+      icon: Clock,
+    },
+    { label: 'Flagged', value: (data?.flagged_devices ?? 0).toLocaleString(), icon: AlertTriangle },
+  ];
 
   return (
     <>
       <DashboardPageHeader
-        soon
         title="Analytics"
         description="Insights into your verification traffic"
+        action={
+          <a
+            href={analyticsCsvUrl(range)}
+            className="btn-secondary"
+            target="_blank"
+            rel="noreferrer"
+          >
+            <Download size={16} /> Export CSV
+          </a>
+        }
       />
 
+      {error && <ErrorBanner message={error} />}
+
       <div className="space-y-6">
-        {/* Controls */}
-        <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-          <div className="inline-flex items-center rounded-[10px] border border-line bg-surface-2 p-1">
-            {ranges.map((r) => (
-              <button
-                key={r}
-                type="button"
-                disabled
-                className={`rounded-lg px-3 py-1.5 text-xs font-semibold transition-colors ${
-                  r === activeRange
-                    ? 'bg-brand-500/20 text-primary'
-                    : 'cursor-not-allowed opacity-50 text-muted'
-                }`}
-              >
-                {r}
-              </button>
-            ))}
-          </div>
-          <div className="flex items-center gap-2">
-            <select
-              className="input-field w-auto cursor-not-allowed opacity-50"
-              defaultValue="all"
-              aria-label="Filter by origin"
-              disabled
+        <div className="inline-flex items-center rounded-[10px] border border-line bg-surface-2 p-1">
+          {RANGES.map((r) => (
+            <button
+              key={r}
+              type="button"
+              onClick={() => setRange(r)}
+              className={`rounded-lg px-3 py-1.5 text-xs font-semibold transition-colors ${
+                r === range ? 'bg-brand-500/20 text-primary' : 'text-muted hover:text-secondary'
+              }`}
             >
-              <option value="all">All origins</option>
-            </select>
-            <button type="button" className="btn-secondary cursor-not-allowed opacity-50" disabled>
-              Export CSV
+              {r}
             </button>
-          </div>
+          ))}
         </div>
 
-        {/* KPI row */}
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
           {kpis.map((kpi) => {
             const Icon = kpi.icon;
@@ -64,57 +101,45 @@ export default function AnalyticsPage() {
               <div key={kpi.label} className="card p-5">
                 <div className="flex items-center justify-between">
                   <p className="micro-label">{kpi.label}</p>
-                  <span className="pill-soon">Soon</span>
                   <Icon size={16} className="text-muted" />
                 </div>
-                <p className="mt-3 font-mono text-2xl font-semibold tabular-nums tracking-tight text-primary">{kpi.value}</p>
-                <span className="badge-success mt-2">{kpi.delta}</span>
+                <p className="mt-3 font-mono text-2xl font-semibold tabular-nums tracking-tight text-primary">
+                  {loading ? '--' : kpi.value}
+                </p>
               </div>
             );
           })}
         </div>
 
-        {/* Main chart area */}
-        <div className="gradient-border-card p-6 sm:p-8">
-          <div className="mb-6 flex items-center justify-between">
-            <h3 className="section-title">Verifications over time</h3>
-            <div className="flex items-center gap-4">
-              <span className="flex items-center gap-1.5 text-xs text-secondary"><span className="h-2 w-2 rounded-full bg-brand-500" />Verifications</span>
-              <span className="flex items-center gap-1.5 text-xs text-secondary"><span className="h-2 w-2 rounded-full bg-accent-400" />Flagged</span>
-            </div>
-          </div>
-          <div className="flex h-64 items-center justify-center">
+        {loading ? (
+          <LoadingState label="Loading analytics" />
+        ) : (data?.points.length ?? 0) === 0 ? (
+          <div className="card p-6">
             <EmptyState
-              icon={<BarChart3 size={28} />}
-              title="Analytics data unavailable"
-              description="Analytics are not currently available from the backend. Once analytics data is exposed via the API, it will appear here automatically."
+              icon={<BarChart3 size={24} />}
+              title="No verification traffic yet"
+              description="Once this workspace runs verifications, the time series will appear here."
             />
           </div>
-        </div>
-
-        {/* Bottom two columns */}
-        <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
-          <div className="card p-6">
-            <div className="mb-4 flex items-center justify-between">
-              <h3 className="section-title">Verifications by origin</h3>
-              <span className="pill-soon">Coming soon</span>
-            </div>
-            <div className="flex h-40 items-center justify-center rounded-lg border border-dashed border-line">
-              <p className="text-sm text-muted">No origins yet</p>
-            </div>
-          </div>
-          <div className="card p-6">
-            <div className="mb-4 flex items-center justify-between">
-              <h3 className="section-title">Latency distribution</h3>
-              <span className="pill-soon">Coming soon</span>
-            </div>
-            <div className="flex h-40 items-end justify-center gap-1.5 rounded-lg px-4 pb-4">
-              {[40, 65, 30, 80, 55, 20, 45, 70, 35, 60].map((h, i) => (
-                <div key={i} className="w-full rounded-t bg-brand-600 opacity-40" style={{ height: `${h}%` }} />
+        ) : (
+          <div className="gradient-border-card p-6">
+            <h3 className="section-title">Verifications over time</h3>
+            <div className="mt-6 flex h-48 items-end gap-1">
+              {data!.points.map((p) => (
+                <div key={p.bucket} className="group relative flex-1" title={`${new Date(p.bucket).toLocaleString()}: ${p.total}`}>
+                  <div
+                    className="w-full rounded-t bg-brand-600/70"
+                    style={{ height: `${Math.max(2, (p.total / maxBucket) * 100)}%` }}
+                  />
+                </div>
               ))}
             </div>
+            <div className="mt-2 flex justify-between text-[11px] text-text-micro">
+              <span>{new Date(data!.points[0]!.bucket).toLocaleString()}</span>
+              <span>{new Date(data!.points[data!.points.length - 1]!.bucket).toLocaleString()}</span>
+            </div>
           </div>
-        </div>
+        )}
       </div>
     </>
   );

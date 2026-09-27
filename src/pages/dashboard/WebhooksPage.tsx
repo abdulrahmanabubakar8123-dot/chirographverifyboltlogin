@@ -290,35 +290,19 @@ export default function WebhooksPage() {
 
           <div className="card p-6">
             <div>
-              <h2 className="section-title">Event subscriptions</h2>
-              <p className="text-xs text-muted">Choose which events trigger webhook deliveries</p>
+              <h2 className="section-title">Events</h2>
+              <p className="text-xs text-muted">Delivered to your webhook URL with an HMAC signature</p>
             </div>
-            <div className="mt-5 divide-y divide border-line">
-              {[
-                { id: 'verification.succeeded', label: 'verification.succeeded', desc: 'A verification completed successfully' },
-                { id: 'verification.failed', label: 'verification.failed', desc: 'A verification request failed' },
-                { id: 'key.rotated', label: 'key.rotated', desc: 'The API key was regenerated' },
-                { id: 'device.flagged', label: 'device.flagged', desc: 'A device was flagged for review' },
-              ].map((evt) => (
-                <div key={evt.id} className="flex items-center justify-between py-4 first:pt-0 last:pb-0">
-                  <div>
-                    <p className="font-mono text-sm text-primary">{evt.label}</p>
-                    <p className="mt-0.5 text-xs text-muted">{evt.desc}</p>
+            <ul className="mt-5 divide-y divide border-line">
+              {(data?.supported_events ?? []).map((e) => (
+                <li key={e.type} className="flex items-start justify-between gap-4 py-4 first:pt-0 last:pb-0">
+                  <div className="min-w-0">
+                    <p className="font-mono text-sm text-primary">{e.type}</p>
+                    <p className="mt-0.5 text-xs text-muted">{e.description}</p>
                   </div>
-                  <span className="pill-soon">Coming soon</span>
-                  <button
-                    type="button"
-                    role="switch"
-                    aria-checked="true"
-                    aria-label={evt.label}
-                    disabled
-                    className="relative h-[22px] w-10 shrink-0 cursor-not-allowed rounded-full opacity-50 bg-brand-600 transition-opacity"
-                  >
-                    <span className="absolute right-[3px] top-[3px] h-4 w-4 rounded-full bg-surface transition-transform" />
-                  </button>
-                </div>
+                </li>
               ))}
-            </div>
+            </ul>
           </div>
         </div>
       )}

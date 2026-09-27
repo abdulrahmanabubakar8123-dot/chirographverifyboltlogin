@@ -187,9 +187,16 @@ export interface Settings {
  * `origins` key on this route — allowed origins come from
  * GET /api/dashboard/settings as `allowed_origins`.
  */
+export interface WebhookSupportedEvent {
+  type: string;
+  description: string;
+}
+
 export interface WebhookSettings {
   webhook_url: string | null;
   webhook_secret_configured: boolean;
+  /** The events this deployment actually emits. Server-authoritative. */
+  supported_events?: WebhookSupportedEvent[];
   deliveries: WebhookDelivery[];
 }
 

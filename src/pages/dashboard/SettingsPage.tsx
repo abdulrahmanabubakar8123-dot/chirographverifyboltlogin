@@ -29,7 +29,7 @@ export default function SettingsPage() {
   if (loading) {
     return (
       <>
-                <DashboardPageHeader soon title="Settings" description="View your account and organization settings" />
+                <DashboardPageHeader title="Settings" description="View your account and organization settings" />
         <LoadingState />
       </>
     );
@@ -44,7 +44,7 @@ export default function SettingsPage() {
 
   return (
     <>
-            <DashboardPageHeader soon title="Settings" description="View your account and organization settings" />
+            <DashboardPageHeader title="Settings" description="View your account and organization settings" />
       {error ? (
         <div className="card p-6">
           <EmptyState icon={<AlertCircle size={24} />} title="Couldn't load settings" description={error} />

@@ -35,6 +35,9 @@ export default function PaymentsPage() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
   const [status, setStatus] = useState<string>('all');
+  // Plan/tier filter. This select previously had no onChange and no state, so it
+  // rendered options and silently did nothing.
+  const [tier, setTier] = useState<string>('all');
   const [query, setQuery] = useState('');
 
   useEffect(() => {
@@ -58,10 +61,11 @@ export default function PaymentsPage() {
     const q = query.trim().toLowerCase();
     return all.filter((t) => {
       if (status !== 'all' && t.status !== status) return false;
+      if (tier !== 'all' && t.tier !== tier) return false;
       if (!q) return true;
       return t.tx_ref.toLowerCase().includes(q) || t.tier.toLowerCase().includes(q);
     });
-  }, [data, status, query]);
+  }, [data, status, tier, query]);
 
   if (loading) {
     return <LoadingState label="Loading payments" />;
@@ -114,9 +118,10 @@ export default function PaymentsPage() {
 
         <div className="relative">
           <select
+            value={tier}
+            onChange={(e) => setTier(e.target.value)}
             aria-label="Filter by type"
             className="x-filter cursor-pointer appearance-none pr-8"
-            defaultValue="all"
           >
             <option value="all">All types</option>
             {Array.from(new Set(all.map((t) => t.tier))).map((t) => (
@@ -139,10 +144,11 @@ export default function PaymentsPage() {
           className="x-filter w-56 focus:border-muted focus:text-primary focus:outline-none"
         />
 
-        {(status !== 'all' || query) && (
+        {(status !== 'all' || tier !== 'all' || query) && (
           <button
             onClick={() => {
               setStatus('all');
+              setTier('all');
               setQuery('');
             }}
             className="text-[13px] text-secondary transition-colors hover:text-primary"

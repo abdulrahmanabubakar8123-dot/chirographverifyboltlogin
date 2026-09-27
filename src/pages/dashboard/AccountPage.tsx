@@ -14,7 +14,7 @@ export default function AccountPage() {
 
   return (
     <>
-             <DashboardPageHeader soon title="Account" description="Your account information" />
+             <DashboardPageHeader title="Account" description="Your account information" />
       <div className="max-w-2xl space-y-6">
         <div className="card p-6">
           <div className="flex items-center gap-4">

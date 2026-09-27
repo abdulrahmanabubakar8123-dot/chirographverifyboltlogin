@@ -1,4 +1,4 @@
-import { apiRequest } from './apiClient';
+import { apiRequest, BASE } from './apiClient';
 import type {
   Overview,
   Usage,
@@ -136,3 +136,202 @@ export async function cancelPlan(): Promise<void> {
 export async function getSettings(): Promise<Settings> {
   return apiRequest<Settings>('/api/dashboard/settings');
 }
+
+/* ───────────────────────── console parity (added for the 5 formerly-mock pages) ─ */
+
+export type AnalyticsRange = '24h' | '7d' | '30d' | '90d';
+
+export interface AnalyticsPoint {
+  bucket: string;
+  total: number;
+  verified: number;
+  failed: number;
+}
+
+export interface Analytics {
+  range: AnalyticsRange;
+  window_start: string;
+  total: number;
+  verified: number;
+  failed: number;
+  /** null (not 0) when there were no verifications, so the UI can render "—". */
+  success_rate: number | null;
+  flagged_devices: number;
+  /** null when no samples exist yet — never a fake 0. */
+  p50_latency_ms: number | null;
+  p95_latency_ms: number | null;
+  latency_sample_size: number;
+  points: AnalyticsPoint[];
+}
+
+export async function getAnalytics(range: AnalyticsRange): Promise<Analytics> {
+  return apiRequest<Analytics>(`/api/dashboard/analytics?range=${encodeURIComponent(range)}`);
+}
+
+/**
+ * Absolute URL for the CSV export. Built from the same API base as apiRequest so
+ * the download always targets production/staging, never the SPA origin.
+ */
+export function analyticsCsvUrl(range: AnalyticsRange): string {
+  return `${BASE}/api/dashboard/analytics.csv?range=${encodeURIComponent(range)}`;
+}
+
+export interface AuditEvent {
+  id: string;
+  actor: string;
+  action: string;
+  description: string;
+  metadata: Record<string, unknown>;
+  created_at: string;
+}
+
+export interface ActivityPage {
+  events: AuditEvent[];
+  total: number;
+  limit: number;
+  offset: number;
+}
+
+export async function getActivity(params: {
+  limit?: number;
+  offset?: number;
+} = {}): Promise<ActivityPage> {
+  const q = new URLSearchParams();
+  q.set('limit', String(params.limit ?? 50));
+  q.set('offset', String(params.offset ?? 0));
+  return apiRequest<ActivityPage>(`/api/dashboard/activity?${q.toString()}`);
+}
+
+export interface ApiRequestLogRow {
+  id: string;
+  request_id: string | null;
+  endpoint: string;
+  status_code: number;
+  duration_ms: number;
+  created_at: string;
+}
+
+export interface ApiLogsPage {
+  requests: ApiRequestLogRow[];
+  total: number;
+  limit: number;
+  offset: number;
+}
+
+export async function getApiLogs(params: {
+  limit?: number;
+  offset?: number;
+  endpoint?: string;
+  status?: number;
+} = {}): Promise<ApiLogsPage> {
+  const q = new URLSearchParams();
+  q.set('limit', String(params.limit ?? 50));
+  q.set('offset', String(params.offset ?? 0));
+  if (params.endpoint) q.set('endpoint', params.endpoint);
+  if (params.status) q.set('status', String(params.status));
+  return apiRequest<ApiLogsPage>(`/api/dashboard/api-logs?${q.toString()}`);
+}
+
+export type TeamRole = 'owner' | 'admin' | 'member';
+
+export interface TeamMember {
+  id: string;
+  email: string;
+  role: TeamRole;
+  created_at: string;
+}
+
+export interface TeamInvitation {
+  id: string;
+  email: string;
+  role: TeamRole;
+  invited_by_email: string | null;
+  expires_at: string;
+  created_at: string;
+}
+
+export interface Team {
+  members: TeamMember[];
+  invitations: TeamInvitation[];
+}
+
+export async function getTeam(): Promise<Team> {
+  return apiRequest<Team>('/api/dashboard/team');
+}
+
+/** Returns the shareable link. Email delivery is unconfigured by design. */
+export async function inviteMember(
+  email: string,
+  role: Exclude<TeamRole, 'owner'>,
+): Promise<{ invitation: TeamInvitation; invite_url: string }> {
+  return apiRequest('/api/dashboard/team/invitations', {
+    method: 'POST',
+    body: JSON.stringify({ email, role }),
+  });
+}
+
+export async function revokeInvitation(id: string): Promise<void> {
+  await apiRequest(`/api/dashboard/team/invitations/${encodeURIComponent(id)}`, {
+    method: 'DELETE',
+  });
+}
+
+export async function updateMemberRole(id: string, role: Exclude<TeamRole, 'owner'>): Promise<void> {
+  await apiRequest(`/api/dashboard/team/members/${encodeURIComponent(id)}`, {
+    method: 'PATCH',
+    body: JSON.stringify({ role }),
+  });
+}
+
+export async function removeMember(id: string): Promise<void> {
+  await apiRequest(`/api/dashboard/team/members/${encodeURIComponent(id)}`, {
+    method: 'DELETE',
+  });
+}
+
+export interface NotificationRow {
+  id: string;
+  kind: string;
+  recipient: string;
+  subject: string;
+  body: string;
+  status: 'pending' | 'sent' | 'failed' | 'skipped';
+  attempts: number;
+  last_error: string | null;
+  created_at: string;
+  sent_at: string | null;
+}
+
+export interface NotificationsPage {
+  notifications: NotificationRow[];
+  total: number;
+  limit: number;
+  offset: number;
+  /** False until an email provider is configured; the UI must say so. */
+  delivery_configured: boolean;
+}
+
+export async function getNotifications(params: { limit?: number; offset?: number } = {}): Promise<NotificationsPage> {
+  const q = new URLSearchParams();
+  q.set('limit', String(params.limit ?? 50));
+  q.set('offset', String(params.offset ?? 0));
+  return apiRequest<NotificationsPage>(`/api/dashboard/notifications?${q.toString()}`);
+}
+
+export interface Preferences {
+  email_notifications: boolean;
+  webhook_alerts: boolean;
+  usage_reports: boolean;
+}
+
+export async function getPreferences(): Promise<Preferences> {
+  return apiRequest<Preferences>('/api/dashboard/preferences');
+}
+
+export async function updatePreferences(patch: Partial<Preferences>): Promise<Preferences> {
+  return apiRequest<Preferences>('/api/dashboard/preferences', {
+    method: 'POST',
+    body: JSON.stringify(patch),
+  });
+}
+
