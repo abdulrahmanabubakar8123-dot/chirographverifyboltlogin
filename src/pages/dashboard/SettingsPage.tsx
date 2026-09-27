@@ -39,16 +39,22 @@ export default function SettingsPage() {
       } catch (err) {
         if (!cancelled) setError(describeError(err, 'settings'));
       }
-      try {
-        const p = await getPreferences();
-        if (!cancelled) setPrefs(p);
-      } catch {
-        if (!cancelled) setPrefs(null);
-      }
+      void loadPrefs(cancelled);
       if (!cancelled) setLoading(false);
     })();
     return () => { cancelled = true; };
   }, []);
+
+  // Retryable preferences fetch: the fallback used to force a full page
+  // reload, which threw away every other edit on the page.
+  async function loadPrefs(cancelled = false) {
+    try {
+      const p = await getPreferences();
+      if (!cancelled) { setPrefs(p); setPrefsError(''); }
+    } catch (err) {
+      if (!cancelled) setPrefsError(describeError(err, 'your preferences'));
+    }
+  }
 
   async function saveOrg(e: FormEvent) {
     e.preventDefault();
@@ -184,12 +190,9 @@ export default function SettingsPage() {
           <p className="mt-1 text-sm text-muted">Choose which updates you receive.</p>
 
           {!prefs ? (
-            <p className="mt-4 text-sm text-muted">
-              Preferences are unavailable right now.{' '}
-              <button type="button" className="underline" onClick={() => window.location.reload()}>
-                Retry
-              </button>
-            </p>
+            <div className="mt-4 space-y-3">
+              {prefsError && <ErrorBanner message={prefsError} onRetry={loadPrefs} />}
+            </div>
           ) : (
             <form onSubmit={savePrefs} className="mt-5 space-y-4" noValidate>
               {[

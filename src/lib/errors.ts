@@ -64,11 +64,21 @@ const REASONS: Record<string, string> = {
 /** Status-based fallback when the backend sent no reason code we recognise. */
 function statusMessage(status: number): string {
   if (status === 0) {
-    return "Can't reach the server. Check your connection and try again.";
+    // fetch() only throws here for a genuine transport failure: offline, DNS,
+    // TLS, or -- the case actually seen in production -- a CORS preflight the
+    // server rejected, so the browser blocked the response and never let us
+    // read a status. Do not blame the user's connection, because a page full
+    // of loaded data proves it is fine.
+    return (
+      "The server didn't respond to this request. This is usually a CORS or " +
+      "network restriction on the API, not a problem with your connection."
+    );
   }
   if (status === 401) return 'Your session has expired. Sign in again to continue.';
   if (status === 403) return 'You do not have permission to do that.';
-  if (status === 404) return 'That endpoint is not available on this server.';
+  if (status === 404) {
+    return 'This feature needs a newer server version. Ask an administrator to deploy the latest backend.';
+  }
   if (status === 409) return 'That conflicts with something that already exists.';
   if (status === 413) return 'That request was too large.';
   if (status === 429) return 'Too many requests. Wait a moment and try again.';
@@ -106,7 +116,7 @@ export function describeError(err: unknown, context = 'this data'): string {
   if (err instanceof Error && err.message) {
     // Network-layer errors (TypeError: Failed to fetch) arrive here.
     if (/failed to fetch|networkerror|load failed/i.test(err.message)) {
-      return "Can't reach the server. Check your connection and try again.";
+      return "The server didn't respond. This is usually a CORS or network restriction on the API.";
     }
     return err.message;
   }
