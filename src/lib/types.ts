@@ -192,6 +192,24 @@ export interface WebhookSupportedEvent {
   description: string;
 }
 
+/**
+ * POST /api/dashboard/settings/widget-key
+ *
+ * `widget_key` is the PUBLISHABLE browser credential (safe in client code),
+ * returned by the server exactly once. It is NOT the tenant API key, which
+ * authenticates `X-API-Key` server-side and is never returned to the browser —
+ * do not conflate the two in the UI.
+ */
+export interface WidgetKeyResponse {
+  /** Plaintext, shown once. Never stored server-side (only its SHA-256 hash is). */
+  widget_key: string;
+  /** Internal `wc_<hex>` identifier, for support and logs. */
+  client_id: string;
+  widget_client_id: string;
+  allowed_origins: string[];
+  redirect_allowlist: string[];
+}
+
 export interface WebhookSettings {
   webhook_url: string | null;
   webhook_secret_configured: boolean;

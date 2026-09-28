@@ -9,6 +9,7 @@ import type {
   PaymentsResponse,
   Settings,
   UpgradeResult,
+  WidgetKeyResponse,
 } from './types';
 
 export async function getOverview(): Promise<Overview> {
@@ -105,6 +106,22 @@ export async function updateOrigins(origins: string[]): Promise<void> {
   await apiRequest('/api/dashboard/settings/origins', {
     method: 'POST',
     body: JSON.stringify({ origins }),
+  });
+}
+
+/**
+ * Create a widget client for the current tenant and return its plaintext key.
+ *
+ * The key is revealed exactly once by the server, so it cannot be re-fetched
+ * later. Multiple keys may be created; creating one never revokes another.
+ * The tenant's Allowed Origins are copied onto the client, and at least one is
+ * required — the server rejects the request otherwise.
+ */
+export async function createWidgetKey(redirectUrl?: string): Promise<WidgetKeyResponse> {
+  return apiRequest<WidgetKeyResponse>('/api/dashboard/settings/widget-key', {
+    method: 'POST',
+    // Omitted entirely when blank so the server keeps its default behaviour.
+    body: JSON.stringify(redirectUrl && redirectUrl.trim() ? { redirect_url: redirectUrl.trim() } : {}),
   });
 }
 

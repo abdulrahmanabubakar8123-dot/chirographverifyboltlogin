@@ -3,7 +3,7 @@ import { AlertCircle, Plus, Trash2, CheckCircle2, Globe, Copy, Check, KeyRound }
 import { DashboardPageHeader } from '@/layouts/DashboardLayout';
 import { LoadingState, EmptyState, ErrorBanner } from '@/components/Feedback';
 import Spinner from '@/components/Spinner';
-import { getWebhooks, getSettings, updateWebhookUrl, rotateWebhookSecret, updateOrigins } from '@/lib/dashboard';
+import { getWebhooks, getSettings, updateWebhookUrl, rotateWebhookSecret, updateOrigins, createWidgetKey } from '@/lib/dashboard';
 import { describeError } from '@/lib/errors';
 import type { WebhookSettings } from '@/lib/types';
 
@@ -34,6 +34,22 @@ export default function WebhooksPage() {
   const [newSecret, setNewSecret] = useState<string | null>(null);
   const [secretCopied, setSecretCopied] = useState(false);
 
+  /**
+   * The newly created Widget Key, held in component state only.
+   *
+   * Same discipline as the webhook secret above: the server reveals it exactly
+   * once, so it cannot be re-fetched. Never written to storage, never placed in
+   * the URL, never logged, and cleared on unmount.
+   *
+   * This is the PUBLISHABLE browser credential — distinct from the tenant API
+   * key, which stays server-side.
+   */
+  const [widgetKey, setWidgetKey] = useState<string | null>(null);
+  const [widgetKeyCopied, setWidgetKeyCopied] = useState(false);
+  const [creatingWidgetKey, setCreatingWidgetKey] = useState(false);
+  /** Optional redirect target; blank means "use the origin root". */
+  const [redirectUrl, setRedirectUrl] = useState('');
+
   useEffect(() => {
     let cancelled = false;
     (async () => {
@@ -55,7 +71,7 @@ export default function WebhooksPage() {
   }, []);
 
   // Drop the one-time secret from memory when the page unmounts.
-  useEffect(() => () => { setNewSecret(null); }, []);
+  useEffect(() => () => { setNewSecret(null); setWidgetKey(null); }, []);
 
   const showSuccess = (msg: string) => {
     setSuccessMsg(msg);
@@ -138,6 +154,32 @@ export default function WebhooksPage() {
       setSavingOrigins(false);
     }
   };
+
+  const handleCreateWidgetKey = async () => {
+    setActionError('');
+    setWidgetKeyCopied(false);
+    setCreatingWidgetKey(true);
+    try {
+      const res = await createWidgetKey(redirectUrl);
+      setWidgetKey(res.widget_key);
+      showSuccess('Widget key created.');
+    } catch (err) {
+      setActionError(describeError(err, 'creating the widget key'));
+    } finally {
+      setCreatingWidgetKey(false);
+    }
+  };
+
+  const handleCopyWidgetKey = async () => {
+    if (!widgetKey) return;
+    try {
+      await navigator.clipboard.writeText(widgetKey);
+      setWidgetKeyCopied(true);
+    } catch {
+      setActionError('Could not copy to the clipboard. Select the key and copy it manually.');
+    }
+  };
+
 
   if (loading) {
     return (
@@ -285,6 +327,87 @@ export default function WebhooksPage() {
               <button onClick={handleSaveOrigins} disabled={savingOrigins} className="btn-primary mt-5">
                 {savingOrigins ? <Spinner size={16} /> : 'Save Origins'}
               </button>
+            )}
+          </div>
+
+          <div className="card p-6">
+            <div>
+              <h2 className="section-title">Widget Key</h2>
+              <p className="text-xs text-muted">
+                Use this key to initialize the Chirograph Verify widget in your application
+              </p>
+            </div>
+
+            <div className="mt-5 flex flex-col gap-3 sm:flex-row sm:items-center">
+              <button
+                type="button"
+                onClick={handleCreateWidgetKey}
+                disabled={creatingWidgetKey || origins.length === 0}
+                className="btn-primary shrink-0"
+              >
+                {creatingWidgetKey ? <Spinner size={16} /> : <KeyRound size={16} />}
+                Create Widget Key
+              </button>
+              <p className="text-xs text-muted">
+                {origins.length === 0
+                  ? 'Add and save at least one Allowed Origin above first.'
+                  : 'Bound to your Allowed Origins. You can create more than one key; creating a key never revokes an existing one.'}
+              </p>
+            </div>
+
+            {/* Optional. Blank keeps the default: the origin root is the only
+                permitted redirect target. */}
+            <div className="mt-5">
+              <label htmlFor="widget-redirect-url" className="block text-xs font-medium text-secondary">
+                Redirect URL <span className="text-muted">(optional)</span>
+              </label>
+              <input
+                id="widget-redirect-url"
+                type="url"
+                value={redirectUrl}
+                onChange={(e) => setRedirectUrl(e.target.value)}
+                disabled={creatingWidgetKey || origins.length === 0}
+                className="input-field mt-2 font-mono"
+                placeholder="https://chiro-widget-demo.lovable.app/callback"
+              />
+              <p className="mt-2 text-xs text-muted">
+                Where users are sent after verification. Must be on one of your Allowed Origins. Leave
+                blank to send them to the origin root.
+              </p>
+            </div>
+
+            {widgetKey && (
+              <div className="mt-5 rounded-panel border border-warning/40 bg-warning/[0.06] p-4">
+                <p className="flex items-center gap-2 text-[13px] font-semibold text-warning">
+                  <AlertCircle size={15} /> Copy this key now — it will not be shown again
+                </p>
+                <div className="mt-3 flex items-center gap-2">
+                  <code className="min-w-0 flex-1 overflow-x-auto rounded-md border border-line bg-surface px-3 py-2.5 font-mono text-sm text-primary">
+                    {widgetKey}
+                  </code>
+                  <button
+                    type="button"
+                    onClick={handleCopyWidgetKey}
+                    className="btn-secondary shrink-0"
+                    aria-label="Copy widget key"
+                  >
+                    {widgetKeyCopied ? <Check size={16} /> : <Copy size={16} />}
+                    {widgetKeyCopied ? 'Copied' : 'Copy'}
+                  </button>
+                </div>
+                <p className="mt-3 text-xs text-muted">
+                  Pass it to <code className="font-mono">ChirographWidget.init({'{ widgetKey }'})</code> in your
+                  frontend. This is a publishable browser credential and is not your tenant API key — keep
+                  that one on your server.
+                </p>
+                <button
+                  type="button"
+                  onClick={() => setWidgetKey(null)}
+                  className="mt-3 text-xs text-muted underline hover:text-secondary"
+                >
+                  I have saved it — hide this
+                </button>
+              </div>
             )}
           </div>
 
