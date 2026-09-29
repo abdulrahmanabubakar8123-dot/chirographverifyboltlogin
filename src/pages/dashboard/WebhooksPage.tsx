@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useState, type FormEvent } from 'react';
 import { AlertCircle, Plus, Trash2, CheckCircle2, Globe, Copy, Check, KeyRound } from 'lucide-react';
 import { DashboardPageHeader } from '@/layouts/DashboardLayout';
-import { LoadingState, EmptyState, ErrorBanner } from '@/components/Feedback';
+import { EmptyState, ErrorBanner, SkeletonPage } from '@/components/Feedback';
 import Spinner from '@/components/Spinner';
 import { getWebhooks, getSettings, updateWebhookUrl, rotateWebhookSecret, updateOrigins, createWidgetKey } from '@/lib/dashboard';
 import { describeError } from '@/lib/errors';
@@ -203,7 +203,7 @@ export default function WebhooksPage() {
     return (
       <>
         <DashboardPageHeader soon title="Webhooks" description="Configure webhook endpoints and event subscriptions" />
-        <LoadingState />
+        <SkeletonPage variant="card" />
       </>
     );
   }

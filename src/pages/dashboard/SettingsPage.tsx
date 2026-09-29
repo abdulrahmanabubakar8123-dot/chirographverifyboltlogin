@@ -1,7 +1,7 @@
 import { useEffect, useState, type FormEvent } from 'react';
 import { Lock, Check, Globe, Webhook } from 'lucide-react';
 import { DashboardPageHeader } from '@/layouts/DashboardLayout';
-import { LoadingState, ErrorBanner } from '@/components/Feedback';
+import { ErrorBanner, SkeletonPage } from '@/components/Feedback';
 import {
   getSettings, updateProfile, getPreferences, updatePreferences,
   type Preferences,
@@ -98,7 +98,7 @@ export default function SettingsPage() {
     return (
       <>
         <DashboardPageHeader title="Settings" description="Manage your account and workspace" />
-        <LoadingState label="Loading settings" />
+        <SkeletonPage variant="card" />
       </>
     );
   }

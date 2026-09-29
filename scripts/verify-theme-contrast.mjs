@@ -55,4 +55,37 @@ for (const [name, t] of Object.entries(themes)) {
   }
 }
 console.log(fail ? `\n${fail} FAILING PAIR(S)` : '\nAll pairs pass in both themes.');
+
+/*
+ * Components-layer guard.
+ *
+ * The pairs above only compare TOKENS, so a component rule that hardcodes a
+ * colour instead of using one is completely invisible to them. That is how
+ * `hover:bg-white` on .btn-primary survived: its label is `text-canvas`, which
+ * is white in the light theme, so hovering produced white-on-white (contrast
+ * 1.0) and the button vanished. The same raw white appeared in
+ * .plan-cta-primary.
+ *
+ * Every colour in this design system is meant to be a token, so the light theme
+ * can repaint the whole console atomically (see the note in index.css). A bare
+ * `bg-white` / `text-white` in the components layer breaks that invariant, so
+ * fail the build. Alpha forms (`bg-white/20`, `bg-white/[0.06]`) are overlays,
+ * not surface colours, and remain allowed.
+ */
+const componentsStart = css.indexOf('@layer components');
+const components = componentsStart < 0 ? '' : css.slice(componentsStart);
+const hardcoded = [];
+for (const m of components.matchAll(/(bg|text)-white\b(?!\/)/g)) {
+  const line = components.slice(0, m.index).split('\n').length;
+  hardcoded.push(`  line ${line}: ${m[0]}`);
+}
+
+if (hardcoded.length) {
+  console.log(
+    `\nHARDCODED COLOUR IN COMPONENTS LAYER (${hardcoded.length}) — use a theme token:\n` +
+      hardcoded.join('\n'),
+  );
+  fail += hardcoded.length;
+}
+
 process.exit(fail ? 1 : 0);

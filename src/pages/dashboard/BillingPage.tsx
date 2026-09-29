@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { AlertCircle, Check, Zap, ArrowRight, ShieldCheck } from 'lucide-react';
 import { DashboardPageHeader } from '@/layouts/DashboardLayout';
-import { LoadingState, EmptyState, ErrorBanner } from '@/components/Feedback';
+import { EmptyState, ErrorBanner, SkeletonPage } from '@/components/Feedback';
 import Spinner from '@/components/Spinner';
 import { getBilling, upgradePlan, cancelPlan } from '@/lib/dashboard';
 import { describeError } from '@/lib/errors';
@@ -109,7 +109,7 @@ export default function BillingPage() {
     return (
       <>
         <DashboardPageHeader title="Plans" description="Choose the plan that fits your verification volume" />
-        <LoadingState />
+        <SkeletonPage variant="card" />
       </>
     );
   }

@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { SquareTerminal } from 'lucide-react';
 import { DashboardPageHeader } from '@/layouts/DashboardLayout';
-import { LoadingState, EmptyState, ErrorBanner } from '@/components/Feedback';
+import { EmptyState, ErrorBanner, SkeletonPage } from '@/components/Feedback';
 import { getApiLogs, type ApiRequestLogRow } from '@/lib/dashboard';
 import { describeError } from '@/lib/errors';
 
@@ -101,7 +101,7 @@ export default function ApiLogsPage() {
         </div>
 
         {loading ? (
-          <LoadingState label="Loading API logs" />
+          <SkeletonPage variant="list" />
         ) : rows.length === 0 ? (
           <div className="card p-6">
             <EmptyState

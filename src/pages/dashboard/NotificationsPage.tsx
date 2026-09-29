@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { Bell, AlertCircle } from 'lucide-react';
 import { DashboardPageHeader } from '@/layouts/DashboardLayout';
-import { LoadingState, EmptyState, ErrorBanner } from '@/components/Feedback';
+import { EmptyState, ErrorBanner, SkeletonPage } from '@/components/Feedback';
 import { getNotifications, type NotificationRow } from '@/lib/dashboard';
 import { describeError } from '@/lib/errors';
 
@@ -76,7 +76,7 @@ export default function NotificationsPage() {
       )}
 
       {loading ? (
-        <LoadingState label="Loading notifications" />
+        <SkeletonPage variant="list" />
       ) : rows.length === 0 ? (
         <div className="card p-6">
           <EmptyState

@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { AlertCircle, RefreshCw, X, BarChart3, Boxes, ArrowRight, CreditCard } from 'lucide-react';
-import { LoadingState } from '@/components/Feedback';
+import { SkeletonPage } from '@/components/Feedback';
 import { getOverview, getUsage } from '@/lib/dashboard';
 import { describeError } from '@/lib/errors';
 import type { Overview as OverviewType, Usage as UsageType } from '@/lib/types';
@@ -34,7 +34,7 @@ export default function OverviewPage() {
   }, []);
 
   if (loading) {
-    return <LoadingState label="Loading dashboard" />;
+    return <SkeletonPage variant="stats" />;
   }
 
   const total = usage?.usage?.total ?? 0;

@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { Activity } from 'lucide-react';
 import { DashboardPageHeader } from '@/layouts/DashboardLayout';
-import { LoadingState, EmptyState, ErrorBanner } from '@/components/Feedback';
+import { EmptyState, ErrorBanner, SkeletonPage } from '@/components/Feedback';
 import { getActivity, type AuditEvent } from '@/lib/dashboard';
 import { describeError } from '@/lib/errors';
 
@@ -91,7 +91,7 @@ export default function ActivityLogPage() {
         </div>
 
         {loading ? (
-          <LoadingState label="Loading activity" />
+          <SkeletonPage variant="list" />
         ) : events.length === 0 ? (
           <div className="card p-6">
             <EmptyState

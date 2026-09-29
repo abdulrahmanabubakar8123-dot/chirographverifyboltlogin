@@ -2,6 +2,15 @@
 @tailwind components;
 @tailwind utilities;
 
+/* Indeterminate progress sweep used by the branded auth transition. */
+@keyframes sweep {
+  from { transform: translateX(0%); }
+  to   { transform: translateX(200%); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .animate-\[sweep_1\.3s_ease-in-out_infinite_alternate\] { animation: none; }
+}
+
 @layer base {
   /*
    * The single source of truth for the console palette.
@@ -121,7 +130,7 @@
   }
   /* button-primary: solid white pill, black label, 48px, soft glow */
   .btn-primary {
-    @apply inline-flex items-center justify-center gap-2 rounded-full bg-neutral px-6 text-body-md font-medium text-canvas transition-all duration-200 hover:bg-white hover:shadow-glow focus:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2 focus-visible:ring-offset-canvas disabled:cursor-not-allowed disabled:opacity-50;
+    @apply inline-flex items-center justify-center gap-2 rounded-full bg-neutral px-6 text-body-md font-medium text-canvas transition-all duration-200 hover:bg-canvas hover:text-primary hover:shadow-glow focus:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2 focus-visible:ring-offset-canvas disabled:cursor-not-allowed disabled:opacity-50;
     height: 48px;
   }
   /* button-secondary: hairline-outlined pill on black */
@@ -300,7 +309,7 @@
     @apply inline-flex h-10 w-full items-center justify-center gap-2 rounded-full px-5 text-[14px] font-medium transition-colors duration-200 disabled:cursor-default;
   }
   .plan-cta-primary {
-    @apply bg-primary text-canvas hover:bg-white disabled:bg-surface-3 disabled:text-text-micro;
+    @apply bg-primary text-canvas hover:bg-canvas hover:text-primary disabled:bg-surface-3 disabled:text-text-micro;
   }
   .plan-cta-secondary {
     @apply border border-line-strong text-secondary hover:border-muted hover:bg-white/[0.06] hover:text-primary;

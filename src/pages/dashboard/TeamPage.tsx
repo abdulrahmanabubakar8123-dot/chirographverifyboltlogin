@@ -1,7 +1,7 @@
 import { useEffect, useState, type FormEvent } from 'react';
 import { Users, Trash2, Copy, Check, Plus } from 'lucide-react';
 import { DashboardPageHeader } from '@/layouts/DashboardLayout';
-import { LoadingState, EmptyState, ErrorBanner } from '@/components/Feedback';
+import { EmptyState, ErrorBanner, SkeletonPage } from '@/components/Feedback';
 import Spinner from '@/components/Spinner';
 import {
   getTeam, inviteMember, revokeInvitation, updateMemberRole, removeMember,
@@ -116,7 +116,7 @@ export default function TeamPage() {
     }
   };
 
-  if (loading) return <LoadingState label="Loading team" />;
+  if (loading) return <SkeletonPage variant="list" />;
 
   return (
     <>

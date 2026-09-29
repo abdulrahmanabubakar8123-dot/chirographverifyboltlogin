@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { TrendingUp, Clock, AlertTriangle, Activity, Download, BarChart3 } from 'lucide-react';
 import { DashboardPageHeader } from '@/layouts/DashboardLayout';
-import { LoadingState, EmptyState, ErrorBanner } from '@/components/Feedback';
+import { EmptyState, ErrorBanner, SkeletonPage } from '@/components/Feedback';
 import { getAnalytics, analyticsCsvUrl, type Analytics, type AnalyticsRange } from '@/lib/dashboard';
 import { describeError } from '@/lib/errors';
 
@@ -125,7 +125,7 @@ export default function AnalyticsPage() {
         </div>
 
         {loading ? (
-          <LoadingState label="Loading analytics" />
+          <SkeletonPage variant="stats" />
         ) : (data?.points.length ?? 0) === 0 ? (
           <div className="card p-6">
             <EmptyState

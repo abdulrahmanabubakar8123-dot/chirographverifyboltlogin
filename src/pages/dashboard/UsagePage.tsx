@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { AlertCircle, BarChart3, Flag } from 'lucide-react';
-import { LoadingState } from '@/components/Feedback';
+import { SkeletonPage } from '@/components/Feedback';
 import { getUsage, extractUsageValue } from '@/lib/dashboard';
 import { describeError } from '@/lib/errors';
 import type { Usage as UsageType } from '@/lib/types';
@@ -26,7 +26,7 @@ export default function UsagePage() {
   }, []);
 
   if (loading) {
-    return <LoadingState label="Loading usage" />;
+    return <SkeletonPage variant="stats" />;
   }
 
   const total = extractUsageValue(data);

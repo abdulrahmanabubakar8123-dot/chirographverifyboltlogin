@@ -8,17 +8,18 @@ import {
 } from 'react';
 import { useAuth as useClerkAuth, useUser } from '@clerk/react';
 import { ApiError, apiRequest, setCsrfToken, clearCsrfToken } from '@/lib/apiClient';
+import type { SignOutPhase } from '@/components/authGate';
 import type { User } from '@/lib/types';
 
 interface AuthContextValue {
   user: User | null;
   loading: boolean;
   /**
-   * True from the moment the user asks to sign out until Clerk has finished the
-   * sign-out. Lets the UI show an intentional "Signing out…" state instead of the
-   * generic loading screen, which is what the user saw for ~2-5s (BUG-001).
+   * Position in the sign-out sequence. Three states, not a boolean, so a
+   * finished sign-out always resolves to the login redirect instead of
+   * stranding the user on the transition screen.
    */
-  signingOut: boolean;
+  signOutPhase: SignOutPhase;
   /** Set when the backend session exchange fails, so the UI can surface it. */
   authError: string | null;
   login: (email: string, password: string) => Promise<void>;
@@ -35,7 +36,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
-  const [signingOut, setSigningOut] = useState(false);
+  const [signOutPhase, setSignOutPhase] = useState<SignOutPhase>('idle');
   const [authError, setAuthError] = useState<string | null>(null);
 
   const establishBackendSession = useCallback(async () => {
@@ -51,7 +52,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     // only clearing it afterwards) lets ProtectedRoute distinguish "still
     // establishing" from "established" and from "failed".
     // A genuine signed-in user also means any earlier sign-out has finished.
-    setSigningOut(false);
+    setSignOutPhase('idle');
     setLoading(true);
     setAuthError(null);
 
@@ -65,6 +66,17 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         setLoading(false);
         return;
       }
+
+      // The exchange sets the backend session (and hands back the CSRF token);
+      // the read confirms it and resolves the application user. They used to be
+      // awaited one after the other, so the cold-start auth transition paid two
+      // full round trips back to back. The read is fired concurrently and only
+      // awaited once the exchange has completed -- the ordering the backend
+      // actually requires is preserved, the idle round trip is not.
+      const sessionRead = apiRequest<{
+        authenticated: boolean;
+        user?: User;
+      }>('/api/auth/session');
 
       const exchange = await apiRequest<{
         status: string;
@@ -82,10 +94,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         setCsrfToken(exchange.csrf_token);
       }
 
-      const session = await apiRequest<{
-        authenticated: boolean;
-        user?: User;
-      }>('/api/auth/session');
+      const session = await sessionRead;
 
       setUser(session.authenticated ? (session.user ?? null) : null);
 
@@ -129,9 +138,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const logout = useCallback(async () => {
     // Mark the intent BEFORE any await. The real sign-out below still governs
     // completion: we never navigate early and never skip the backend call, we
-    // only stop rendering the generic "Loading..." screen in the meantime
-    // (BUG-001).
-    setSigningOut(true);
+    // only stop rendering the generic "Loading..." screen in the meantime.
+    setSignOutPhase('in-progress');
     try {
       try {
         await apiRequest('/api/auth/logout', {
@@ -145,11 +153,15 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       setUser(null);
       setAuthError(null);
       await signOut();
+      // Terminal state. Reaching it is what guarantees the gate can resolve to
+      // redirect-login; without this the app stayed on the transition screen
+      // forever once the sign-out itself had finished.
+      setSignOutPhase('complete');
     } catch (err) {
-      // Clerk could not complete the sign-out. Stop the "Signing out…" state so
-      // the user is not stranded on it, and rethrow so the caller can surface
-      // the failure.
-      setSigningOut(false);
+      // Clerk could not complete the sign-out. Return to idle so the user is
+      // not stranded on the transition screen, and rethrow so the caller can
+      // surface the failure.
+      setSignOutPhase('idle');
       throw err;
     }
   }, [signOut]);
@@ -159,7 +171,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       value={{
         user,
         loading,
-        signingOut,
+        signOutPhase,
         authError,
         login,
         signup,

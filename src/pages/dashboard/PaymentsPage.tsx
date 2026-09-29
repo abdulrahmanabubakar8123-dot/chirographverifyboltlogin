@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from 'react';
 import { AlertCircle, Calendar, Receipt, ChevronDown } from 'lucide-react';
-import { LoadingState } from '@/components/Feedback';
+import { SkeletonPage } from '@/components/Feedback';
 import { getPayments } from '@/lib/dashboard';
 import { describeError } from '@/lib/errors';
 import type { PaymentsResponse } from '@/lib/types';
@@ -68,7 +68,7 @@ export default function PaymentsPage() {
   }, [data, status, tier, query]);
 
   if (loading) {
-    return <LoadingState label="Loading payments" />;
+    return <SkeletonPage variant="list" />;
   }
 
   const all = data?.transactions ?? [];

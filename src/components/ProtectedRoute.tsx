@@ -3,21 +3,35 @@ import { Navigate, useLocation } from 'react-router-dom';
 import { useAuth as useClerkAuth } from '@clerk/react';
 import { useAuth } from '@/context/AuthContext';
 import { ErrorBanner } from '@/components/Feedback';
-import Spinner from '@/components/Spinner';
 import Logo from '@/components/Logo';
 import { resolveAuthGate } from '@/components/authGate';
 
-function AuthLoadingScreen({ label = 'Loading...' }: { label?: string }) {
+/**
+ * Full-screen auth transition: the branded state shown while Clerk boots and
+ * while a sign-out completes.
+ *
+ * Replaces the bare spinner + "Loading..." text. Announced politely so assistive
+ * tech is told the state, and the copy states what is actually happening rather
+ * than a generic spinner label.
+ */
+function AuthTransitionScreen({ phase }: { phase: 'loading' | 'signing-out' }) {
+  const signingOut = phase === 'signing-out';
   return (
     <div
-      className="flex min-h-screen flex-col items-center justify-center gap-4 bg-canvas"
+      className="flex min-h-screen flex-col items-center justify-center gap-6 bg-canvas px-6"
       role="status"
       aria-live="polite"
+      data-testid={`auth-transition-${phase}`}
     >
       <Logo size="md" showText={false} to="" />
-      <div className="flex items-center gap-2 text-sm text-muted">
-        <Spinner size={18} /> {label}
+      <div className="h-1 w-24 overflow-hidden rounded-full bg-line">
+        <div
+          className="h-full w-1/2 rounded-full bg-primary animate-[sweep_1.3s_ease-in-out_infinite_alternate]"
+        />
       </div>
+      <p className="text-body-md text-secondary">
+        {signingOut ? 'Signing you out…' : 'Restoring your session…'}
+      </p>
     </div>
   );
 }
@@ -29,7 +43,7 @@ function AuthLoadingScreen({ label = 'Loading...' }: { label?: string }) {
 
 export default function ProtectedRoute({ children }: { children: ReactNode }) {
   const { isLoaded: clerkLoaded, isSignedIn } = useClerkAuth();
-  const { user, loading, signingOut, authError, refresh, logout } = useAuth();
+  const { user, loading, signOutPhase, authError, refresh, logout } = useAuth();
   const location = useLocation();
 
   const gate = resolveAuthGate({
@@ -38,7 +52,7 @@ export default function ProtectedRoute({ children }: { children: ReactNode }) {
     // normalise it so the gate's input contract stays strictly boolean.
     isSignedIn: Boolean(isSignedIn),
     loading,
-    signingOut,
+    signOutPhase,
     hasUser: Boolean(user),
     authError,
   });
@@ -47,13 +61,13 @@ export default function ProtectedRoute({ children }: { children: ReactNode }) {
   //    an explicit, branded state. We do NOT navigate here: the real Clerk and
   //    backend sign-out continue to decide when the app moves on.
   if (gate === 'signing-out') {
-    return <AuthLoadingScreen label="Signing out…" />;
+    return <AuthTransitionScreen phase="signing-out" />;
   }
 
   // 2. Still loading: Clerk state unknown, or the backend session exchange is
   //    in flight. No navigation happens here.
   if (gate === 'loading') {
-    return <AuthLoadingScreen />;
+    return <AuthTransitionScreen phase="loading" />;
   }
 
   // 3. Unauthenticated: Clerk confirms there is no active session.

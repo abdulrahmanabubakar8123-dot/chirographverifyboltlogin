@@ -8,6 +8,12 @@
     <meta name="description" content="Device intelligence and verification by Chirograph Verify." />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <!-- Clerk is loaded from the tenant's own Clerk domain, and the console is
+         render-blocked on it: this is the single largest item in the cold-start
+         auth transition. Opening DNS+TLS to it in parallel with our own bundle
+         removes that setup from the critical path. -->
+    <link rel="preconnect" href="https://clerk.chirographverify.com" crossorigin />
+    <link rel="dns-prefetch" href="https://clerk.chirographverify.com" />
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet" />
     <meta property="og:image" content="https://bolt.new/static/og_default.png">
     <meta name="twitter:card" content="summary_large_image">
