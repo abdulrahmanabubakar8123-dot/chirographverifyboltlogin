@@ -67,17 +67,14 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         return;
       }
 
-      // The exchange sets the backend session (and hands back the CSRF token);
-      // the read confirms it and resolves the application user. They used to be
-      // awaited one after the other, so the cold-start auth transition paid two
-      // full round trips back to back. The read is fired concurrently and only
-      // awaited once the exchange has completed -- the ordering the backend
-      // actually requires is preserved, the idle round trip is not.
-      const sessionRead = apiRequest<{
-        authenticated: boolean;
-        user?: User;
-      }>('/api/auth/session');
-
+      // SEQUENTIAL, and it must stay that way.
+      //
+      // GET /api/auth/session authenticates from the session cookie, and that
+      // cookie is issued by the exchange below. Firing the read concurrently
+      // sent it before the Set-Cookie had landed, so it resolved
+      // resolveSession() -> null -> 401, and every login landed on the
+      // "Request failed (401)" screen. These two calls have a genuine data
+      // dependency; there is no parallelism to exploit here.
       const exchange = await apiRequest<{
         status: string;
         csrf_token?: string;
@@ -94,7 +91,11 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         setCsrfToken(exchange.csrf_token);
       }
 
-      const session = await sessionRead;
+      // Only now does the session cookie exist.
+      const session = await apiRequest<{
+        authenticated: boolean;
+        user?: User;
+      }>('/api/auth/session');
 
       setUser(session.authenticated ? (session.user ?? null) : null);
 
