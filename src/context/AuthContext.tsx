@@ -13,6 +13,12 @@ import type { User } from '@/lib/types';
 interface AuthContextValue {
   user: User | null;
   loading: boolean;
+  /**
+   * True from the moment the user asks to sign out until Clerk has finished the
+   * sign-out. Lets the UI show an intentional "Signing out…" state instead of the
+   * generic loading screen, which is what the user saw for ~2-5s (BUG-001).
+   */
+  signingOut: boolean;
   /** Set when the backend session exchange fails, so the UI can surface it. */
   authError: string | null;
   login: (email: string, password: string) => Promise<void>;
@@ -29,6 +35,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
+  const [signingOut, setSigningOut] = useState(false);
   const [authError, setAuthError] = useState<string | null>(null);
 
   const establishBackendSession = useCallback(async () => {
@@ -43,6 +50,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     // The backend session exchange is in flight. Marking loading here (not
     // only clearing it afterwards) lets ProtectedRoute distinguish "still
     // establishing" from "established" and from "failed".
+    // A genuine signed-in user also means any earlier sign-out has finished.
+    setSigningOut(false);
     setLoading(true);
     setAuthError(null);
 
@@ -118,18 +127,30 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   }, [establishBackendSession]);
 
   const logout = useCallback(async () => {
+    // Mark the intent BEFORE any await. The real sign-out below still governs
+    // completion: we never navigate early and never skip the backend call, we
+    // only stop rendering the generic "Loading..." screen in the meantime
+    // (BUG-001).
+    setSigningOut(true);
     try {
-      await apiRequest('/api/auth/logout', {
-        method: 'POST',
-      });
-    } catch {
-      // Clerk sign-out must still happen even if the backend session
-      // has already expired.
-    } finally {
+      try {
+        await apiRequest('/api/auth/logout', {
+          method: 'POST',
+        });
+      } catch {
+        // Clerk sign-out must still happen even if the backend session
+        // has already expired.
+      }
       clearCsrfToken();
       setUser(null);
       setAuthError(null);
       await signOut();
+    } catch (err) {
+      // Clerk could not complete the sign-out. Stop the "Signing out…" state so
+      // the user is not stranded on it, and rethrow so the caller can surface
+      // the failure.
+      setSigningOut(false);
+      throw err;
     }
   }, [signOut]);
 
@@ -138,6 +159,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       value={{
         user,
         loading,
+        signingOut,
         authError,
         login,
         signup,

@@ -51,11 +51,25 @@ jobs:
           # hardcoded in the repo.
           VITE_CLERK_PUBLISHABLE_KEY: ${{ secrets.VITE_CLERK_PUBLISHABLE_KEY }}
 
-      # SPA fallback: GitHub Pages serves 404.html for unknown paths,
-      # so a copy of index.html lets BrowserRouter handle deep links
-      # like /dashboard/settings on refresh or direct navigation.
-      - name: Create SPA 404 fallback
-        run: cp dist/index.html dist/404.html
+      # SPA fallback. GitHub Pages has no rewrite rules, so a request for a
+      # client-side route (/dashboard, /login, ...) does not match a file on
+      # disk. Without these copies the host answers 404 and serves 404.html,
+      # which rendered correctly in the browser but reported every deep link as
+      # HTTP 404 (BUG-003) -- bad for crawlers and for uptime/error-rate
+      # monitoring.
+      #
+      #   200.html -> served with HTTP 200 for the SPA fallback, so valid
+      #               routes stop reporting 404.
+      #   404.html -> still produced so Pages has a fallback document.
+      #
+      # Note: with 200.html present, a genuinely nonexistent path also returns
+      # 200 with the SPA; the app renders its own not-found view client-side.
+      # That is the standard GitHub Pages SPA trade-off and is preferable to
+      # reporting every real route as a server error.
+      - name: Create SPA fallbacks
+        run: |
+          cp dist/index.html dist/200.html
+          cp dist/index.html dist/404.html
 
       - name: Setup Pages
         uses: actions/configure-pages@v5

@@ -1,10 +1,11 @@
-import { useEffect, useState, type FormEvent } from 'react';
+import { useCallback, useEffect, useState, type FormEvent } from 'react';
 import { AlertCircle, Plus, Trash2, CheckCircle2, Globe, Copy, Check, KeyRound } from 'lucide-react';
 import { DashboardPageHeader } from '@/layouts/DashboardLayout';
 import { LoadingState, EmptyState, ErrorBanner } from '@/components/Feedback';
 import Spinner from '@/components/Spinner';
 import { getWebhooks, getSettings, updateWebhookUrl, rotateWebhookSecret, updateOrigins, createWidgetKey } from '@/lib/dashboard';
 import { describeError } from '@/lib/errors';
+import { validateWidgetRedirectUrl } from '@/lib/redirectValidation';
 import type { WebhookSettings } from '@/lib/types';
 
 export default function WebhooksPage() {
@@ -49,6 +50,17 @@ export default function WebhooksPage() {
   const [creatingWidgetKey, setCreatingWidgetKey] = useState(false);
   /** Optional redirect target; blank means "use the origin root". */
   const [redirectUrl, setRedirectUrl] = useState('');
+  /**
+   * Inline validation message for the Redirect URL field. Set on blur and on
+   * submit; cleared when the user edits. The server remains authoritative —
+   * this only avoids a round-trip to discover the rule (BUG-002).
+   */
+  const [redirectUrlError, setRedirectUrlError] = useState('');
+
+  const validateRedirectUrl = useCallback(
+    () => validateWidgetRedirectUrl(redirectUrl, origins),
+    [redirectUrl, origins],
+  );
 
   useEffect(() => {
     let cancelled = false;
@@ -156,6 +168,12 @@ export default function WebhooksPage() {
   };
 
   const handleCreateWidgetKey = async () => {
+    // Validate before doing anything, so an invalid value never reaches the
+    // network and the user gets the reason inline rather than as a server 400.
+    const invalid = validateRedirectUrl();
+    setRedirectUrlError(invalid ?? '');
+    if (invalid) return;
+
     setActionError('');
     setWidgetKeyCopied(false);
     setCreatingWidgetKey(true);
@@ -342,7 +360,9 @@ export default function WebhooksPage() {
               <button
                 type="button"
                 onClick={handleCreateWidgetKey}
-                disabled={creatingWidgetKey || origins.length === 0}
+                // Blocked while the Redirect URL is invalid, so the request never
+                // leaves the browser (the server still re-validates).
+                disabled={creatingWidgetKey || origins.length === 0 || Boolean(redirectUrlError)}
                 className="btn-primary shrink-0"
               >
                 {creatingWidgetKey ? <Spinner size={16} /> : <KeyRound size={16} />}
@@ -365,15 +385,28 @@ export default function WebhooksPage() {
                 id="widget-redirect-url"
                 type="url"
                 value={redirectUrl}
-                onChange={(e) => setRedirectUrl(e.target.value)}
+                onChange={(e) => {
+                  setRedirectUrl(e.target.value);
+                  // Clear a stale error as soon as the user edits the field.
+                  if (redirectUrlError) setRedirectUrlError('');
+                }}
                 disabled={creatingWidgetKey || origins.length === 0}
-                className="input-field mt-2 font-mono"
+                onBlur={() => setRedirectUrlError(validateRedirectUrl() ?? '')}
+                aria-invalid={redirectUrlError ? true : undefined}
+                aria-describedby="widget-redirect-url-help"
+                className={`input-field mt-2 font-mono ${redirectUrlError ? 'border-danger' : ''}`}
                 placeholder="https://chiro-widget-demo.lovable.app/callback"
               />
-              <p className="mt-2 text-xs text-muted">
-                Where users are sent after verification. Must be on one of your Allowed Origins. Leave
-                blank to send them to the origin root.
-              </p>
+              {redirectUrlError ? (
+                <p id="widget-redirect-url-help" role="alert" className="mt-2 text-xs text-danger">
+                  {redirectUrlError}
+                </p>
+              ) : (
+                <p id="widget-redirect-url-help" className="mt-2 text-xs text-muted">
+                  Where users are sent after verification. Must be on one of your Allowed Origins. Leave
+                  blank to send them to the origin root.
+                </p>
+              )}
             </div>
 
             {widgetKey && (

@@ -5,31 +5,59 @@ import { useAuth } from '@/context/AuthContext';
 import { ErrorBanner } from '@/components/Feedback';
 import Spinner from '@/components/Spinner';
 import Logo from '@/components/Logo';
+import { resolveAuthGate } from '@/components/authGate';
 
-function AuthLoadingScreen() {
+function AuthLoadingScreen({ label = 'Loading...' }: { label?: string }) {
   return (
-    <div className="flex min-h-screen flex-col items-center justify-center gap-4 bg-canvas">
+    <div
+      className="flex min-h-screen flex-col items-center justify-center gap-4 bg-canvas"
+      role="status"
+      aria-live="polite"
+    >
       <Logo size="md" showText={false} to="" />
       <div className="flex items-center gap-2 text-sm text-muted">
-        <Spinner size={18} /> Loading...
+        <Spinner size={18} /> {label}
       </div>
     </div>
   );
 }
 
+/**
+ * The single decision ProtectedRoute makes lives in ./authGate so it can be
+ * unit-tested without rendering React.
+ */
+
 export default function ProtectedRoute({ children }: { children: ReactNode }) {
   const { isLoaded: clerkLoaded, isSignedIn } = useClerkAuth();
-  const { user, loading, authError, refresh, logout } = useAuth();
+  const { user, loading, signingOut, authError, refresh, logout } = useAuth();
   const location = useLocation();
 
-  // 1. Still loading: Clerk state unknown, or the backend session exchange is
+  const gate = resolveAuthGate({
+    clerkLoaded,
+    // Clerk types isSignedIn as boolean | undefined before the SDK has loaded;
+    // normalise it so the gate's input contract stays strictly boolean.
+    isSignedIn: Boolean(isSignedIn),
+    loading,
+    signingOut,
+    hasUser: Boolean(user),
+    authError,
+  });
+
+  // 1. The user asked to sign out and the transition is still in flight. Show
+  //    an explicit, branded state. We do NOT navigate here: the real Clerk and
+  //    backend sign-out continue to decide when the app moves on.
+  if (gate === 'signing-out') {
+    return <AuthLoadingScreen label="Signing out…" />;
+  }
+
+  // 2. Still loading: Clerk state unknown, or the backend session exchange is
   //    in flight. No navigation happens here.
-  if (!clerkLoaded || loading) {
+  if (gate === 'loading') {
     return <AuthLoadingScreen />;
   }
 
-  // 2. Unauthenticated: Clerk confirms there is no active session.
-  if (!isSignedIn) {
+  // 3. Unauthenticated: Clerk confirms there is no active session.
+  if (gate === 'redirect-login') {
     return <Navigate to="/login" state={{ from: location.pathname }} replace />;
   }
 
@@ -37,12 +65,12 @@ export default function ProtectedRoute({ children }: { children: ReactNode }) {
   //    the actual error with recovery actions instead of spinning forever.
   //    (Rendering an error state — not a redirect — is what prevents the
   //    /login <-> /dashboard history loop from returning.)
-  if (authError) {
+  if (gate === 'error') {
     return (
       <div className="flex min-h-screen flex-col items-center justify-center gap-5 bg-canvas px-4">
         <Logo size="md" showText={false} to="" />
         <div className="w-full max-w-sm space-y-4 text-center">
-          <ErrorBanner message={authError} />
+          <ErrorBanner message={authError!} />
           <div className="space-y-2">
             <button
               type="button"
@@ -64,13 +92,7 @@ export default function ProtectedRoute({ children }: { children: ReactNode }) {
     );
   }
 
-  // 2. Authenticated: Clerk session is active and the backend session
+  // 5. Authenticated: Clerk session is active and the backend session
   //    exchange has established the application user.
-  if (!user) {
-    // Defensive: reached only if the exchange settled without an error and
-    // without a user, which the exchange no longer produces.
-    return <AuthLoadingScreen />;
-  }
-
   return <>{children}</>;
 }
