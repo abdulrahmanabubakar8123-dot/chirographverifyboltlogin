@@ -35,7 +35,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const { user: clerkUser, isLoaded: clerkLoaded } = useUser();
 
   const [user, setUser] = useState<User | null>(null);
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(false);
   const [signOutPhase, setSignOutPhase] = useState<SignOutPhase>('idle');
   const [authError, setAuthError] = useState<string | null>(null);
 
