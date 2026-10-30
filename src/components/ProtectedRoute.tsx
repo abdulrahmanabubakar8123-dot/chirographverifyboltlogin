@@ -65,9 +65,11 @@ export default function ProtectedRoute({ children }: { children: ReactNode }) {
   }
 
   // 2. Still loading: Clerk state unknown, or the backend session exchange is
-  //    in flight. No navigation happens here.
+  //    in flight. Render the dashboard layout so the shell stays stable.
+  //    Individual page components gate their own data with LoadingState;
+  // they do not need a full-screen restoration page.
   if (gate === 'loading') {
-    return <AuthTransitionScreen phase="loading" />;
+    return <>{children}</>;
   }
 
   // 3. Unauthenticated: Clerk confirms there is no active session.
