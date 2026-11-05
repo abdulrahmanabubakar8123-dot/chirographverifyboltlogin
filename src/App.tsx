@@ -3,6 +3,9 @@ import { AuthProvider } from '@/context/AuthContext';
 import ProtectedRoute from '@/components/ProtectedRoute';
 import DashboardLayout from '@/layouts/DashboardLayout';
 import ErrorBoundary from '@/components/ErrorBoundary';
+import AnalyticsPageviews from '@/components/analytics/AnalyticsPageviews';
+import AnalyticsConsentBanner from '@/components/analytics/AnalyticsConsentBanner';
+import AnalyticsPrivacySettings from '@/components/analytics/AnalyticsPrivacySettings';
 import LoginPage from '@/pages/LoginPage';
 import SignupPage from '@/pages/SignupPage';
 import ForgotPasswordPage from '@/pages/ForgotPasswordPage';
@@ -25,6 +28,7 @@ function App() {
   return (
     <AuthProvider>
       <BrowserRouter basename={import.meta.env.BASE_URL.replace(/\/$/, '')}>
+        <AnalyticsPageviews />
         <Routes>
           <Route path="/" element={<Navigate to="/dashboard" replace />} />
           <Route path="/login" element={<LoginPage />} />
@@ -58,6 +62,8 @@ function App() {
           <Route path="*" element={<Navigate to="/dashboard" replace />} />
         </Routes>
       </BrowserRouter>
+      <AnalyticsConsentBanner />
+      <AnalyticsPrivacySettings />
     </AuthProvider>
   );
 }

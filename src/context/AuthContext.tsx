@@ -8,6 +8,12 @@ import {
 } from 'react';
 import { useAuth as useClerkAuth, useUser } from '@clerk/react';
 import { ApiError, apiRequest, setCsrfToken, clearCsrfToken } from '@/lib/apiClient';
+import {
+  identifyUser,
+  resetAnalytics,
+  trackAuthFailed,
+  trackUserLoggedOut,
+} from '@/lib/analytics';
 import type { SignOutPhase } from '@/components/authGate';
 import type { User } from '@/lib/types';
 
@@ -64,6 +70,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         setUser(null);
         setAuthError('Your session could not be verified. Please try again.');
         setLoading(false);
+        trackAuthFailed({ stage: 'session', reason: 'missing_token' });
         return;
       }
 
@@ -99,10 +106,16 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
       setUser(session.authenticated ? (session.user ?? null) : null);
 
+      if (session.authenticated && clerkUser?.id) {
+        // Identify only after the backend session exchange has succeeded.
+        identifyUser(clerkUser.id);
+      }
+
       if (!session.authenticated) {
         setAuthError(
           'We could not link your account to an application session. Please try again or sign in.'
         );
+        trackAuthFailed({ stage: 'session', reason: 'session_not_established' });
       }
     } catch (err) {
       clearCsrfToken();
@@ -114,6 +127,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
           ? err.message
           : 'Unable to establish your session. Please check your connection and try again.'
       );
+      trackAuthFailed({ stage: 'session', reason: 'session_exchange_failed' });
     } finally {
       setLoading(false);
     }
@@ -154,6 +168,10 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       setUser(null);
       setAuthError(null);
       await signOut();
+      // Track the completed sign-out, then reset PostHog identity and session
+      // recording state so the next account cannot inherit the previous one.
+      trackUserLoggedOut();
+      resetAnalytics();
       // Terminal state. Reaching it is what guarantees the gate can resolve to
       // redirect-login; without this the app stayed on the transition screen
       // forever once the sign-out itself had finished.

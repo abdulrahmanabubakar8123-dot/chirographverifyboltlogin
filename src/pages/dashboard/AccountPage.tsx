@@ -57,7 +57,7 @@ export default function AccountPage() {
           </div>
         </section>
 
-        <section className="card overflow-hidden">
+        <section className="card overflow-hidden ph-no-capture">
           <ul className="divide-y divide-line">
             {rows.map((row) => {
               const Icon = row.icon;

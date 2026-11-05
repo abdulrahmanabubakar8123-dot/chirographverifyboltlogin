@@ -124,7 +124,7 @@ export default function SettingsPage() {
       <div className="max-w-3xl space-y-6">
         {error && <ErrorBanner message={error} />}
 
-        <section className="card p-6">
+        <section className="card p-6 ph-no-capture">
           <h2 className="text-base font-semibold tracking-tight text-primary">Profile</h2>
           <p className="mt-1 text-sm text-muted">
             Your identity comes from your sign-in provider. Only the organization name is

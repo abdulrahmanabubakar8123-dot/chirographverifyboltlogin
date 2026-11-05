@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { AlertCircle, RefreshCw, X, BarChart3, Boxes, ArrowRight, CreditCard } from 'lucide-react';
 import { SkeletonPage } from '@/components/Feedback';
 import { getOverview, getUsage } from '@/lib/dashboard';
+import { trackDashboardViewed } from '@/lib/analytics';
 import { describeError } from '@/lib/errors';
 import type { Overview as OverviewType, Usage as UsageType } from '@/lib/types';
 
@@ -16,6 +17,10 @@ export default function OverviewPage() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
   const [showBanner, setShowBanner] = useState(true);
+
+  useEffect(() => {
+    trackDashboardViewed();
+  }, []);
 
   useEffect(() => {
     let cancelled = false;

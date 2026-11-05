@@ -1,4 +1,5 @@
 import { Component, type ErrorInfo, type ReactNode } from 'react';
+import { captureAnalyticsException } from '@/lib/analytics';
 
 interface Props {
   children: ReactNode;
@@ -23,6 +24,9 @@ export default class ErrorBoundary extends Component<Props, State> {
   componentDidCatch(error: unknown, info: ErrorInfo): void {
     // Keep the error visible in dev tools/console for debugging and reporting.
     console.error('[ErrorBoundary] Uncaught render error:', error, info);
+    // Analytics must never throw here. The helper is a no-op when consent or
+    // configuration is missing.
+    void captureAnalyticsException(error, { source: 'react_error_boundary' });
   }
 
   render(): ReactNode {

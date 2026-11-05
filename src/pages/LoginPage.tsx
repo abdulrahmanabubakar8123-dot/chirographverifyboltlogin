@@ -3,6 +3,7 @@ import { Link, Navigate, useNavigate, useLocation } from 'react-router-dom';
 import { Mail, Lock, Eye, EyeOff } from 'lucide-react';
 import { useSignIn, useAuth } from '@clerk/react';
 import { ErrorBanner } from '@/components/Feedback';
+import { markAuthIntent, trackAuthFailed } from '@/lib/analytics';
 import Spinner from '@/components/Spinner';
 import Logo from '@/components/Logo';
 
@@ -51,14 +52,18 @@ export default function LoginPage() {
       });
       if (result.error) {
         setError(result.error.longMessage || result.error.message || 'Something went wrong. Please try again.');
+        trackAuthFailed({ stage: 'login', reason: 'clerk_rejected' });
       } else if (signIn.status === 'complete') {
         await signIn.finalize();
+        markAuthIntent('login');
         navigate(from, { replace: true });
       } else {
         setError(`Clerk sign-in is not complete. Status: ${signIn.status}`);
+        trackAuthFailed({ stage: 'login', reason: 'incomplete' });
       }
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Something went wrong. Please try again.');
+      trackAuthFailed({ stage: 'login', reason: 'unexpected_error' });
     } finally {
       setLoading(false);
     }

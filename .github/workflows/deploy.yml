@@ -50,6 +50,11 @@ jobs:
           # the loading spinner. Sourced from a repository secret so it is not
           # hardcoded in the repo.
           VITE_CLERK_PUBLISHABLE_KEY: ${{ secrets.VITE_CLERK_PUBLISHABLE_KEY }}
+          # PostHog public project API key (phc_...). Sourced from a repository
+          # variable so it is not hardcoded. Leave unset to disable analytics.
+          VITE_POSTHOG_KEY: ${{ vars.VITE_POSTHOG_KEY }}
+          # PostHog EU cloud ingestion host.
+          VITE_POSTHOG_HOST: ${{ vars.VITE_POSTHOG_HOST }}
 
       # SPA fallback. GitHub Pages has no rewrite rules, so a request for a
       # client-side route (/dashboard, /login, ...) does not match a file on

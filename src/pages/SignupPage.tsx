@@ -5,6 +5,7 @@ import AuthLayout from '@/layouts/AuthLayout';
 import { useSignUp, useAuth } from '@clerk/react';
 import { ErrorBanner } from '@/components/Feedback';
 import Spinner from '@/components/Spinner';
+import { markAuthIntent, trackAuthFailed } from '@/lib/analytics';
 
 export default function SignupPage() {
   const { signUp } = useSignUp();
@@ -63,12 +64,14 @@ export default function SignupPage() {
       });
       if (result.error) {
         setError(result.error.longMessage || result.error.message || 'Something went wrong. Please try again.');
+        trackAuthFailed({ stage: 'signup', reason: 'clerk_rejected' });
       } else {
         await signUp.verifications.sendEmailCode();
         setSuccess(true);
       }
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Something went wrong. Please try again.');
+      trackAuthFailed({ stage: 'signup', reason: 'unexpected_error' });
     } finally {
       setLoading(false);
     }
@@ -93,6 +96,7 @@ export default function SignupPage() {
             result.error.message ||
             'That verification code is invalid or has expired. Please try again or request a new code.'
         );
+        trackAuthFailed({ stage: 'signup', reason: 'email_verification_failed' });
         return;
       }
       if (signUp.status === 'complete') {
@@ -103,18 +107,22 @@ export default function SignupPage() {
               finalizeResult.error.message ||
               'Something went wrong while finishing your account. Please try again.'
           );
+          trackAuthFailed({ stage: 'signup', reason: 'finalize_failed' });
           return;
         }
+        markAuthIntent('signup');
         navigate('/dashboard', { replace: true });
       } else {
         setVerifyError(
           'Your email could not be verified. Please check the code or request a new one.'
         );
+        trackAuthFailed({ stage: 'signup', reason: 'email_verification_failed' });
       }
     } catch (err) {
       setVerifyError(
         err instanceof Error ? err.message : 'Something went wrong while verifying your code. Please try again.'
       );
+      trackAuthFailed({ stage: 'signup', reason: 'unexpected_error' });
     } finally {
       setVerifying(false);
     }

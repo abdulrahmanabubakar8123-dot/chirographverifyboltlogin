@@ -281,7 +281,7 @@ export default function WebhooksPage() {
                   <AlertCircle size={15} /> Copy this secret now — it will not be shown again
                 </p>
                 <div className="mt-3 flex items-center gap-2">
-                  <code className="min-w-0 flex-1 overflow-x-auto rounded-md border border-line bg-surface px-3 py-2.5 font-mono text-sm text-primary">
+                  <code className="min-w-0 flex-1 overflow-x-auto rounded-md border border-line bg-surface px-3 py-2.5 font-mono text-sm text-primary ph-no-capture">
                     {newSecret}
                   </code>
                   <button
@@ -415,7 +415,7 @@ export default function WebhooksPage() {
                   <AlertCircle size={15} /> Copy this key now — it will not be shown again
                 </p>
                 <div className="mt-3 flex items-center gap-2">
-                  <code className="min-w-0 flex-1 overflow-x-auto rounded-md border border-line bg-surface px-3 py-2.5 font-mono text-sm text-primary">
+                  <code className="min-w-0 flex-1 overflow-x-auto rounded-md border border-line bg-surface px-3 py-2.5 font-mono text-sm text-primary ph-no-capture">
                     {widgetKey}
                   </code>
                   <button

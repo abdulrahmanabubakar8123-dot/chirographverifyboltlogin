@@ -4,6 +4,7 @@ import { ArrowLeft, Mail, Lock, Eye, EyeOff } from 'lucide-react';
 import AuthLayout from '@/layouts/AuthLayout';
 import { useSignIn } from '@clerk/react';
 import { ErrorBanner } from '@/components/Feedback';
+import { markAuthIntent } from '@/lib/analytics';
 import Spinner from '@/components/Spinner';
 
 /**
@@ -168,6 +169,7 @@ export default function ResetPasswordPage() {
       }
       if (signIn.status === 'complete') {
         await signIn.finalize();
+        markAuthIntent('login');
         navigate('/dashboard', { replace: true });
       } else {
         setError(`Password reset is not complete. Status: ${signIn.status}`);

@@ -73,7 +73,7 @@ export default function ApiKeysPage() {
           <div className="mt-6">
             {data?.key ? (
               <div className="flex items-center gap-2">
-                <div className="flex-1 overflow-hidden rounded-full border border-line bg-surface px-3.5 py-2.5 font-mono text-sm text-primary">
+                <div className="flex-1 overflow-hidden rounded-full border border-line bg-surface px-3.5 py-2.5 font-mono text-sm text-primary ph-no-capture">
                   {showKey ? data.key : `${data.key.slice(0, 8)}${'•'.repeat(20)}`}
                 </div>
                 <button onClick={() => setShowKey(!showKey)} className="rounded-full p-1.5 text-muted transition-colors hover:bg-white/[0.06] hover:text-primary" aria-label={showKey ? 'Hide key' : 'Show key'}>
@@ -85,7 +85,7 @@ export default function ApiKeysPage() {
               </div>
             ) : data?.prefix ? (
               <div className="flex items-center gap-2">
-                <div className="flex-1 overflow-hidden rounded-full border border-line bg-surface px-3.5 py-2.5 font-mono text-sm text-primary">
+                <div className="flex-1 overflow-hidden rounded-full border border-line bg-surface px-3.5 py-2.5 font-mono text-sm text-primary ph-no-capture">
                   {data.prefix}{'•'.repeat(16)}
                 </div>
                 <span className="text-xs text-muted">Key prefix only</span>

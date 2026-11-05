@@ -4,6 +4,10 @@ import { DashboardPageHeader } from '@/layouts/DashboardLayout';
 import { EmptyState, ErrorBanner, SkeletonPage } from '@/components/Feedback';
 import Spinner from '@/components/Spinner';
 import { getBilling, upgradePlan, cancelPlan } from '@/lib/dashboard';
+import {
+  trackPaymentInitiated,
+  trackSubscriptionViewed,
+} from '@/lib/analytics';
 import { describeError } from '@/lib/errors';
 import type { Billing as BillingType, BillingPlan } from '@/lib/types';
 
@@ -50,6 +54,10 @@ export default function BillingPage() {
   const [busy, setBusy] = useState<string | null>(null);
 
   useEffect(() => {
+    trackSubscriptionViewed();
+  }, []);
+
+  useEffect(() => {
     let cancelled = false;
     (async () => {
       try {
@@ -78,6 +86,9 @@ export default function BillingPage() {
       // billing state first: the tenant's plan is unchanged until Flutterwave
       // confirms payment, and the user is leaving the page.
       if (result?.checkout_url) {
+        // The checkout is only "initiated" once the backend has created a
+        // hosted-checkout session. Track before the browser leaves the page.
+        trackPaymentInitiated({ planTier: key, method: 'flutterwave' });
         window.location.href = result.checkout_url;
         return;
       }

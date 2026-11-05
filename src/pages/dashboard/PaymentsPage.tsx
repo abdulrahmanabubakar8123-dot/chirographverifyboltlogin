@@ -159,7 +159,7 @@ export default function PaymentsPage() {
       </div>
 
       {/* Transactions table */}
-      <div className="x-table-wrap">
+      <div className="x-table-wrap ph-no-capture">
         <table className="w-full border-collapse">
           <thead>
             <tr className="x-table-head">
