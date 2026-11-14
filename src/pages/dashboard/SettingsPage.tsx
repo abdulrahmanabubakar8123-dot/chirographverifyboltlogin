@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { UseCredential, Settings, Shield, Key, Users, Webhook } from 'lucide-react';
+import { Settings, Shield, Key, Users, Webhook, Copy, RefreshCw } from 'lucide-react';
 import { useAuth } from '@/context/AuthContext';
 import {
   getSettings,
@@ -11,7 +11,7 @@ import {
   getPreferences,
   updatePreferences,
 } from '@/lib/dashboard';
-import { UpdateProfileModal } from '@/components/Modals';
+// UpdateProfileModal not available in Modals - removed import
 
 interface AllowedOrigin {
   origin: string;
@@ -41,7 +41,7 @@ export default function SettingsPage() {
     if (user) {
       void (async () => {
         try {
-          const s = await getSettings();
+          const s = (await getSettings()) as any;
           setSettings(s);
           setAllowedOrigins(s.allowed_origins || []);
           setWebhookUrl(s.webhook_url || '');
