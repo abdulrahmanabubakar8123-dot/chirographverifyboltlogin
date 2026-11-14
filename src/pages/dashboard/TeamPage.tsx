@@ -8,6 +8,7 @@ import {
   type TeamMember, type TeamInvitation, type TeamRole,
 } from '@/lib/dashboard';
 import { describeError } from '@/lib/errors';
+import { InviteTeamModal } from '@/components/Modals';
 
 function initials(email: string): string {
   const name = email.split('@')[0] || '?';
@@ -33,6 +34,7 @@ export default function TeamPage() {
   const [successMsg, setSuccessMsg] = useState('');
   const [inviteLink, setInviteLink] = useState('');
   const [copied, setCopied] = useState(false);
+  const [inviteOpen, setInviteOpen] = useState(false);
 
   const load = async () => {
     try {
@@ -120,6 +122,7 @@ export default function TeamPage() {
 
   return (
     <>
+      <div className="mb-4 flex justify-end"><button onClick={() => setInviteOpen(true)} className="btn-secondary">Invite teammate</button></div>
       <DashboardPageHeader
         title="Team"
         description="Invite teammates and manage workspace roles"
@@ -246,6 +249,7 @@ export default function TeamPage() {
           </div>
         )}
       </div>
+    <InviteTeamModal open={inviteOpen} onClose={() => setInviteOpen(false)} onInvite={(e) => { void (async () => { try { const res = await inviteMember(e, 'member'); setInviteLink(res.invite_url); showSuccess('Invitation created'); await load(); } catch (err) { setActionError(describeError(err, 'inviting a teammate')); } })(); }} />
     </>
   );
 }

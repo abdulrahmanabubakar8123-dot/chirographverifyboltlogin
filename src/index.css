@@ -110,7 +110,7 @@
 @layer components {
   /* ── Typography: spec scales, 500-600 weight throughout ──── */
   .page-title {
-    @apply text-headline-lg font-normal text-primary;
+    @apply font-display text-2xl font-semibold tracking-tight text-zinc-950 dark:text-white;
   }
   .page-description {
     @apply mt-1 text-body-md text-secondary;
@@ -145,7 +145,7 @@
   }
   /* Surfaces: flat, hairline, no shadow */
   .card {
-    @apply rounded-xl border border-line bg-surface;
+    @apply rounded-xl border border-zinc-200 dark:border-white/[0.09] bg-white dark:bg-[#0B0B0D] dark:shadow-[inset_0_1px_0_0_rgba(255,255,255,0.04)];
   }
   .card-interactive {
     @apply rounded-xl border border-line bg-surface transition-colors duration-150 hover:border-line-strong;
@@ -224,7 +224,7 @@
   }
   /* Primary panel: the large rounded container used for every section */
   .x-panel {
-    @apply rounded-2xl border border-line bg-surface-2;
+    @apply rounded-xl border border-zinc-200 dark:border-white/[0.09] bg-white dark:bg-[#0B0B0D] dark:shadow-[inset_0_1px_0_0_rgba(255,255,255,0.04)];
   }
   /* Flush sub-panel sitting inside a panel (the "Link your X team" strip) */
   .x-panel-inset {
@@ -232,11 +232,11 @@
   }
   /* Stat card */
   .x-stat {
-    @apply rounded-2xl border border-line bg-surface-2 p-5;
+    @apply rounded-xl border border-zinc-200 dark:border-white/[0.09] bg-white dark:bg-[#0B0B0D] dark:shadow-[inset_0_1px_0_0_rgba(255,255,255,0.04)] p-5;
   }
   /* Densely padded table container */
   .x-table-wrap {
-    @apply overflow-hidden rounded-2xl border border-line bg-surface-2;
+    @apply overflow-hidden rounded-xl border border-zinc-200 dark:border-white/[0.09] bg-white dark:bg-[#0B0B0D] dark:shadow-[inset_0_1px_0_0_rgba(255,255,255,0.04)];
   }
   .x-table-head {
     @apply bg-surface-3/60 text-[13px] font-normal text-text-secondary;

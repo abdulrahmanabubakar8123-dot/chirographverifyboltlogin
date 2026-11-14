@@ -6,6 +6,7 @@ import Spinner from '@/components/Spinner';
 import { getWebhooks, getSettings, updateWebhookUrl, rotateWebhookSecret, updateOrigins, createWidgetKey } from '@/lib/dashboard';
 import { describeError } from '@/lib/errors';
 import { validateWidgetRedirectUrl } from '@/lib/redirectValidation';
+import { ConfigureWebhookModal } from '@/components/Modals';
 import type { WebhookSettings } from '@/lib/types';
 
 export default function WebhooksPage() {
@@ -22,6 +23,7 @@ export default function WebhooksPage() {
   const [savingOrigins, setSavingOrigins] = useState(false);
   const [actionError, setActionError] = useState('');
   const [successMsg, setSuccessMsg] = useState('');
+  const [configureOpen, setConfigureOpen] = useState(false);
 
   /**
    * The newly rotated plaintext secret, held in component state only.
@@ -210,6 +212,7 @@ export default function WebhooksPage() {
 
   return (
     <>
+      <div className="mb-4 flex justify-end"><button onClick={() => setConfigureOpen(true)} className="btn-secondary">Add endpoint</button></div>
       <DashboardPageHeader soon title="Webhooks" description="Configure webhook endpoints and event subscriptions" />
       {error ? (
         <div className="card p-6">
@@ -462,6 +465,7 @@ export default function WebhooksPage() {
           </div>
         </div>
       )}
+    <ConfigureWebhookModal open={configureOpen} onClose={() => setConfigureOpen(false)} onSave={(u) => { setWebhookUrl(u); void updateWebhookUrl(u); }} />
     </>
   );
 }

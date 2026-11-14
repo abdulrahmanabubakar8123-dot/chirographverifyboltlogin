@@ -4,6 +4,7 @@ import { DashboardPageHeader } from '@/layouts/DashboardLayout';
 import { ErrorBanner } from '@/components/Feedback';
 import Spinner from '@/components/Spinner';
 import { regenerateApiKey } from '@/lib/dashboard';
+import { CreateKeyModal } from '@/components/Modals';
 import { describeError } from '@/lib/errors';
 import type { ApiKey as ApiKeyType } from '@/lib/types';
 
@@ -13,6 +14,7 @@ export default function ApiKeysPage() {
   const [regenError, setRegenError] = useState('');
   const [showKey, setShowKey] = useState(false);
   const [copied, setCopied] = useState(false);
+  const [createOpen, setCreateOpen] = useState(false);
 
   const handleRegenerate = async () => {
     setRegenError('');
@@ -43,10 +45,13 @@ export default function ApiKeysPage() {
         title="API Keys"
         description="Manage your API key for authenticating verification requests"
         action={
-          <button onClick={handleRegenerate} disabled={regenerating} className="btn-secondary">
+          <div className="flex gap-2">
+            <button onClick={() => setCreateOpen(true)} className="btn-secondary">Create key</button>
+            <button onClick={handleRegenerate} disabled={regenerating} className="btn-secondary">
             {regenerating ? <Spinner size={16} /> : <RefreshCw size={16} />}
             Regenerate Key
           </button>
+          </div>
         }
       />
 
@@ -126,6 +131,7 @@ export default function ApiKeysPage() {
           </div>
         </div>
       </div>
+    <CreateKeyModal open={createOpen} onClose={() => setCreateOpen(false)} onCreate={() => handleRegenerate()} />
     </>
   );
 }
