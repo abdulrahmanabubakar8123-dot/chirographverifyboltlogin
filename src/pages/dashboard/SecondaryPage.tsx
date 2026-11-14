@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { SecondaryViews } from '@/components/SecondaryViews';
+import { CommandSearchModal, ConfigureWebhookModal, CreateKeyModal, InfoResourceModal, InviteTeamModal, SignInModal } from '@/components/Modals';
 import {
   fetchConsoleOverview,
   fetchConsoleBilling,
@@ -30,6 +31,7 @@ export default function SecondaryPage({ section }: { section: Exclude<NavSection
   const [teamMembers, setTeamMembers] = useState<any[]>([]);
   const [notifications, setNotifications] = useState<any[]>([]);
   const [plans, setPlans] = useState<any[]>([]);
+  const [activeModal, setActiveModal] = useState<string | null>(null);
 
   useEffect(() => {
     (async () => {
@@ -70,6 +72,7 @@ export default function SecondaryPage({ section }: { section: Exclude<NavSection
   }, [section]);
 
   return (
+    <>
     <SecondaryViews
       section={section}
       projectName={projectName}
@@ -86,16 +89,24 @@ export default function SecondaryPage({ section }: { section: Exclude<NavSection
       teamMembers={teamMembers}
       notifications={notifications}
       onSelectPlan={() => {}}
-      onOpenCreateKey={() => {}}
+      onOpenCreateKey={() => setActiveModal('create-key')}
       onRevokeKey={() => {}}
-      onOpenConfigureWebhook={() => {}}
+      onOpenConfigureWebhook={() => setActiveModal('configure-webhook')}
       onToggleWebhook={() => {}}
-      onOpenInviteTeam={() => {}}
+      onOpenInviteTeam={() => setActiveModal('invite-team')}
       onMarkAllRead={() => {}}
       onOpenSignIn={() => {}}
       onRunTestVerification={() => {}}
       onLoadSampleData={() => {}}
       onUpdateProjectName={() => {}}
     />
+    {activeModal === 'create-key' && <CreateKeyModal onClose={() => setActiveModal(null)} onCreate={() => {}} />}
+    {activeModal === 'configure-webhook' && <ConfigureWebhookModal onClose={() => setActiveModal(null)} onSave={() => {}} />}
+    {activeModal === 'invite-team' && <InviteTeamModal onClose={() => setActiveModal(null)} onInvite={() => {}} />}
+    {activeModal === 'sign-in' && <SignInModal email={userEmail} onClose={() => setActiveModal(null)} onConfirm={() => {}} />}
+    {activeModal === 'search' && <CommandSearchModal onClose={() => setActiveModal(null)} onNavigate={() => {}} onCreateKey={() => {}} />}
+    {activeModal === 'docs' && <InfoResourceModal kind="docs" onClose={() => setActiveModal(null)} />}
+    {activeModal === 'support' && <InfoResourceModal kind="support" onClose={() => setActiveModal(null)} />}
+    </>
   );
 }
