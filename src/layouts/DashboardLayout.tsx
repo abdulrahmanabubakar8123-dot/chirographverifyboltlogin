@@ -104,6 +104,7 @@ export default function DashboardLayout() {
   const { user, logout } = useAuth();
   const navigate = useNavigate();
   const [mobileOpen, setMobileOpen] = useState(false);
+  const [cmdOpen, setCmdOpen] = useState(false);
   // Restore the persisted preference on first mount so a reload does not
   // snap back to dark behind the toggle's back.
   const [theme, setTheme] = useState<'dark' | 'light'>(() => {
@@ -117,6 +118,18 @@ export default function DashboardLayout() {
   useEffect(() => {
     document.documentElement.classList.toggle('light', theme === 'light');
   }, [theme]);
+
+  useEffect(() => {
+    const onKey = (e: KeyboardEvent) => {
+      if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === 'k') {
+        e.preventDefault();
+        setCmdOpen(true);
+      }
+      if (e.key === 'Escape') setCmdOpen(false);
+    };
+    window.addEventListener('keydown', onKey);
+    return () => window.removeEventListener('keydown', onKey);
+  }, []);
 
   // The console is dark-first; the X system is true-black. The choice is
   // persisted so it survives a reload.
@@ -160,7 +173,7 @@ export default function DashboardLayout() {
   const sidebarContent = (
     <div className="x-sidebar text-secondary">
       {/* Brand block */}
-      <div className="flex h-[60px] shrink-0 items-center gap-2.5 border-b border-line px-4">
+      <div className="flex h-14 shrink-0 items-center gap-2.5 border-b border-line px-4">
         <BrandMark className="h-6 w-6 shrink-0" />
         <span className="text-[15px] font-semibold leading-tight text-primary">
           Chirograph
@@ -203,9 +216,10 @@ export default function DashboardLayout() {
   );
 
   return (
+    <>
     <div className="flex min-h-screen gap-3 bg-canvas p-3">
       {/* Desktop sidebar — an inset rounded panel, as in the reference. */}
-      <aside className="hidden w-[300px] shrink-0 overflow-hidden rounded-2xl border border-line lg:block">
+      <aside className="hidden w-[252px] shrink-0 overflow-hidden rounded-2xl border border-line lg:block">
         {sidebarContent}
       </aside>
 
@@ -216,7 +230,7 @@ export default function DashboardLayout() {
             className="fixed inset-0 z-40 bg-black/60 backdrop-blur-sm lg:hidden"
             onClick={() => setMobileOpen(false)}
           />
-          <aside className="fixed left-0 top-0 z-50 h-full w-[300px] border-r border-line lg:hidden">
+          <aside className="fixed left-0 top-0 z-50 h-full w-[252px] border-r border-line lg:hidden">
             <button
               onClick={() => setMobileOpen(false)}
               className="absolute right-3 top-4 z-10 rounded-md p-1.5 text-muted hover:bg-surface-3"
@@ -231,7 +245,7 @@ export default function DashboardLayout() {
 
       {/* Main content — second inset panel, rounded on every corner. */}
       <div className="flex min-w-0 flex-1 flex-col overflow-hidden rounded-2xl border border-line bg-surface">
-        <header className="sticky top-0 z-30 flex h-[60px] shrink-0 items-center justify-between border-b border-line bg-surface px-4 lg:px-6">
+        <header className="sticky top-0 z-30 flex h-14 shrink-0 items-center justify-between border-b border-line bg-surface px-4 lg:px-6">
           <button
             onClick={() => setMobileOpen(true)}
             className="rounded-md p-1.5 text-muted hover:bg-surface-3 lg:hidden"
@@ -242,6 +256,9 @@ export default function DashboardLayout() {
           <div className="flex items-center gap-2 lg:hidden">
             <Logo size="sm" to="/dashboard" />
           </div>
+          <span className="hidden text-[13px] text-secondary lg:block">
+            Your project <span className="text-text-micro">/</span> Overview
+          </span>
 
           {/* Handle, left of the utility cluster like the reference */}
           <span className="hidden text-[14px] text-secondary lg:block">@{handle}</span>
@@ -273,9 +290,9 @@ export default function DashboardLayout() {
               it actually does.
             */}
             <button
-              onClick={() => navigate('/dashboard/usage')}
+              onClick={() => setCmdOpen(true)}
               className="rounded-md p-2 text-secondary transition-colors hover:bg-surface-3 hover:text-primary"
-              aria-label="Usage"
+              aria-label="Search"
               title="Usage"
             >
               <Search size={18} strokeWidth={1.7} />
@@ -349,6 +366,23 @@ export default function DashboardLayout() {
         </footer>
       </div>
     </div>
+  {/* Command palette */}
+  {cmdOpen && (
+    <div className="fixed inset-0 z-50 flex items-start justify-center bg-black/60 p-4 pt-24" onClick={() => setCmdOpen(false)}>
+      <div className="w-full max-w-lg rounded-xl border border-line bg-surface-2 p-3 shadow-xl" onClick={(e) => e.stopPropagation()}>
+        <input autoFocus placeholder="Search commands…" className="input-field h-10 text-[14px]" />
+        <div className="mt-2 max-h-72 overflow-y-auto">
+          {navGroups.flatMap(g => g.items).map(item => (
+            <button key={item.to} onClick={() => { navigate(item.to); setCmdOpen(false); }} className="flex w-full items-center gap-3 rounded-md px-3 py-2 text-[14px] text-secondary hover:bg-surface-3 hover:text-primary">
+              <span>{item.label}</span>
+            </button>
+          ))}
+        </div>
+      </div>
+    </div>
+  )}
+
+    </>
   );
 }
 

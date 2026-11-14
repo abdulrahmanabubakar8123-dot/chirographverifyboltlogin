@@ -108,7 +108,7 @@ export default function AnalyticsPage() {
                 {loading ? (
                   /* Reserve the row height so the grid does not reflow when
                      the real values land. */
-                  <div className="mt-3 h-8 w-24 animate-pulse rounded-lg bg-line/40" />
+                  <div className="mt-3 h-8 w-24 rounded-lg bg-line/40" />
                 ) : (
                   <p
                     className={`mt-3 truncate text-2xl font-semibold tabular-nums tracking-tight ${

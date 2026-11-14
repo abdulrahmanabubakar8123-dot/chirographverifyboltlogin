@@ -65,7 +65,7 @@ export function EmptyState({ icon, title, description, action }: EmptyStateProps
 
 /** A single shimmering block. */
 export function Skeleton({ className = '' }: { className?: string }) {
-  return <div className={`animate-pulse rounded-lg bg-surface-3 ${className}`} aria-hidden="true" />;
+  return <div className={`rounded-lg bg-surface-3 ${className}`} aria-hidden="true" />;
 }
 
 /** Placeholder for a page heading + description. */
