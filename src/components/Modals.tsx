@@ -110,11 +110,10 @@ export const SignInModal: React.FC<{
 };
 
 export const CreateKeyModal: React.FC<{
-  onCreate: (name: string, env: 'Production' | 'Sandbox') => void;
+  onCreate: (name: string) => void;
   onClose: () => void;
 }> = ({ onCreate, onClose }) => {
   const [name, setName] = useState('Backend Verification Service');
-  const [env, setEnv] = useState<'Production' | 'Sandbox'>('Sandbox');
 
   return (
     <ModalShell
@@ -125,7 +124,7 @@ export const CreateKeyModal: React.FC<{
       <form
         onSubmit={(e) => {
           e.preventDefault();
-          if (name.trim()) onCreate(name.trim(), env);
+          if (name.trim()) onCreate(name.trim());
         }}
         className="space-y-4"
       >
@@ -141,28 +140,6 @@ export const CreateKeyModal: React.FC<{
             required
             className="w-full h-9 px-3 rounded-lg border border-zinc-200 dark:border-white/[0.12] bg-white dark:bg-black text-sm text-zinc-950 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
           />
-        </div>
-
-        <div>
-          <span className="block text-xs font-medium text-zinc-700 dark:text-zinc-300 mb-1.5">
-            Environment
-          </span>
-          <div className="grid grid-cols-2 gap-2">
-            {(['Sandbox', 'Production'] as const).map((option) => (
-              <button
-                key={option}
-                type="button"
-                onClick={() => setEnv(option)}
-                className={`py-2 px-3 rounded-lg border text-xs font-medium transition-colors ${
-                  env === option
-                    ? 'border-blue-600 bg-blue-50 dark:bg-blue-950/30 text-blue-700 dark:text-blue-300'
-                    : 'border-zinc-200 dark:border-white/[0.1] text-zinc-600 dark:text-zinc-300'
-                }`}
-              >
-                {option}
-              </button>
-            ))}
-          </div>
         </div>
 
         <div className="flex items-center justify-end gap-2 pt-2">
