@@ -1,5 +1,5 @@
-import SecondaryPage from './SecondaryPage';
+import { Navigate } from 'react-router-dom';
 
 export default function PaymentsPage() {
-  return <SecondaryPage section="payments" />;
+  return <Navigate to="/dashboard/plans" replace />;
 }

@@ -17,7 +17,6 @@ const SECTION_TO_PATH: Record<NavSectionId, string> = {
   webhooks: '/dashboard/webhooks',
   'api-logs': '/dashboard/api-logs',
   team: '/dashboard/team',
-  payments: '/dashboard/billing/payments',
   plans: '/dashboard/billing',
   settings: '/dashboard/settings',
   account: '/dashboard/account',
@@ -32,7 +31,6 @@ function pathToSection(pathname: string): NavSectionId {
   if (pathname.startsWith('/dashboard/webhooks')) return 'webhooks';
   if (pathname.startsWith('/dashboard/api-logs')) return 'api-logs';
   if (pathname.startsWith('/dashboard/team')) return 'team';
-  if (pathname.startsWith('/dashboard/billing/payments')) return 'payments';
   if (pathname.startsWith('/dashboard/billing')) return 'plans';
   if (pathname.startsWith('/dashboard/settings')) return 'settings';
   if (pathname.startsWith('/dashboard/account')) return 'account';

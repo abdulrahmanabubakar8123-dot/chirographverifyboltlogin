@@ -8,7 +8,6 @@ export type NavSectionId =
   | 'webhooks'
   | 'api-logs'
   | 'team'
-  | 'payments'
   | 'plans'
   | 'settings'
   | 'account';

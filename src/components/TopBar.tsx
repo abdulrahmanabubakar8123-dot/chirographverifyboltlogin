@@ -32,8 +32,7 @@ const SECTION_LABELS: Record<NavSectionId, string> = {
   webhooks: 'Webhooks',
   'api-logs': 'API Logs',
   team: 'Team',
-  payments: 'Payments',
-  plans: 'Plans & Billing',
+  plans: 'Plans',
   settings: 'Project Settings',
   account: 'Account',
 };

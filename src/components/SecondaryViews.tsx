@@ -95,13 +95,13 @@ export const SecondaryViews: React.FC<SecondaryViewsProps> = ({
   const cardSurface =
     'rounded-xl border border-zinc-200 dark:border-white/[0.09] bg-white dark:bg-[#0B0B0D] dark:shadow-[inset_0_1px_0_0_rgba(255,255,255,0.04)]';
 
-  if (section === 'plans' || section === 'payments') {
+  if (section === 'plans') {
     return (
       <div className="space-y-6">
         <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4">
           <div>
             <h1 className="font-display text-2xl font-semibold tracking-tight text-zinc-950 dark:text-white">
-              {section === 'plans' ? 'Plans & Allowance' : 'Payments & Billing'}
+              Plans & Allowance
             </h1>
             <p className="text-sm text-zinc-500 dark:text-zinc-400 mt-1">
               {activePlan
