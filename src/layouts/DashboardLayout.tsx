@@ -27,6 +27,7 @@ import { useAuth } from '@/context/AuthContext';
 import Logo from '@/components/Logo';
 import { BrandMark } from '@/components/BrandMark';
 import { getNotifications } from '@/lib/dashboard';
+import { InfoResourceModal } from '@/components/Modals';
 
 type Icon = typeof LayoutGrid;
 
@@ -105,6 +106,9 @@ export default function DashboardLayout() {
   const navigate = useNavigate();
   const [mobileOpen, setMobileOpen] = useState(false);
   const [cmdOpen, setCmdOpen] = useState(false);
+  const [infoOpen, setInfoOpen] = useState(false);
+  const [infoTitle, setInfoTitle] = useState('Documentation');
+  const [infoBody, setInfoBody] = useState('');
   // Restore the persisted preference on first mount so a reload does not
   // snap back to dark behind the toggle's back.
   const [theme, setTheme] = useState<'dark' | 'light'>(() => {
@@ -264,24 +268,20 @@ export default function DashboardLayout() {
           <span className="hidden text-[14px] text-secondary lg:block">@{handle}</span>
 
           <div className="ml-auto flex items-center gap-1">
-            <a
-              href="https://chirographverify.com/#/docs"
-              target="_blank"
-              rel="noreferrer"
+            <button
+              onClick={() => { setInfoTitle('Documentation'); setInfoBody('Chirograph Verify documentation covers authentication, verification flows, webhooks, and billing.'); setInfoOpen(true); }}
               className="hidden items-center gap-1 rounded-md px-2.5 py-1.5 text-[14px] text-secondary transition-colors hover:bg-surface-3 hover:text-primary sm:flex"
             >
               Documentation
               <ExternalLink size={13} strokeWidth={1.8} className="text-text-micro" />
-            </a>
-            <a
-              href="https://chirographverify.com/#/docs#support"
-              target="_blank"
-              rel="noreferrer"
+            </button>
+            <button
+              onClick={() => { setInfoTitle('Support'); setInfoBody('Contact support for account, billing, and integration help.'); setInfoOpen(true); }}
               className="hidden items-center gap-1 rounded-md px-2.5 py-1.5 text-[14px] text-secondary transition-colors hover:bg-surface-3 hover:text-primary md:flex"
             >
               Support
               <ExternalLink size={13} strokeWidth={1.8} className="text-text-micro" />
-            </a>
+            </button>
             <span className="mx-1 hidden h-5 w-px bg-line sm:block" />
 
             {/*
@@ -366,6 +366,7 @@ export default function DashboardLayout() {
         </footer>
       </div>
     </div>
+  <InfoResourceModal open={infoOpen} onClose={() => setInfoOpen(false)} title={infoTitle} body={infoBody} />
   {/* Command palette */}
   {cmdOpen && (
     <div className="fixed inset-0 z-50 flex items-start justify-center bg-black/60 p-4 pt-24" onClick={() => setCmdOpen(false)}>
