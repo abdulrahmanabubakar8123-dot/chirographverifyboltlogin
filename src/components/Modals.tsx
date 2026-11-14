@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { BookOpen, LifeBuoy, Lock, Search, X } from 'lucide-react';
+import { BookOpen, Copy, LifeBuoy, Lock, Search, X } from 'lucide-react';
 import type { NavSectionId } from '../types/console';
 
 interface ModalShellProps {
