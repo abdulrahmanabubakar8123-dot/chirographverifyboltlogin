@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { SecondaryViews } from '@/components/SecondaryViews';
+import { regenerateApiKey, updateWebhookUrl, rotateWebhookSecret, updateProfile, upgradePlan, inviteMember, getBilling, getSettings } from '@/lib/dashboard';
 import { CommandSearchModal, ConfigureWebhookModal, CreateKeyModal, InfoResourceModal, InviteTeamModal, SignInModal } from '@/components/Modals';
 import {
   fetchConsoleOverview,
@@ -32,6 +33,7 @@ export default function SecondaryPage({ section }: { section: Exclude<NavSection
   const [notifications, setNotifications] = useState<any[]>([]);
   const [plans, setPlans] = useState<any[]>([]);
   const [activeModal, setActiveModal] = useState<string | null>(null);
+  const [secret, setSecret] = useState<string | null>(null);
 
   useEffect(() => {
     (async () => {
@@ -88,7 +90,7 @@ export default function SecondaryPage({ section }: { section: Exclude<NavSection
       usageData={usageData}
       teamMembers={teamMembers}
       notifications={notifications}
-      onSelectPlan={() => {}}
+      onSelectPlan={(plan) => { void (async () => { try { const r = await upgradePlan(plan.id); window.location.href = r.checkout_url; } catch (e) { console.error(e); } })(); }}
       onOpenCreateKey={() => setActiveModal('create-key')}
       onRevokeKey={() => {}}
       onOpenConfigureWebhook={() => setActiveModal('configure-webhook')}
@@ -98,11 +100,11 @@ export default function SecondaryPage({ section }: { section: Exclude<NavSection
       onOpenSignIn={() => {}}
       onRunTestVerification={() => {}}
       onLoadSampleData={() => {}}
-      onUpdateProjectName={() => {}}
+      onUpdateProjectName={(name) => { void (async () => { try { await updateProfile({ name }); const s = await getSettings(); setProjectName(s.organizationName || name); } catch (e) { console.error(e); } })(); }}
     />
-    {activeModal === 'create-key' && <CreateKeyModal onClose={() => setActiveModal(null)} onCreate={() => {}} />}
-    {activeModal === 'configure-webhook' && <ConfigureWebhookModal onClose={() => setActiveModal(null)} onSave={() => {}} />}
-    {activeModal === 'invite-team' && <InviteTeamModal onClose={() => setActiveModal(null)} onInvite={() => {}} />}
+    {activeModal === 'create-key' && <CreateKeyModal onClose={() => setActiveModal(null)} onCreate={(name) => { void (async () => { try { const r = await regenerateApiKey(); setSecret(r.key || null); setActiveModal(null); } catch (e) { console.error(e); } })(); }} />}
+    {activeModal === 'configure-webhook' && <ConfigureWebhookModal onClose={() => setActiveModal(null)} onSave={(url) => { void (async () => { try { await updateWebhookUrl(url); const sec = await rotateWebhookSecret(); setSecret(sec); setActiveModal(null); } catch (e) { console.error(e); } })(); }} />}
+    {activeModal === 'invite-team' && <InviteTeamModal onClose={() => setActiveModal(null)} onInvite={(name,email,role) => { void (async () => { try { const r = await inviteMember(email, role === 'Developer' ? 'admin' : 'member'); setSecret(r.invite_url); setActiveModal(null); } catch (e) { console.error(e); } })(); }} />}
     {activeModal === 'sign-in' && <SignInModal email={userEmail} onClose={() => setActiveModal(null)} onConfirm={() => {}} />}
     {activeModal === 'search' && <CommandSearchModal onClose={() => setActiveModal(null)} onNavigate={() => {}} onCreateKey={() => {}} />}
     {activeModal === 'docs' && <InfoResourceModal kind="docs" onClose={() => setActiveModal(null)} />}
