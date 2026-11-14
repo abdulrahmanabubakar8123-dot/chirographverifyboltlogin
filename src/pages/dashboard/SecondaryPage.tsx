@@ -92,9 +92,9 @@ export default function SecondaryPage({ section }: { section: Exclude<NavSection
       notifications={notifications}
       onSelectPlan={(plan) => { void (async () => { try { const r = await upgradePlan(plan.id); window.location.href = r.checkout_url; } catch (e) { console.error(e); } })(); }}
       onOpenCreateKey={() => setActiveModal('create-key')}
-      onRevokeKey={() => {}}
+      onRevokeKey={() => { void alert("API key revocation not yet implemented via UI - use backend directly"); }}
       onOpenConfigureWebhook={() => setActiveModal('configure-webhook')}
-      onToggleWebhook={() => {}}
+      onToggleWebhook={() => { void (async () => { try { const secret = await rotateWebhookSecret(); setSecret(secret); setActiveModal("create-key"); } catch (e) { console.error(e); } })(); }}
       onOpenInviteTeam={() => setActiveModal('invite-team')}
       onMarkAllRead={() => {}}
       onOpenSignIn={() => {}}
