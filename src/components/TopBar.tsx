@@ -28,7 +28,6 @@ const SECTION_LABELS: Record<NavSectionId, string> = {
   activity: 'Activity Log',
   'api-keys': 'API Keys',
   analytics: 'Analytics',
-  usage: 'Usage',
   webhooks: 'Webhooks',
   'api-logs': 'API Logs',
   team: 'Team',

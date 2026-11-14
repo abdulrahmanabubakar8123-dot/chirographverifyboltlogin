@@ -114,6 +114,8 @@ export const CreateKeyModal: React.FC<{
   onClose: () => void;
 }> = ({ onCreate, onClose }) => {
   const [name, setName] = useState('Backend Verification Service');
+  const [apiKey, setApiKey] = useState<string | null>(null);
+  const [showKey, setShowKey] = useState(false);
 
   return (
     <ModalShell
@@ -124,7 +126,10 @@ export const CreateKeyModal: React.FC<{
       <form
         onSubmit={(e) => {
           e.preventDefault();
-          if (name.trim()) onCreate(name.trim());
+          if (name.trim()) {
+            onCreate(name.trim());
+            setShowKey(true);
+          }
         }}
         className="space-y-4"
       >
@@ -141,6 +146,41 @@ export const CreateKeyModal: React.FC<{
             className="w-full h-9 px-3 rounded-lg border border-zinc-200 dark:border-white/[0.12] bg-white dark:bg-black text-sm text-zinc-950 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
           />
         </div>
+
+        {showKey && (
+          <div className="space-y-4">
+            <p className="text-sm text-zinc-600 dark:text-zinc-400">
+              Your new API key<strong>{name ? ` '${name}'` : ''}</strong> has been generated once below. <span className="text-red-600 font-medium">It will not be shown again</span>, so copy it now. <span className="text-zinc-500 font-medium">Previous key is now invalid</span>
+            </p>
+            <div className="flex items-baseline gap-2">
+              <input
+                type="text"
+                value={apiKey || ''}
+                readOnly
+                className="w-full h-9 px-3 rounded-lg border border-zinc-200 dark:border-white/[0.08] bg-zinc-50 dark:bg-[#141417] font-mono text-sm text-zinc-950 dark:text-zinc-400 select-all"
+                id="generated-key"
+              />
+              <button
+                type="button"
+                onClick={() => {
+                  navigator.clipboard
+                    .writeText(apiKey || '')
+                    .catch(() => {
+                      const input = document.getElementById('generated-key') as HTMLInputElement;
+                      input.select();
+                      document.execCommand('copy');
+                    });
+                  setShowKey(false);
+                  onClose();
+                }}
+                className="px-3.5 py-2 rounded-lg bg-zinc-950 hover:bg-zinc-800 dark:bg-white dark:hover:bg-zinc-200 text-white dark:text-black text-xs font-semibold"
+              >
+                <Copy className="h-3.5 w-3.5" />
+                <span>Copy</span>
+              </button>
+            </div>
+          </div>
+        )}
 
         <div className="flex items-center justify-end gap-2 pt-2">
           <button
@@ -428,7 +468,7 @@ export const InfoResourceModal: React.FC<{
           </div>
         </div>
         <p className="text-zinc-500 dark:text-zinc-400">
-          Authenticate all requests using <code className="font-mono text-zinc-800 dark:text-zinc-200">Authorization: Bearer &lt;key&gt;</code>.
+          Authenticate all requests using <code className="font-mono text-zinc-800 dark:text-zinc-200">Authorization: Bearer {'<key>'}</code>.
         </p>
       </div>
     ) : (
