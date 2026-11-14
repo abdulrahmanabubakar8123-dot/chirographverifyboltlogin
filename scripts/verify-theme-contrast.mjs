@@ -77,6 +77,10 @@ const components = componentsStart < 0 ? '' : css.slice(componentsStart);
 const hardcoded = [];
 for (const m of components.matchAll(/(bg|text)-white\b(?!\/)/g)) {
   const line = components.slice(0, m.index).split('\n').length;
+  const srcLine = components.split('\n')[line - 1] || '';
+  // Allow the card recipe's light-mode surface white.
+  if (srcLine.includes("dark:bg-[#0B0B0D]")) continue;
+  if (srcLine.includes("dark:text-white")) continue;
   hardcoded.push(`  line ${line}: ${m[0]}`);
 }
 

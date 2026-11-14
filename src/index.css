@@ -2,14 +2,6 @@
 @tailwind components;
 @tailwind utilities;
 
-@layer base {
-  :root {
-    --font-display: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
-    --font-sans: 'DM Sans', system-ui, -apple-system, sans-serif;
-    --font-mono: 'JetBrains Mono', ui-monospace, SFMono-Regular, monospace;
-  }
-}
-
 /* Indeterminate progress sweep used by the branded auth transition. */
 @keyframes sweep {
   from { transform: translateX(0%); }
@@ -30,6 +22,9 @@
    * the previous attempt render dark-on-dark text.
    */
   :root {
+    --font-display: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
+    --font-sans: 'DM Sans', system-ui, -apple-system, sans-serif;
+    --font-mono: 'JetBrains Mono', ui-monospace, SFMono-Regular, monospace;
     /* Pure-black architectural console (dark default). */
     --cv-primary: 255 255 255;        /* headings & primary numbers */
     --cv-secondary: 228 228 231;      /* body & controls (#E4E4E7) */
