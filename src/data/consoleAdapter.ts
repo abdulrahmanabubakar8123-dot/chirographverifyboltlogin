@@ -170,3 +170,14 @@ export async function fetchConsoleActivity(offset = 0) {
   }));
   return { items, total: r.total };
 }
+
+export async function fetchConsoleSettings(): Promise<{allowedOrigins: string[], widgetKey: string | null, clientId: string | null, widgetClientId: string | null, redirectAllowlist: string[]}> {
+  const s = await getSettings();
+  return {
+    allowedOrigins: s.allowed_origins || [],
+    widgetKey: s.widget_key || null,
+    clientId: s.widget_client_id || null,
+    widgetClientId: s.widget_client_id || null,
+    redirectAllowlist: s.redirect_allowlist || [],
+  };
+}

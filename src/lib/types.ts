@@ -178,6 +178,9 @@ export interface Settings {
   webhook_secret_configured: boolean;
   allowed_origins: string[];
   csrf_token: string;
+  widget_key: string | null;
+  widget_client_id: string | null;
+  redirect_allowlist: string[];
 }
 
 /**
