@@ -189,7 +189,7 @@ export const ConfigureWebhookModal: React.FC<{
   onSave: (url: string, events: string[]) => void;
   onClose: () => void;
 }> = ({ onSave, onClose }) => {
-  const [url, setUrl] = useState('https://api.example.com/webhooks/chirograph');
+  const [url, setUrl] = useState('https://example.com/webhook');
   const [events, setEvents] = useState<string[]>(['verification.completed', 'verification.flagged']);
 
   const toggleEvent = (event: string) => {
@@ -434,7 +434,7 @@ export const InfoResourceModal: React.FC<{
     title={kind === 'docs' ? 'API Documentation' : 'Developer Support'}
     subtitle={
       kind === 'docs'
-        ? 'Chirograph Signature Verification REST & SDK Reference'
+        ? 'Developer Console Documentation'
         : 'Get help with verification thresholds, quotas, or webhooks'
     }
     onClose={onClose}
@@ -461,7 +461,7 @@ export const InfoResourceModal: React.FC<{
           <div>
             <p className="font-medium text-zinc-950 dark:text-white">Priority engineering desk</p>
             <p className="mt-0.5 text-zinc-500 dark:text-zinc-400">
-              Reach our verification engineers at <span className="font-mono text-zinc-800 dark:text-zinc-200">support@chirographverify.com</span> with your project ID (<span className="font-mono">proj_chiro_84a2f</span>).
+              Developer console support and documentation.
             </p>
           </div>
         </div>
