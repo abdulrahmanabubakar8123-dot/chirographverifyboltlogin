@@ -47,11 +47,11 @@ function App() {
           >
             <Route index element={<OverviewPage />} />
             <Route path="api-keys" element={<ApiKeysPage />} />
-            <Route path="usage" element={<UsagePage />} />
+            <Route path="usage" element={<Navigate to="/dashboard/analytics" replace />} />
             <Route path="analytics" element={<AnalyticsPage />} />
             <Route path="webhooks" element={<WebhooksPage />} />
             <Route path="billing" element={<BillingPage />} />
-            <Route path="billing/payments" element={<PaymentsPage />} />
+            <Route path="billing/payments" element={<Navigate to="/dashboard/billing" replace />} />
             <Route path="settings" element={<SettingsPage />} />
             <Route path="account" element={<AccountPage />} />
             <Route path="team" element={<TeamPage />} />

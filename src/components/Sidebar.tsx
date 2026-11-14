@@ -70,7 +70,6 @@ export const Sidebar: React.FC<SidebarProps> = ({
       items: [
         { id: 'api-keys', label: 'API Keys', icon: KeyRound },
         { id: 'analytics', label: 'Analytics', icon: BarChart3 },
-        { id: 'usage', label: 'Usage', icon: Gauge },
         { id: 'webhooks', label: 'Webhooks', icon: Webhook },
         { id: 'api-logs', label: 'API Logs', icon: FileCode2 },
         { id: 'team', label: 'Team', icon: Users },
@@ -79,8 +78,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
     {
       label: 'Billing',
       items: [
-        { id: 'payments', label: 'Payments', icon: CreditCard },
-        { id: 'plans', label: 'Plans', icon: Layers },
+          { id: 'plans', label: 'Plans', icon: Layers },
         { id: 'settings', label: 'Settings', icon: Settings },
         { id: 'account', label: 'Account', icon: UserCheck },
       ],
