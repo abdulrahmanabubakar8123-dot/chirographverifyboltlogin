@@ -68,6 +68,12 @@ describe('resolveAuthGate', () => {
     expect(resolveAuthGate({ ...base, loading: true })).toBe('loading');
   });
 
+  it('redirects a signed-out visitor even while the exchange flag is set', () => {
+    // `loading` is shared with the exchange; a signed-out visitor must not be
+    // rendered protected children because that flag happens to be true.
+    expect(resolveAuthGate({ ...base, isSignedIn: false, loading: true })).toBe('redirect-login');
+  });
+
   it('redirects to login when unauthenticated', () => {
     expect(resolveAuthGate({ ...base, isSignedIn: false })).toBe('redirect-login');
   });

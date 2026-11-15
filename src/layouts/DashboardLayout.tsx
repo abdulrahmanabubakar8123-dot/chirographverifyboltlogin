@@ -42,6 +42,8 @@ export default function DashboardLayout() {
   const navigate = useNavigate();
   const location = useLocation();
   const [mobileOpen, setMobileOpen] = useState(false);
+  const [loggingOut, setLoggingOut] = useState(false);
+  const [logoutError, setLogoutError] = useState<string | null>(null);
   const [theme, setTheme] = useState<'dark' | 'light'>(() => {
     try {
       return localStorage.getItem('cv-theme') === 'light' ? 'light' : 'dark';
@@ -66,8 +68,27 @@ export default function DashboardLayout() {
   };
 
   const handleLogout = async () => {
-    await logout();
-    navigate('/login');
+    if (loggingOut) return;
+    setLoggingOut(true);
+    setLogoutError(null);
+    try {
+      // logout() posts /api/auth/logout (revokes the backend session, clears
+      // the API cookie + CSRF token), then awaits Clerk's signOut(), resets
+      // analytics identity and enters the terminal 'complete' phase.
+      await logout();
+      // Replace (not push) so the authenticated entry is removed from history;
+      // the protected gate is signed-out anyway, but this keeps Back clean.
+      navigate('/login', { replace: true });
+    } catch (err) {
+      // Clerk could not end the session — keep the dashboard mounted and say so
+      // instead of pretending the user is signed out.
+      setLogoutError(
+        err instanceof Error
+          ? err.message
+          : 'We could not sign you out. Please check your connection and try again.',
+      );
+      setLoggingOut(false);
+    }
   };
 
   const handle = (user?.email || '').split('@')[0] || 'account';
@@ -106,6 +127,8 @@ export default function DashboardLayout() {
         mobileOpen={mobileOpen}
         onCloseMobile={() => setMobileOpen(false)}
         onOpenSignIn={() => setActiveModal('search')}
+        onLogout={() => void handleLogout()}
+        loggingOut={loggingOut}
       />
       <div className="flex-1 min-w-0 flex flex-col">
         <TopBar
@@ -119,8 +142,25 @@ export default function DashboardLayout() {
           onOpenMobileMenu={() => setMobileOpen(true)}
           onOpenDocs={() => setActiveModal('docs')}
           onOpenSupport={() => setActiveModal('support')}
+          onLogout={() => void handleLogout()}
+          loggingOut={loggingOut}
         />
         <main className="flex-1 w-full max-w-[1220px] mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8">
+          {logoutError && (
+            <div
+              role="alert"
+              className="mb-5 flex items-start justify-between gap-4 rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700 dark:border-red-500/30 dark:bg-red-500/10 dark:text-red-300"
+            >
+              <p>{logoutError}</p>
+              <button
+                type="button"
+                onClick={() => setLogoutError(null)}
+                className="shrink-0 font-medium hover:underline"
+              >
+                Dismiss
+              </button>
+            </div>
+          )}
           <Outlet />
         </main>
       </div>

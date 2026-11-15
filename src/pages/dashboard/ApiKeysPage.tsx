@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import {
   AlertCircle,
+  Check,
   Copy,
   KeyRound,
   Plus,
@@ -10,7 +11,7 @@ import { useAuth } from '@/context/AuthContext';
 import { regenerateApiKey, getSettings } from '@/lib/dashboard';
 import { CreateKeyModal } from '@/components/Modals';
 import { apiRequest } from '@/lib/apiClient';
-import type { ApiKey } from '@/lib/dashboard';
+import type { Settings } from '@/lib/types';
 
 interface ApiKeyItem {
   id: string;
@@ -21,6 +22,14 @@ interface ApiKeyItem {
   lastUsed: string;
   status: 'Active' | 'Revoked';
 }
+
+/**
+ * The settings endpoint does not currently return key metadata, but older
+ * backend revisions included an optional `apiKeys` array. Typing that
+ * optional shape locally keeps the read forward-compatible without widening
+ * the shared Settings contract.
+ */
+type SettingsWithKeys = Settings & { apiKeys?: ApiKeyItem[] };
 
 export default function ApiKeysPage() {
   const { user } = useAuth();
@@ -36,7 +45,7 @@ export default function ApiKeysPage() {
     if (user) {
       void (async () => {
         try {
-          const settings = await getSettings();
+          const settings = (await getSettings()) as SettingsWithKeys;
           setApiKeys(settings.apiKeys || []);
         } catch {
           // Settings may not have apiKeys yet; start empty
@@ -55,14 +64,14 @@ export default function ApiKeysPage() {
     setIsGenerating(true);
     try {
       const result = await regenerateApiKey();
-      setGeneratedKey(result.key);
+      setGeneratedKey(result.key ?? null);
       setKeyName(result.prefix ? `Key ${result.prefix.substring(0, 8)}` : 'API Key');
       setShowKey(true);
       // Refresh the keys list after a moment
       window.setTimeout(() => {
         void (async () => {
           try {
-            const settings = await getSettings();
+            const settings = (await getSettings()) as SettingsWithKeys;
             setApiKeys(settings.apiKeys || []);
           } catch {
             // ignore
@@ -124,12 +133,12 @@ export default function ApiKeysPage() {
               />
               <button
                 type="button"
-                onClick={() => {
+                onClick={(e) => {
                   navigator.clipboard
                     .writeText(generatedKey)
                     .catch(() => {
-                      const input = event.target.previousElementSibling as HTMLInputElement;
-                      input.select();
+                      const input = e.currentTarget.previousElementSibling as HTMLInputElement | null;
+                      input?.select();
                       document.execCommand('copy');
                     });
                   setShowKey(false);

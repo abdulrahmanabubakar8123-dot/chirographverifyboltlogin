@@ -4,6 +4,7 @@ import { ArrowLeft, Mail, Lock, Eye, EyeOff } from 'lucide-react';
 import AuthLayout from '@/layouts/AuthLayout';
 import { useSignIn } from '@clerk/react';
 import { ErrorBanner } from '@/components/Feedback';
+import { useAuth } from '@/context/AuthContext';
 import { markAuthIntent } from '@/lib/analytics';
 import Spinner from '@/components/Spinner';
 
@@ -28,6 +29,7 @@ const codeSentByEmail = new Set<string>();
 
 export default function ResetPasswordPage() {
   const { signIn } = useSignIn();
+  const { resetSignOutPhase } = useAuth();
   const [searchParams] = useSearchParams();
   const navigate = useNavigate();
   const prefillEmail = searchParams.get('email') || '';
@@ -170,6 +172,7 @@ export default function ResetPasswordPage() {
       if (signIn.status === 'complete') {
         await signIn.finalize();
         markAuthIntent('login');
+        resetSignOutPhase();
         navigate('/dashboard', { replace: true });
       } else {
         setError(`Password reset is not complete. Status: ${signIn.status}`);

@@ -2,14 +2,16 @@ import { useState, type FormEvent } from 'react';
 import { Link, Navigate, useNavigate } from 'react-router-dom';
 import { Mail, Lock, Eye, EyeOff, User } from 'lucide-react';
 import AuthLayout from '@/layouts/AuthLayout';
-import { useSignUp, useAuth } from '@clerk/react';
+import { useSignUp, useAuth as useClerkAuth } from '@clerk/react';
 import { ErrorBanner } from '@/components/Feedback';
+import { useAuth } from '@/context/AuthContext';
 import Spinner from '@/components/Spinner';
 import { markAuthIntent, trackAuthFailed } from '@/lib/analytics';
 
 export default function SignupPage() {
   const { signUp } = useSignUp();
-  const { isLoaded: isClerkLoaded, isSignedIn } = useAuth();
+  const { isLoaded: isClerkLoaded, isSignedIn } = useClerkAuth();
+  const { signOutPhase, resetSignOutPhase } = useAuth();
   const navigate = useNavigate();
 
   const [name, setName] = useState('');
@@ -30,8 +32,9 @@ export default function SignupPage() {
   // If Clerk has loaded and confirms an active session, the user is already
   // authenticated. Send them straight to the dashboard instead of showing the
   // signup form (which would otherwise surface Clerk's "already signed in" error).
-  // Never redirect while Clerk auth state is still loading.
-  if (isClerkLoaded && isSignedIn) {
+  // Never redirect while Clerk auth state is still loading, nor while a
+  // sign-out is finishing/complete.
+  if (isClerkLoaded && isSignedIn && signOutPhase === 'idle') {
     return <Navigate to="/dashboard" replace />;
   }
 
@@ -111,6 +114,7 @@ export default function SignupPage() {
           return;
         }
         markAuthIntent('signup');
+        resetSignOutPhase();
         navigate('/dashboard', { replace: true });
       } else {
         setVerifyError(

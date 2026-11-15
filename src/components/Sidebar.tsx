@@ -10,6 +10,7 @@ import {
   KeyRound,
   Layers,
   LayoutGrid,
+  LogOut,
   Settings,
   UserCheck,
   Users,
@@ -28,6 +29,9 @@ interface SidebarProps {
   mobileOpen: boolean;
   onCloseMobile: () => void;
   onOpenSignIn: () => void;
+  /** Ends the Clerk session, clears app state and returns to /login. */
+  onLogout: () => void;
+  loggingOut?: boolean;
 }
 
 interface NavGroup {
@@ -50,6 +54,8 @@ export const Sidebar: React.FC<SidebarProps> = ({
   mobileOpen,
   onCloseMobile,
   onOpenSignIn,
+  onLogout,
+  loggingOut = false,
 }) => {
   const groups: NavGroup[] = [
     {
@@ -222,6 +228,20 @@ export const Sidebar: React.FC<SidebarProps> = ({
             </button>
           )}
         </div>
+
+        {/* Session exit. Always visible in the authenticated console so signing
+            out never depends on finding a hidden profile menu. */}
+        <button
+          type="button"
+          onClick={onLogout}
+          disabled={loggingOut}
+          aria-label="Log out of Chirograph Verify"
+          className="w-full flex items-center gap-2.5 px-2.5 py-2 rounded-lg text-[13px] font-medium text-zinc-600 hover:text-zinc-950 hover:bg-zinc-100 dark:text-zinc-400 dark:hover:text-white dark:hover:bg-white/[0.06] transition-colors duration-150 disabled:opacity-60 disabled:cursor-wait"
+        >
+          <LogOut className="h-4 w-4 shrink-0 text-zinc-400 dark:text-zinc-500" />
+          <span>{loggingOut ? 'Signing out…' : 'Log out'}</span>
+        </button>
+
         <div className="flex items-center justify-between px-2 text-[11px] text-zinc-500 dark:text-zinc-600">
           <button
             type="button"

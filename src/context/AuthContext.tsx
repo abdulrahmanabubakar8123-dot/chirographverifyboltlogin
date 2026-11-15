@@ -31,6 +31,12 @@ interface AuthContextValue {
   login: (email: string, password: string) => Promise<void>;
   signup: (email: string, password: string, name?: string) => Promise<void>;
   logout: () => Promise<void>;
+  /**
+   * Clears the terminal 'complete' sign-out phase. Called by the sign-in
+   * screens once Clerk has accepted a fresh authentication, so the gate does
+   * not keep resolving to the post-logout redirect.
+   */
+  resetSignOutPhase: () => void;
   refresh: () => Promise<void>;
 }
 
@@ -150,6 +156,10 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     await establishBackendSession();
   }, [establishBackendSession]);
 
+  const resetSignOutPhase = useCallback(() => {
+    setSignOutPhase('idle');
+  }, []);
+
   const logout = useCallback(async () => {
     // Mark the intent BEFORE any await. The real sign-out below still governs
     // completion: we never navigate early and never skip the backend call, we
@@ -195,6 +205,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         login,
         signup,
         logout,
+        resetSignOutPhase,
         refresh,
       }}
     >

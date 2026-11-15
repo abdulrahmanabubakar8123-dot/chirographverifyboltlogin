@@ -1,15 +1,17 @@
 import { useState, type FormEvent } from 'react';
 import { Link, Navigate, useNavigate, useLocation } from 'react-router-dom';
 import { Mail, Lock, Eye, EyeOff } from 'lucide-react';
-import { useSignIn, useAuth } from '@clerk/react';
+import { useSignIn, useAuth as useClerkAuth } from '@clerk/react';
 import { ErrorBanner } from '@/components/Feedback';
 import { markAuthIntent, trackAuthFailed } from '@/lib/analytics';
+import { useAuth } from '@/context/AuthContext';
 import Spinner from '@/components/Spinner';
 import Logo from '@/components/Logo';
 
 export default function LoginPage() {
   const { signIn } = useSignIn();
-  const { isLoaded: isClerkLoaded, isSignedIn } = useAuth();
+  const { isLoaded: isClerkLoaded, isSignedIn } = useClerkAuth();
+  const { signOutPhase, resetSignOutPhase } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
   const from = (location.state as { from?: string })?.from || '/dashboard';
@@ -24,8 +26,10 @@ export default function LoginPage() {
   // If Clerk has loaded and confirms an active session, the user is already
   // authenticated. Send them straight to the dashboard instead of showing the
   // login form (which would otherwise surface Clerk's "already signed in" error).
-  // Never redirect while Clerk auth state is still loading.
-  if (isClerkLoaded && isSignedIn) {
+  // Never redirect while Clerk auth state is still loading, and never do it
+  // while a sign-out is finishing or complete — otherwise the just-signed-out
+  // user would be bounced back into the dashboard by a stale session snapshot.
+  if (isClerkLoaded && isSignedIn && signOutPhase === 'idle') {
     return <Navigate to="/dashboard" replace />;
   }
 
@@ -56,6 +60,9 @@ export default function LoginPage() {
       } else if (signIn.status === 'complete') {
         await signIn.finalize();
         markAuthIntent('login');
+        // A fresh, explicit sign-in clears the terminal post-logout gate state
+        // before we hand control back to the protected routes.
+        resetSignOutPhase();
         navigate(from, { replace: true });
       } else {
         setError(`Clerk sign-in is not complete. Status: ${signIn.status}`);

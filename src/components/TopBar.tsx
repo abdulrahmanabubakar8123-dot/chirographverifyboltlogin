@@ -2,6 +2,7 @@ import React from 'react';
 import {
   Bell,
   ExternalLink,
+  LogOut,
   Menu,
   Moon,
   Search,
@@ -20,6 +21,9 @@ interface TopBarProps {
   onOpenMobileMenu: () => void;
   onOpenDocs: () => void;
   onOpenSupport: () => void;
+  /** Ends the Clerk session, clears app state and returns to /login. */
+  onLogout: () => void;
+  loggingOut?: boolean;
 }
 
 const SECTION_LABELS: Record<NavSectionId, string> = {
@@ -32,6 +36,7 @@ const SECTION_LABELS: Record<NavSectionId, string> = {
   'api-logs': 'API Logs',
   team: 'Team',
   plans: 'Plans',
+  usage: 'Usage',
   settings: 'Project Settings',
   account: 'Account',
 };
@@ -47,6 +52,8 @@ export const TopBar: React.FC<TopBarProps> = ({
   onOpenMobileMenu,
   onOpenDocs,
   onOpenSupport,
+  onLogout,
+  loggingOut = false,
 }) => {
   return (
     <header className="sticky top-0 z-30 h-14 bg-white/90 dark:bg-black/85 backdrop-blur-md border-b border-zinc-200 dark:border-white/[0.08] px-4 sm:px-6 lg:px-8 flex items-center justify-between gap-6">
@@ -142,6 +149,22 @@ export const TopBar: React.FC<TopBarProps> = ({
             className="flex h-9 w-9 items-center justify-center rounded-lg text-zinc-600 hover:text-zinc-950 hover:bg-zinc-100 dark:text-zinc-400 dark:hover:text-white dark:hover:bg-white/[0.06] transition-colors"
           >
             {isDark ? <Sun className="h-4 w-4" /> : <Moon className="h-4 w-4" />}
+          </button>
+
+          <span className="mx-0.5 h-5 w-px bg-zinc-200 dark:bg-white/[0.1]" aria-hidden="true" />
+
+          <button
+            type="button"
+            onClick={onLogout}
+            disabled={loggingOut}
+            title="Log out"
+            aria-label="Log out of Chirograph Verify"
+            className="flex h-9 items-center gap-2 rounded-lg px-2 text-zinc-600 hover:text-zinc-950 hover:bg-zinc-100 dark:text-zinc-400 dark:hover:text-white dark:hover:bg-white/[0.06] transition-colors disabled:opacity-60 disabled:cursor-wait"
+          >
+            <LogOut className="h-4 w-4" />
+            <span className="hidden xl:inline text-[13px] font-medium">
+              {loggingOut ? 'Signing out…' : 'Log out'}
+            </span>
           </button>
         </div>
       </div>

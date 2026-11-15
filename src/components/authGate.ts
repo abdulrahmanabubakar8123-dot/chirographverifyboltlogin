@@ -33,9 +33,14 @@ export function resolveAuthGate(input: {
   //    isSignedIn — so the user can never be stranded here.
   if (signOutPhase === 'complete') return 'redirect-login';
 
-  // 3. Ordinary cold start / session exchange.
+  // 3. Clerk has booted and confirms there is NO active session. This must be
+  //    answered before the generic `loading` branch: during a session
+  //    exchange the flag can still be true for a signed-out visitor, and the
+  //    old ordering rendered protected children in that window.
+  if (clerkLoaded && !isSignedIn) return 'redirect-login';
+
+  // 4. Ordinary cold start / session exchange.
   if (!clerkLoaded || loading) return 'loading';
-  if (!isSignedIn) return 'redirect-login';
   if (authError) return 'error';
   if (!hasUser) return 'loading';
   return 'ready';
