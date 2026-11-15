@@ -64,7 +64,7 @@ export default function AnalyticsPrivacySettings() {
         aria-haspopup="dialog"
         aria-expanded={open}
         aria-label="Privacy and analytics settings"
-        className="fixed bottom-4 left-4 z-40 rounded-full border border-line bg-surface px-3 py-2 text-xs font-medium text-secondary shadow-lg transition-colors hover:bg-surface-3 hover:text-primary focus:outline-none focus:ring-2 focus:ring-brand-500"
+        className="cv-privacy-control fixed bottom-4 left-4 z-40 rounded-full border border-line bg-surface px-3 py-2 text-xs font-medium text-secondary shadow-lg transition-colors hover:bg-surface-3 hover:text-primary focus:outline-none focus:ring-2 focus:ring-brand-500"
       >
         Privacy
       </button>

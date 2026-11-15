@@ -524,6 +524,12 @@
   background-size: 64px 64px;
 }
 
+/* The console's floating analytics control shares the auth footer's corner;
+ * the auth shell already exposes Privacy, so step it aside on those routes. */
+body.cv-auth-route .cv-privacy-control {
+  display: none;
+}
+
 /* Never animate the auth ambience for users who asked for less motion. */
 @media (prefers-reduced-motion: reduce) {
   .cv-auth .animate-morph-a,

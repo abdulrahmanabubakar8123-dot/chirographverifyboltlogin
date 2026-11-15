@@ -1,4 +1,4 @@
-import type { ReactNode } from 'react';
+import { useLayoutEffect, type ReactNode } from 'react';
 import { BrandLogo } from '@/components/BrandLogo';
 import { HeroNetworkParticles } from '@/components/HeroNetworkParticles';
 import { MARKETING_URLS } from '@/lib/siteLinks';
@@ -12,6 +12,17 @@ import { MARKETING_URLS } from '@/lib/siteLinks';
  * background work (and its pointer listeners) runs exactly once per screen.
  */
 export function AuthShell({ children }: { children: ReactNode }) {
+  // The console's persistent floating analytics pill also parks in the
+  // bottom-left corner, where this shell renders its Privacy footer. Mark the
+  // document while an auth screen is mounted so the pill steps aside instead
+  // of stacking a second "Privacy" control on top of the design.
+  useLayoutEffect(() => {
+    document.body.classList.add('cv-auth-route');
+    return () => {
+      document.body.classList.remove('cv-auth-route');
+    };
+  }, []);
+
   return (
     <div className="cv-auth relative flex min-h-screen flex-col justify-between overflow-hidden bg-[#020305] text-zinc-100">
       {/* Subtle obsidian grid & refractive ambient light */}
