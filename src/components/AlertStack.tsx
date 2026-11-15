@@ -10,6 +10,13 @@ interface AlertStackProps {
   onDismissAllowance: () => void;
 }
 
+/**
+ * Actionable notices that sit above the overview page header.
+ *
+ * Both notices are translucent wells rather than solid banners so they read as
+ * part of the obsidian glass shell instead of cutting a coloured stripe across
+ * it. Rose = session problem, amber = quota recommendation.
+ */
 export const AlertStack: React.FC<AlertStackProps> = ({
   sessionExpired,
   showAllowanceBanner,
@@ -27,15 +34,15 @@ export const AlertStack: React.FC<AlertStackProps> = ({
       {sessionExpired && (
         <div
           role="alert"
-          className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 px-4 py-3 rounded-xl border border-red-500/30 bg-red-50 dark:bg-[#120709] dark:border-red-500/30"
+          className="glass-panel flex flex-col justify-between gap-3 rounded-xl border-rose-500/30 px-4 py-3 sm:flex-row sm:items-center"
         >
-          <div className="flex items-start sm:items-center gap-3 min-w-0">
-            <AlertCircle className="h-4 w-4 text-red-600 dark:text-red-400 shrink-0 mt-0.5 sm:mt-0" />
+          <div className="relative z-10 flex min-w-0 items-start gap-3 sm:items-center">
+            <AlertCircle className="mt-0.5 h-4 w-4 shrink-0 text-rose-500 dark:text-rose-400 sm:mt-0" />
             <div className="text-[13px] leading-snug">
-              <span className="font-semibold text-red-900 dark:text-red-300">
+              <span className="font-semibold text-rose-700 dark:text-rose-300">
                 Session expired.
               </span>{' '}
-              <span className="text-red-800/90 dark:text-zinc-300">
+              <span className="text-zinc-600 dark:text-zinc-300">
                 Re-authenticate to create production keys, rotate secrets, or update billing.
               </span>
             </div>
@@ -44,7 +51,7 @@ export const AlertStack: React.FC<AlertStackProps> = ({
           <button
             type="button"
             onClick={onOpenSignIn}
-            className="inline-flex items-center justify-center gap-1.5 px-3.5 py-1.5 rounded-lg bg-red-600 hover:bg-red-500 text-white text-xs font-medium transition-colors duration-150 whitespace-nowrap shrink-0 self-start sm:self-auto"
+            className="relative z-10 inline-flex shrink-0 items-center justify-center gap-1.5 self-start whitespace-nowrap rounded-xl border border-rose-500/30 bg-rose-500/10 px-3.5 py-1.5 text-xs font-medium text-rose-700 transition-colors hover:bg-rose-500/20 dark:text-rose-300 sm:self-auto"
           >
             <span>Sign in again</span>
             <ArrowRight className="h-3.5 w-3.5" />
@@ -53,10 +60,10 @@ export const AlertStack: React.FC<AlertStackProps> = ({
       )}
 
       {showAllowanceBanner && !activePlanName && (
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 px-4 py-2.5 rounded-xl border border-zinc-200 dark:border-white/[0.09] bg-amber-50/70 dark:bg-[#0B0B0D]">
-          <div className="flex items-start sm:items-center gap-3 min-w-0">
-            <RefreshCw className="h-4 w-4 text-amber-600 dark:text-amber-400 shrink-0 mt-0.5 sm:mt-0" />
-            <p className="text-[13px] text-zinc-700 dark:text-zinc-300 leading-snug">
+        <div className="glass-panel flex flex-col justify-between gap-3 rounded-xl px-4 py-2.5 sm:flex-row sm:items-center">
+          <div className="relative z-10 flex min-w-0 items-start gap-3 sm:items-center">
+            <RefreshCw className="mt-0.5 h-4 w-4 shrink-0 text-amber-500 dark:text-amber-400 sm:mt-0" />
+            <p className="text-[13px] leading-snug text-zinc-600 dark:text-zinc-300">
               <span className="font-medium text-zinc-950 dark:text-white">
                 Allowance recommendation:
               </span>{' '}
@@ -64,11 +71,11 @@ export const AlertStack: React.FC<AlertStackProps> = ({
             </p>
           </div>
 
-          <div className="flex items-center gap-3 shrink-0 self-end sm:self-auto">
+          <div className="relative z-10 flex shrink-0 items-center gap-3 self-end sm:self-auto">
             <button
               type="button"
               onClick={onManagePlan}
-              className="inline-flex items-center gap-1 text-xs font-medium text-amber-700 dark:text-amber-300 hover:underline whitespace-nowrap shrink-0"
+              className="inline-flex shrink-0 items-center gap-1 whitespace-nowrap text-xs font-medium text-amber-700 transition-colors hover:text-amber-600 dark:text-amber-300 dark:hover:text-amber-200"
             >
               <span>Manage plan</span>
               <ArrowRight className="h-3.5 w-3.5" />
@@ -77,7 +84,7 @@ export const AlertStack: React.FC<AlertStackProps> = ({
               type="button"
               onClick={onDismissAllowance}
               aria-label="Dismiss allowance recommendation"
-              className="p-1 rounded-md text-zinc-400 hover:text-zinc-700 dark:hover:text-white transition-colors"
+              className="morph-socket rounded-lg p-1.5 text-zinc-500 transition-colors hover:text-zinc-950 dark:hover:text-white"
             >
               <X className="h-3.5 w-3.5" />
             </button>

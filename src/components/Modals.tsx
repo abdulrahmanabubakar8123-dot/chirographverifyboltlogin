@@ -1,6 +1,15 @@
 import React, { useState } from 'react';
-import { BookOpen, Copy, LifeBuoy, Lock, Search, X } from 'lucide-react';
+import { BookOpen, LifeBuoy, Lock, Search, X } from 'lucide-react';
 import type { NavSectionId } from '../types/console';
+
+const PRIMARY_BUTTON =
+  'inline-flex items-center justify-center gap-1.5 rounded-xl bg-zinc-950 px-4 py-2 text-xs font-semibold text-white shadow-[0_0_20px_rgba(0,0,0,0.18)] transition-all duration-150 hover:bg-zinc-800 dark:bg-white dark:text-black dark:shadow-[0_0_24px_rgba(255,255,255,0.16)] dark:hover:bg-emerald-400 dark:hover:shadow-[0_0_26px_rgba(16,185,129,0.35)]';
+
+const GHOST_BUTTON =
+  'rounded-xl px-3.5 py-2 text-xs font-medium text-zinc-600 transition-colors hover:bg-zinc-100 hover:text-zinc-950 dark:text-zinc-300 dark:hover:bg-white/[0.06] dark:hover:text-white';
+
+const WELL_INPUT =
+  'glass-well w-full rounded-xl px-3 py-2.5 text-sm text-zinc-950 transition-all focus-within:border-[#3B5BFF]/65 focus-within:shadow-[inset_0_3px_10px_rgba(0,0,0,0.85),0_0_0_3px_rgba(59,91,255,0.16)] focus:outline-none dark:text-white';
 
 interface ModalShellProps {
   title: string;
@@ -12,34 +21,34 @@ interface ModalShellProps {
 const ModalShell: React.FC<ModalShellProps> = ({ title, subtitle, onClose, children }) => (
   <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
     <div
-      className="fixed inset-0 bg-black/80 backdrop-blur-[2px]"
+      className="fixed inset-0 bg-black/70 backdrop-blur-sm"
       onClick={onClose}
       aria-hidden="true"
     />
     <div
       role="dialog"
       aria-modal="true"
-      className="relative z-10 w-full max-w-md rounded-xl border border-zinc-200 dark:border-white/[0.12] bg-white dark:bg-[#0B0B0D] shadow-2xl overflow-hidden"
+      className="glass-panel relative z-10 w-full max-w-md overflow-hidden rounded-2xl"
     >
-      <div className="flex items-start justify-between gap-4 px-5 py-4 border-b border-zinc-100 dark:border-white/[0.08]">
+      <div className="relative z-10 flex items-start justify-between gap-4 border-b border-zinc-200 px-5 py-4 dark:border-white/[0.08]">
         <div>
-          <h2 className="font-display text-base font-semibold text-zinc-950 dark:text-white">
+          <h2 className="font-display text-base font-semibold tracking-tight text-zinc-950 dark:text-white">
             {title}
           </h2>
           {subtitle && (
-            <p className="text-xs text-zinc-500 dark:text-zinc-400 mt-0.5">{subtitle}</p>
+            <p className="mt-0.5 text-xs text-zinc-500 dark:text-zinc-400">{subtitle}</p>
           )}
         </div>
         <button
           type="button"
           onClick={onClose}
           aria-label="Close modal"
-          className="p-1 rounded-md text-zinc-400 hover:text-zinc-700 dark:hover:text-white"
+          className="morph-socket rounded-lg p-1.5 text-zinc-500 transition-colors hover:text-zinc-950 dark:text-zinc-400 dark:hover:text-white"
         >
           <X className="h-4 w-4" />
         </button>
       </div>
-      <div className="p-5">{children}</div>
+      <div className="relative z-10 p-5">{children}</div>
     </div>
   </div>
 );
@@ -65,18 +74,13 @@ export const SignInModal: React.FC<{
         className="space-y-4"
       >
         <div>
-          <label className="block text-xs font-medium text-zinc-700 dark:text-zinc-300 mb-1.5">
+          <label className="mb-1.5 block text-xs font-medium text-zinc-600 dark:text-zinc-300">
             Account email
           </label>
-          <input
-            type="email"
-            readOnly
-            value={email}
-            className="w-full h-9 px-3 rounded-lg border border-zinc-200 dark:border-white/[0.08] bg-zinc-50 dark:bg-[#141417] text-xs text-zinc-600 dark:text-zinc-300"
-          />
+          <input type="email" readOnly value={email} className={WELL_INPUT} />
         </div>
         <div>
-          <label htmlFor="session-pass" className="block text-xs font-medium text-zinc-700 dark:text-zinc-300 mb-1.5">
+          <label htmlFor="session-pass" className="mb-1.5 block text-xs font-medium text-zinc-600 dark:text-zinc-300">
             Password or SSO passkey
           </label>
           <input
@@ -85,21 +89,14 @@ export const SignInModal: React.FC<{
             value={password}
             onChange={(e) => setPassword(e.target.value)}
             required
-            className="w-full h-9 px-3 rounded-lg border border-zinc-200 dark:border-white/[0.12] bg-white dark:bg-black text-sm text-zinc-950 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
+            className={WELL_INPUT}
           />
         </div>
         <div className="flex items-center justify-end gap-2 pt-2">
-          <button
-            type="button"
-            onClick={onClose}
-            className="px-3.5 py-2 rounded-lg text-xs font-medium text-zinc-600 dark:text-zinc-300 hover:bg-zinc-100 dark:hover:bg-white/[0.06]"
-          >
+          <button type="button" onClick={onClose} className={GHOST_BUTTON}>
             Cancel
           </button>
-          <button
-            type="submit"
-            className="inline-flex items-center gap-1.5 px-4 py-2 rounded-lg bg-zinc-950 hover:bg-zinc-800 dark:bg-white dark:hover:bg-zinc-200 text-white dark:text-black text-xs font-semibold"
-          >
+          <button type="submit" className={PRIMARY_BUTTON}>
             <Lock className="h-3.5 w-3.5" />
             <span>Restore session</span>
           </button>
@@ -114,8 +111,6 @@ export const CreateKeyModal: React.FC<{
   onClose: () => void;
 }> = ({ onCreate, onClose }) => {
   const [name, setName] = useState('Backend Verification Service');
-  const [apiKey, setApiKey] = useState<string | null>(null);
-  const [showKey, setShowKey] = useState(false);
 
   return (
     <ModalShell
@@ -126,15 +121,12 @@ export const CreateKeyModal: React.FC<{
       <form
         onSubmit={(e) => {
           e.preventDefault();
-          if (name.trim()) {
-            onCreate(name.trim());
-            setShowKey(true);
-          }
+          if (name.trim()) onCreate(name.trim());
         }}
         className="space-y-4"
       >
         <div>
-          <label htmlFor="key-name" className="block text-xs font-medium text-zinc-700 dark:text-zinc-300 mb-1.5">
+          <label htmlFor="key-name" className="mb-1.5 block text-xs font-medium text-zinc-600 dark:text-zinc-300">
             Key label
           </label>
           <input
@@ -143,57 +135,15 @@ export const CreateKeyModal: React.FC<{
             value={name}
             onChange={(e) => setName(e.target.value)}
             required
-            className="w-full h-9 px-3 rounded-lg border border-zinc-200 dark:border-white/[0.12] bg-white dark:bg-black text-sm text-zinc-950 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
+            className={WELL_INPUT}
           />
         </div>
 
-        {showKey && (
-          <div className="space-y-4">
-            <p className="text-sm text-zinc-600 dark:text-zinc-400">
-              Your new API key<strong>{name ? ` '${name}'` : ''}</strong> has been generated once below. <span className="text-red-600 font-medium">It will not be shown again</span>, so copy it now. <span className="text-zinc-500 font-medium">Previous key is now invalid</span>
-            </p>
-            <div className="flex items-baseline gap-2">
-              <input
-                type="text"
-                value={apiKey || ''}
-                readOnly
-                className="w-full h-9 px-3 rounded-lg border border-zinc-200 dark:border-white/[0.08] bg-zinc-50 dark:bg-[#141417] font-mono text-sm text-zinc-950 dark:text-zinc-400 select-all"
-                id="generated-key"
-              />
-              <button
-                type="button"
-                onClick={() => {
-                  navigator.clipboard
-                    .writeText(apiKey || '')
-                    .catch(() => {
-                      const input = document.getElementById('generated-key') as HTMLInputElement;
-                      input.select();
-                      document.execCommand('copy');
-                    });
-                  setShowKey(false);
-                  onClose();
-                }}
-                className="px-3.5 py-2 rounded-lg bg-zinc-950 hover:bg-zinc-800 dark:bg-white dark:hover:bg-zinc-200 text-white dark:text-black text-xs font-semibold"
-              >
-                <Copy className="h-3.5 w-3.5" />
-                <span>Copy</span>
-              </button>
-            </div>
-          </div>
-        )}
-
         <div className="flex items-center justify-end gap-2 pt-2">
-          <button
-            type="button"
-            onClick={onClose}
-            className="px-3.5 py-2 rounded-lg text-xs font-medium text-zinc-600 dark:text-zinc-300 hover:bg-zinc-100 dark:hover:bg-white/[0.06]"
-          >
+          <button type="button" onClick={onClose} className={GHOST_BUTTON}>
             Cancel
           </button>
-          <button
-            type="submit"
-            className="px-4 py-2 rounded-lg bg-zinc-950 hover:bg-zinc-800 dark:bg-white dark:hover:bg-zinc-200 text-white dark:text-black text-xs font-semibold"
-          >
+          <button type="submit" className={PRIMARY_BUTTON}>
             Generate key
           </button>
         </div>
@@ -229,7 +179,7 @@ export const ConfigureWebhookModal: React.FC<{
         className="space-y-4"
       >
         <div>
-          <label htmlFor="webhook-url" className="block text-xs font-medium text-zinc-700 dark:text-zinc-300 mb-1.5">
+          <label htmlFor="webhook-url" className="mb-1.5 block text-xs font-medium text-zinc-600 dark:text-zinc-300">
             Endpoint URL
           </label>
           <input
@@ -238,21 +188,24 @@ export const ConfigureWebhookModal: React.FC<{
             value={url}
             onChange={(e) => setUrl(e.target.value)}
             required
-            className="w-full h-9 px-3 rounded-lg border border-zinc-200 dark:border-white/[0.12] bg-white dark:bg-black font-mono text-xs text-zinc-950 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
+            className={`${WELL_INPUT} font-mono text-xs`}
           />
         </div>
 
         <div className="space-y-2">
-          <span className="block text-xs font-medium text-zinc-700 dark:text-zinc-300">
+          <span className="block text-xs font-medium text-zinc-600 dark:text-zinc-300">
             Subscribed events
           </span>
           {['verification.completed', 'verification.flagged', 'quota.threshold_reached'].map((evt) => (
-            <label key={evt} className="flex items-center gap-2.5 text-xs text-zinc-700 dark:text-zinc-300">
+            <label
+              key={evt}
+              className="flex items-center gap-2.5 text-xs text-zinc-700 dark:text-zinc-300"
+            >
               <input
                 type="checkbox"
                 checked={events.includes(evt)}
                 onChange={() => toggleEvent(evt)}
-                className="rounded border-zinc-300 dark:border-zinc-700 text-blue-600"
+                className="h-3.5 w-3.5 rounded border-zinc-300 accent-emerald-500 dark:border-white/20 dark:bg-black"
               />
               <span className="font-mono">{evt}</span>
             </label>
@@ -260,17 +213,10 @@ export const ConfigureWebhookModal: React.FC<{
         </div>
 
         <div className="flex items-center justify-end gap-2 pt-2">
-          <button
-            type="button"
-            onClick={onClose}
-            className="px-3.5 py-2 rounded-lg text-xs font-medium text-zinc-600 dark:text-zinc-300 hover:bg-zinc-100 dark:hover:bg-white/[0.06]"
-          >
+          <button type="button" onClick={onClose} className={GHOST_BUTTON}>
             Cancel
           </button>
-          <button
-            type="submit"
-            className="px-4 py-2 rounded-lg bg-zinc-950 hover:bg-zinc-800 dark:bg-white dark:hover:bg-zinc-200 text-white dark:text-black text-xs font-semibold"
-          >
+          <button type="submit" className={PRIMARY_BUTTON}>
             Save endpoint
           </button>
         </div>
@@ -301,7 +247,7 @@ export const InviteTeamModal: React.FC<{
         className="space-y-4"
       >
         <div>
-          <label htmlFor="invite-name" className="block text-xs font-medium text-zinc-700 dark:text-zinc-300 mb-1.5">
+          <label htmlFor="invite-name" className="mb-1.5 block text-xs font-medium text-zinc-600 dark:text-zinc-300">
             Full name
           </label>
           <input
@@ -310,11 +256,11 @@ export const InviteTeamModal: React.FC<{
             value={name}
             onChange={(e) => setName(e.target.value)}
             placeholder="e.g. Amina Bello"
-            className="w-full h-9 px-3 rounded-lg border border-zinc-200 dark:border-white/[0.12] bg-white dark:bg-black text-sm text-zinc-950 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
+            className={WELL_INPUT}
           />
         </div>
         <div>
-          <label htmlFor="invite-email" className="block text-xs font-medium text-zinc-700 dark:text-zinc-300 mb-1.5">
+          <label htmlFor="invite-email" className="mb-1.5 block text-xs font-medium text-zinc-600 dark:text-zinc-300">
             Work email
           </label>
           <input
@@ -324,21 +270,22 @@ export const InviteTeamModal: React.FC<{
             onChange={(e) => setEmail(e.target.value)}
             placeholder="engineer@company.com"
             required
-            className="w-full h-9 px-3 rounded-lg border border-zinc-200 dark:border-white/[0.12] bg-white dark:bg-black text-sm text-zinc-950 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
+            className={WELL_INPUT}
           />
         </div>
         <div>
-          <span className="block text-xs font-medium text-zinc-700 dark:text-zinc-300 mb-1.5">Role</span>
-          <div className="grid grid-cols-2 gap-2">
+          <span className="mb-1.5 block text-xs font-medium text-zinc-600 dark:text-zinc-300">Role</span>
+          <div className="grid grid-cols-2 gap-2 rounded-xl border border-zinc-200 bg-zinc-100/70 p-1 dark:border-white/[0.08] dark:bg-black/45">
             {(['Developer', 'Analyst'] as const).map((r) => (
               <button
                 key={r}
                 type="button"
                 onClick={() => setRole(r)}
-                className={`py-2 px-3 rounded-lg border text-xs font-medium ${
+                aria-pressed={role === r}
+                className={`rounded-lg px-3 py-1.5 text-xs font-medium transition-colors ${
                   role === r
-                    ? 'border-blue-600 bg-blue-50 dark:bg-blue-950/30 text-blue-700 dark:text-blue-300'
-                    : 'border-zinc-200 dark:border-white/[0.1] text-zinc-600 dark:text-zinc-300'
+                    ? 'bg-white text-zinc-950 shadow-[0_2px_10px_rgba(9,9,11,0.12)] dark:bg-white dark:text-black dark:shadow-[0_2px_10px_rgba(255,255,255,0.2)]'
+                    : 'text-zinc-500 hover:text-zinc-900 dark:text-zinc-400 dark:hover:text-white'
                 }`}
               >
                 {r}
@@ -347,17 +294,10 @@ export const InviteTeamModal: React.FC<{
           </div>
         </div>
         <div className="flex items-center justify-end gap-2 pt-2">
-          <button
-            type="button"
-            onClick={onClose}
-            className="px-3.5 py-2 rounded-lg text-xs font-medium text-zinc-600 dark:text-zinc-300 hover:bg-zinc-100 dark:hover:bg-white/[0.06]"
-          >
+          <button type="button" onClick={onClose} className={GHOST_BUTTON}>
             Cancel
           </button>
-          <button
-            type="submit"
-            className="px-4 py-2 rounded-lg bg-zinc-950 hover:bg-zinc-800 dark:bg-white dark:hover:bg-zinc-200 text-white dark:text-black text-xs font-semibold"
-          >
+          <button type="submit" className={PRIMARY_BUTTON}>
             Send invite
           </button>
         </div>
@@ -386,32 +326,32 @@ export const CommandSearchModal: React.FC<{
   ].filter((item) => item.label.toLowerCase().includes(query.toLowerCase()));
 
   return (
-    <div className="fixed inset-0 z-50 flex items-start justify-center pt-20 p-4">
-      <div className="fixed inset-0 bg-black/80 backdrop-blur-[2px]" onClick={onClose} aria-hidden="true" />
+    <div className="fixed inset-0 z-50 flex items-start justify-center p-4 pt-20">
+      <div className="fixed inset-0 bg-black/70 backdrop-blur-sm" onClick={onClose} aria-hidden="true" />
       <div
         role="dialog"
         aria-modal="true"
-        className="relative z-10 w-full max-w-lg rounded-xl border border-zinc-200 dark:border-white/[0.12] bg-white dark:bg-[#0B0B0D] shadow-2xl overflow-hidden"
+        className="glass-panel relative z-10 w-full max-w-lg overflow-hidden rounded-2xl"
       >
-        <div className="flex items-center gap-2.5 px-4 h-12 border-b border-zinc-100 dark:border-white/[0.08]">
-          <Search className="h-4 w-4 text-zinc-400 shrink-0" />
+        <div className="relative z-10 flex h-12 items-center gap-2.5 border-b border-zinc-200 px-4 dark:border-white/[0.08]">
+          <Search className="h-4 w-4 shrink-0 text-zinc-400 dark:text-zinc-500" />
           <input
             type="text"
             autoFocus
             value={query}
             onChange={(e) => setQuery(e.target.value)}
             placeholder="Jump to section or action..."
-            className="w-full bg-transparent text-sm text-zinc-950 dark:text-white placeholder:text-zinc-400 focus:outline-none"
+            className="w-full bg-transparent text-sm text-zinc-950 placeholder:text-zinc-400 focus:outline-none dark:text-white dark:placeholder:text-zinc-500"
           />
           <button
             type="button"
             onClick={onClose}
-            className="text-[11px] font-mono text-zinc-400 hover:text-zinc-700 dark:hover:text-white"
+            className="morph-socket rounded-md px-1.5 py-0.5 font-mono text-[10px] text-zinc-500 transition-colors hover:text-zinc-900 dark:hover:text-white"
           >
             ESC
           </button>
         </div>
-        <ul className="max-h-72 overflow-y-auto py-2 divide-y divide-zinc-100/60 dark:divide-white/[0.04]">
+        <ul className="relative z-10 max-h-72 divide-y divide-zinc-200/60 overflow-y-auto py-2 dark:divide-white/[0.06]">
           {items.length === 0 ? (
             <li className="px-4 py-6 text-center text-xs text-zinc-500 dark:text-zinc-400">
               No matching commands found.
@@ -425,14 +365,12 @@ export const CommandSearchModal: React.FC<{
                     item.action();
                     onClose();
                   }}
-                  className="w-full px-4 py-2.5 flex items-center justify-between text-left hover:bg-zinc-50 dark:hover:bg-white/[0.04] transition-colors"
+                  className="flex w-full items-center justify-between px-4 py-2.5 text-left transition-colors hover:bg-zinc-100 dark:hover:bg-white/[0.04]"
                 >
                   <span className="text-[13px] font-medium text-zinc-950 dark:text-zinc-100">
                     {item.label}
                   </span>
-                  <span className="text-[11px] text-zinc-400 dark:text-zinc-500">
-                    {item.category}
-                  </span>
+                  <span className="text-[11px] text-zinc-400 dark:text-zinc-500">{item.category}</span>
                 </button>
               </li>
             ))
@@ -457,24 +395,31 @@ export const InfoResourceModal: React.FC<{
     onClose={onClose}
   >
     {kind === 'docs' ? (
-      <div className="space-y-3 text-xs text-zinc-600 dark:text-zinc-300 leading-relaxed">
-        <div className="flex items-start gap-2.5 p-3 rounded-lg bg-zinc-50 dark:bg-[#141417] border border-zinc-200 dark:border-white/[0.08]">
-          <BookOpen className="h-4 w-4 text-blue-500 shrink-0 mt-0.5" />
+      <div className="space-y-3 text-xs leading-relaxed text-zinc-600 dark:text-zinc-300">
+        <div className="glass-well flex items-start gap-2.5 rounded-xl p-3">
+          <BookOpen className="mt-0.5 h-4 w-4 shrink-0 text-[#7e95ff]" />
           <div>
-            <p className="font-medium text-zinc-950 dark:text-white">POST /v1/signatures/verify</p>
+            <p className="font-mono font-medium text-zinc-950 dark:text-white">
+              POST /v1/signatures/verify
+            </p>
             <p className="mt-0.5 text-zinc-500 dark:text-zinc-400">
-              Submit a document signature image URL or base64 payload to receive a calibrated authenticity score and stroke integrity breakdown.
+              Submit a document signature image URL or base64 payload to receive a calibrated
+              authenticity score and stroke integrity breakdown.
             </p>
           </div>
         </div>
         <p className="text-zinc-500 dark:text-zinc-400">
-          Authenticate all requests using <code className="font-mono text-zinc-800 dark:text-zinc-200">Authorization: Bearer {'<key>'}</code>.
+          Authenticate all requests using{' '}
+          <code className="font-mono text-zinc-800 dark:text-zinc-200">
+            Authorization: Bearer {'<key>'}
+          </code>
+          .
         </p>
       </div>
     ) : (
-      <div className="space-y-3 text-xs text-zinc-600 dark:text-zinc-300 leading-relaxed">
-        <div className="flex items-start gap-2.5 p-3 rounded-lg bg-zinc-50 dark:bg-[#141417] border border-zinc-200 dark:border-white/[0.08]">
-          <LifeBuoy className="h-4 w-4 text-blue-500 shrink-0 mt-0.5" />
+      <div className="space-y-3 text-xs leading-relaxed text-zinc-600 dark:text-zinc-300">
+        <div className="glass-well flex items-start gap-2.5 rounded-xl p-3">
+          <LifeBuoy className="mt-0.5 h-4 w-4 shrink-0 text-[#7e95ff]" />
           <div>
             <p className="font-medium text-zinc-950 dark:text-white">Priority engineering desk</p>
             <p className="mt-0.5 text-zinc-500 dark:text-zinc-400">
@@ -484,12 +429,8 @@ export const InfoResourceModal: React.FC<{
         </div>
       </div>
     )}
-    <div className="flex justify-end mt-5">
-      <button
-        type="button"
-        onClick={onClose}
-        className="px-4 py-2 rounded-lg bg-zinc-950 dark:bg-white text-white dark:text-black text-xs font-semibold"
-      >
+    <div className="mt-5 flex justify-end">
+      <button type="button" onClick={onClose} className={PRIMARY_BUTTON}>
         Close
       </button>
     </div>

@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { motion } from 'motion/react';
 import {
   ArrowRight,
   Check,
@@ -8,8 +9,6 @@ import {
   CreditCard,
   Download,
   KeyRound,
-  Play,
-  RotateCcw,
   Users,
   Webhook,
 } from 'lucide-react';
@@ -22,12 +21,24 @@ import type {
   TimeRange,
   WebhookItem,
 } from '../types/console';
+import { AlertStack } from './AlertStack';
+import { UsageChart } from './UsageChart';
+import { ConsolePageHeader } from './console/ConsolePageHeader';
+import { SegmentedTabs } from './console/SegmentedTabs';
+
 const QUICKSTART_SNIPPETS = {
   curl: `curl -X POST https://api.chirographverify.com/v1/signatures/verify \\\n  -H "X-API-Key: $CHIROGRAPH_API_KEY" \\\n  -d '{"challenge_id":"..."}'`,
   typescript: `const result = await client.verify({ challengeId: '...' });`,
 };
-import { AlertStack } from './AlertStack';
-import { UsageChart } from './UsageChart';
+
+const PRIMARY_CTA =
+  'inline-flex items-center justify-center gap-2 rounded-xl bg-zinc-950 px-4 py-2 text-xs font-semibold text-white shadow-[0_0_20px_rgba(0,0,0,0.2)] transition-all duration-150 hover:bg-zinc-800 dark:bg-white dark:text-black dark:shadow-[0_0_24px_rgba(255,255,255,0.16)] dark:hover:bg-emerald-400 dark:hover:shadow-[0_0_26px_rgba(16,185,129,0.35)]';
+
+const SECONDARY_BUTTON =
+  'morph-socket inline-flex items-center gap-1.5 rounded-xl px-3.5 py-2 text-xs font-medium text-zinc-700 transition-colors hover:text-zinc-950 dark:text-zinc-200 dark:hover:text-white';
+
+const LINK_ACTION =
+  'text-xs font-medium text-[#2563eb] transition-colors hover:text-zinc-950 dark:text-[#7e95ff] dark:hover:text-white';
 
 interface DashboardViewProps {
   firstName: string;
@@ -154,12 +165,9 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
     onReportExported?.(filename);
   };
 
-  const cardSurface =
-    'rounded-xl border border-zinc-200 dark:border-white/[0.09] bg-white dark:bg-[#0B0B0D] dark:shadow-[inset_0_1px_0_0_rgba(255,255,255,0.04)]';
-
   return (
     <div className="space-y-6">
-      {/* 1. Actionable Notice Stack */}
+      {/* 1. Actionable notice stack */}
       <AlertStack
         sessionExpired={sessionExpired}
         showAllowanceBanner={showAllowanceBanner}
@@ -169,67 +177,55 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
         onDismissAllowance={onDismissAllowance}
       />
 
-      {/* 2. Personalized Workspace Header */}
-      <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4 pt-1">
-        <div>
-          <h1 className="font-display text-2xl sm:text-[28px] font-semibold tracking-tight text-zinc-950 dark:text-white text-balance">
-            Welcome back, {firstName}
-          </h1>
-          <p className="text-sm text-zinc-500 dark:text-zinc-400 mt-1">
-            {sessionExpired
-              ? 'Sandbox environment · Re-authenticate to unlock production keys and billing'
-              : 'Monitor verification throughput, project credentials, and monthly quota readiness.'}
-          </p>
-        </div>
-
-        <div className="flex flex-wrap items-center gap-2.5 shrink-0">
-          <button
-            type="button"
-            onClick={handleDownloadReport}
-            className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-lg border border-zinc-200 dark:border-white/[0.12] bg-white dark:bg-[#0B0B0D] hover:bg-zinc-50 dark:hover:bg-[#141417] text-xs font-medium text-zinc-700 dark:text-zinc-200 transition-colors whitespace-nowrap shrink-0"
-          >
-            <Download className="h-3.5 w-3.5" />
-            <span>Download Report</span>
-          </button>
-
-          <button
-            type="button"
-            onClick={() => onNavigate('plans')}
-            className="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-zinc-950 hover:bg-zinc-800 dark:bg-white dark:hover:bg-zinc-200 text-white dark:text-black text-xs font-semibold transition-colors whitespace-nowrap shrink-0"
-          >
-            <CreditCard className="h-3.5 w-3.5" />
-            <span>{activePlan ? `${activePlan.name} plan` : 'Manage plan'}</span>
-          </button>
-        </div>
-      </div>
-
-      {/* 3. Three-Column KPI Metric Strip (Single-Elevation Architectural Black) */}
-      <section aria-label="Account summary metrics" className="grid grid-cols-1 md:grid-cols-3 gap-4">
-        {/* Metric 1: Current Plan */}
-        <div className={`${cardSurface} p-5 flex flex-col justify-between`}>
-          <div className="flex items-center justify-between gap-2">
-            <span className="text-[13px] font-medium text-zinc-500 dark:text-zinc-400">
-              Current plan
-            </span>
-            <button
-              type="button"
-              onClick={() => onNavigate('plans')}
-              className="text-xs font-medium text-blue-600 dark:text-blue-400 hover:underline whitespace-nowrap shrink-0"
-            >
-              {activePlan ? 'Change' : 'Select plan'}
+      {/* 2. Workspace header */}
+      <ConsolePageHeader
+        title={`Welcome back, ${firstName}`}
+        description={
+          sessionExpired
+            ? 'Sandbox environment · Re-authenticate to unlock production keys and billing'
+            : 'Monitor verification throughput, project credentials, and monthly quota readiness.'
+        }
+        actions={
+          <>
+            <button type="button" onClick={handleDownloadReport} className={SECONDARY_BUTTON}>
+              <Download className="h-3.5 w-3.5 text-zinc-500 dark:text-zinc-400" />
+              <span>Download Report</span>
             </button>
-          </div>
-          <p className="font-display text-[28px] leading-tight font-semibold tracking-tight text-zinc-950 dark:text-white mt-3">
-            {activePlan ? activePlan.name : 'Unassigned'}
-          </p>
-          <div className="mt-3 space-y-2">
-            <div className="h-1 w-full rounded-full bg-zinc-100 dark:bg-white/[0.06] overflow-hidden">
+            <button type="button" onClick={() => onNavigate('plans')} className={PRIMARY_CTA}>
+              <CreditCard className="h-3.5 w-3.5" />
+              <span>{activePlan ? `${activePlan.name} plan` : 'free plan'}</span>
+            </button>
+          </>
+        }
+      />
+
+      {/* 3. KPI strip: plan · verifications · pass rate */}
+      <motion.section
+        aria-label="Account summary metrics"
+        initial={{ opacity: 0, y: 14 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.45, delay: 0.05, ease: [0.16, 1, 0.3, 1] }}
+        className="grid grid-cols-1 gap-5 md:grid-cols-3"
+      >
+        {/* Metric 1: Current plan */}
+        <div className="glass-panel rounded-2xl p-6">
+          <div className="relative z-10">
+            <div className="flex items-center justify-between gap-2 text-xs">
+              <span className="whitespace-nowrap text-zinc-500 dark:text-zinc-400">Current plan</span>
+              <button type="button" onClick={() => onNavigate('plans')} className={`${LINK_ACTION} shrink-0 whitespace-nowrap`}>
+                {activePlan ? 'Change' : 'Select plan'}
+              </button>
+            </div>
+            <p className="mt-4 font-display text-3xl font-semibold tracking-tight text-zinc-950 dark:text-white">
+              {activePlan ? activePlan.name : 'Unassigned'}
+            </p>
+            <div className="mt-4 h-1.5 w-full overflow-hidden rounded-full bg-zinc-200 dark:bg-white/[0.06]">
               <div
-                className="h-full bg-blue-600 dark:bg-blue-500 transition-all duration-300"
+                className="h-full rounded-full bg-gradient-to-r from-[#3B5BFF] to-emerald-400 transition-all duration-300"
                 style={{ width: `${quotaPct}%` }}
               />
             </div>
-            <p className="text-xs text-zinc-500 dark:text-zinc-400 font-mono tabular-nums">
+            <p className="mt-2.5 font-mono text-xs tabular-nums text-zinc-500 dark:text-zinc-400">
               {activePlan
                 ? `${totalVerifications.toLocaleString()} / ${activePlan.allowance.toLocaleString()} monthly quota`
                 : '0 / 0 monthly quota · Action needed'}
@@ -238,243 +234,256 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
         </div>
 
         {/* Metric 2: Verifications */}
-        <div className={`${cardSurface} p-5 flex flex-col justify-between`}>
-          <div className="flex items-center justify-between gap-2">
-            <span className="text-[13px] font-medium text-zinc-500 dark:text-zinc-400">
-              Verifications ({timeRange})
-            </span>
-            <button
-              type="button"
-              onClick={() => onNavigate('api-logs')}
-              className="text-xs font-medium text-zinc-500 hover:text-zinc-950 dark:text-zinc-400 dark:hover:text-white whitespace-nowrap shrink-0"
-            >
-              Inspect logs
-            </button>
+        <div className="glass-panel rounded-2xl p-6">
+          <div className="relative z-10">
+            <div className="flex items-center justify-between gap-2 text-xs">
+              <span className="whitespace-nowrap text-zinc-500 dark:text-zinc-400">
+                Verifications ({timeRange})
+              </span>
+              <button
+                type="button"
+                onClick={() => onNavigate('api-logs')}
+                className="shrink-0 whitespace-nowrap text-xs font-medium text-zinc-500 transition-colors hover:text-zinc-950 dark:text-zinc-400 dark:hover:text-white"
+              >
+                Inspect logs
+              </button>
+            </div>
+            <p className="mt-4 font-display text-3xl font-semibold tracking-tight tabular-nums text-zinc-950 dark:text-white">
+              {totalVerifications.toLocaleString()}
+            </p>
+            <p className="mt-7 font-mono text-xs tabular-nums text-zinc-500 dark:text-zinc-400">
+              {totalVerifications > 0 ? (
+                <>
+                  <span className="text-emerald-600 dark:text-emerald-400">
+                    {totalPassed.toLocaleString()} verified
+                  </span>
+                  <span className="mx-1.5 text-zinc-400 dark:text-zinc-600">·</span>
+                  <span>{totalFlagged.toLocaleString()} flagged</span>
+                </>
+              ) : (
+                'Billable events · last 30 days'
+              )}
+            </p>
           </div>
-          <p className="font-display text-[28px] leading-tight font-semibold tracking-tight text-zinc-950 dark:text-white mt-3 tabular-nums">
-            {totalVerifications.toLocaleString()}
-          </p>
-          <p className="text-xs text-zinc-500 dark:text-zinc-400 mt-3 tabular-nums">
-            {totalVerifications > 0
-              ? `${totalPassed.toLocaleString()} verified · ${totalFlagged.toLocaleString()} flagged`
-              : 'Billable events · Last 30 days'}
-          </p>
         </div>
 
-        {/* Metric 3: Pass Rate */}
-        <div className={`${cardSurface} p-5 flex flex-col justify-between`}>
-          <div className="flex items-center justify-between gap-2">
-            <span className="text-[13px] font-medium text-zinc-500 dark:text-zinc-400">
-              Pass rate
-            </span>
-            <button
-              type="button"
-              onClick={() => onNavigate('analytics')}
-              className="text-xs font-medium text-zinc-500 hover:text-zinc-950 dark:text-zinc-400 dark:hover:text-white whitespace-nowrap shrink-0"
-            >
-              Analytics
-            </button>
+        {/* Metric 3: Pass rate */}
+        <div className="glass-panel-featured rounded-2xl p-6">
+          <div className="relative z-10">
+            <div className="flex items-center justify-between gap-2 text-xs">
+              <span className="whitespace-nowrap text-zinc-600 dark:text-zinc-300">Pass rate</span>
+              <button
+                type="button"
+                onClick={() => onNavigate('analytics')}
+                className="shrink-0 whitespace-nowrap text-xs font-medium text-emerald-600 transition-colors hover:text-emerald-700 dark:text-emerald-400 dark:hover:text-emerald-300"
+              >
+                Analytics
+              </button>
+            </div>
+            <p className="mt-4 font-display text-3xl font-semibold tracking-tight tabular-nums text-zinc-950 dark:text-white">
+              {passRate}
+            </p>
+            <p className="mt-7 text-xs text-zinc-600 dark:text-zinc-300">
+              {totalVerifications > 0 ? (
+                <>
+                  Threshold:{' '}
+                  <span className="font-mono text-emerald-600 dark:text-emerald-400">85%</span>{' '}
+                  confidence strict mode
+                </>
+              ) : (
+                'Requires at least 1 verification'
+              )}
+            </p>
           </div>
-          <p className="font-display text-[28px] leading-tight font-semibold tracking-tight text-zinc-950 dark:text-white mt-3 tabular-nums">
-            {passRate}
-          </p>
-          <p className="text-xs text-zinc-500 dark:text-zinc-400 mt-3">
-            {totalVerifications > 0
-              ? 'Threshold: 85% confidence strict mode'
-              : 'Requires at least 1 verification'}
-          </p>
         </div>
-      </section>
+      </motion.section>
 
-      {/* 4. Primary Workspace Split: Usage Chart (2/3) + Project Configuration (1/3) */}
-      <section aria-label="Usage and project overview" className="grid grid-cols-1 xl:grid-cols-12 gap-4 items-stretch">
-        {/* Left: Usage Telemetry */}
-        <div className={`xl:col-span-8 ${cardSurface} p-5 sm:p-6 flex flex-col justify-between`}>
-          <div>
-            <div className="flex flex-wrap items-center justify-between gap-3 pb-4 border-b border-zinc-100 dark:border-white/[0.06]">
-              <div className="flex items-center gap-2 text-sm font-semibold text-zinc-950 dark:text-white">
-                <h2>Usage</h2>
-                <span className="text-zinc-300 dark:text-zinc-700" aria-hidden="true">·</span>
-                <span className="text-xs font-normal text-zinc-500 dark:text-zinc-400">
-                  Billable signature verifications
-                </span>
-              </div>
-
-              <div className="flex items-center gap-3">
-                <div className="inline-flex items-center p-0.5 rounded-lg bg-zinc-100 dark:bg-[#141417] border border-zinc-200/70 dark:border-white/[0.07]">
-                  {(['7d', '30d', '90d'] as TimeRange[]).map((range) => (
-                    <button
-                      key={range}
-                      type="button"
-                      onClick={() => onChangeTimeRange(range)}
-                      className={`px-2.5 py-1 text-xs font-medium rounded-md transition-colors whitespace-nowrap ${
-                        timeRange === range
-                          ? 'bg-white dark:bg-[#222227] text-zinc-950 dark:text-white shadow-xs'
-                          : 'text-zinc-500 dark:text-zinc-400 hover:text-zinc-950 dark:hover:text-zinc-200'
-                      }`}
-                    >
-                      {range}
-                    </button>
-                  ))}
+      {/* 4. Usage telemetry + apps & credentials */}
+      <motion.section
+        aria-label="Usage and project overview"
+        initial={{ opacity: 0, y: 16 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.5, delay: 0.1, ease: [0.16, 1, 0.3, 1] }}
+        className="grid grid-cols-1 items-stretch gap-6 xl:grid-cols-12"
+      >
+        {/* Left: usage */}
+        <div className="glass-panel rounded-2xl p-6 xl:col-span-8">
+          <div className="relative z-10 flex h-full flex-col justify-between">
+            <div>
+              <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+                <div className="flex flex-wrap items-center gap-2 text-xs">
+                  <span className="text-sm font-semibold text-zinc-950 dark:text-white">Usage</span>
+                  <span className="text-zinc-400 dark:text-zinc-600">·</span>
+                  <span className="text-zinc-500 dark:text-zinc-400">
+                    Billable signature verifications
+                  </span>
                 </div>
 
-                <button
-                  type="button"
-                  onClick={() => onNavigate('usage')}
-                  className="inline-flex items-center gap-1 text-xs font-medium text-zinc-600 dark:text-zinc-300 hover:text-zinc-950 dark:hover:text-white whitespace-nowrap shrink-0"
-                >
-                  <span>View usage</span>
-                  <ArrowRight className="h-3.5 w-3.5" />
-                </button>
-              </div>
-            </div>
+                <div className="flex items-center gap-4">
+                  <SegmentedTabs
+                    options={['7d', '30d', '90d'] as const}
+                    value={timeRange}
+                    onChange={onChangeTimeRange}
+                    layoutId="dash-range-tab"
+                    ariaLabel="Usage time range"
+                  />
 
-            <div className="flex flex-wrap items-baseline justify-between gap-4 py-4">
-              <div>
-                <p className="font-display text-3xl font-semibold tracking-tight text-zinc-950 dark:text-white tabular-nums">
-                  {totalVerifications.toLocaleString()}
-                </p>
-                <p className="text-xs text-zinc-500 dark:text-zinc-400 mt-0.5">
-                  Total verifications ({timeRange})
-                </p>
+                  <button
+                    type="button"
+                    onClick={() => onNavigate('usage')}
+                    className="inline-flex shrink-0 items-center gap-1 text-xs font-medium text-zinc-600 transition-colors hover:text-emerald-600 dark:text-zinc-300 dark:hover:text-emerald-400"
+                  >
+                    <span>View usage</span>
+                    <ArrowRight className="h-3.5 w-3.5" />
+                  </button>
+                </div>
               </div>
 
-              {totalVerifications > 0 && (
-                <div className="flex items-center gap-4 text-xs font-mono tabular-nums text-zinc-500 dark:text-zinc-400">
-                  <span className="text-emerald-600 dark:text-emerald-400">
+              <div className="mt-6 flex flex-wrap items-end justify-between gap-4">
+                <div>
+                  <p className="font-display text-3xl font-semibold tracking-tight tabular-nums text-zinc-950 dark:text-white">
+                    {totalVerifications.toLocaleString()}
+                  </p>
+                  <p className="mt-1 text-xs text-zinc-500 dark:text-zinc-400">
+                    Total verifications ({timeRange})
+                  </p>
+                </div>
+
+                <div className="flex items-center gap-4 font-mono text-xs">
+                  <span className="tabular-nums text-emerald-600 dark:text-emerald-400">
                     Verified {totalPassed.toLocaleString()}
                   </span>
-                  <span aria-hidden="true">·</span>
-                  <span className="text-amber-600 dark:text-amber-400">
-                    Flagged {totalFlagged.toLocaleString()}
+                  <span className="text-zinc-400 dark:text-zinc-600">·</span>
+                  <span className="inline-flex items-center gap-1 tabular-nums text-amber-600 dark:text-amber-400/90">
+                    <span>Flagged {totalFlagged.toLocaleString()}</span>
                   </span>
                 </div>
-              )}
+              </div>
+
+              <div className="glass-well mt-6 rounded-xl p-4 sm:p-5">
+                <UsageChart data={visibleData} />
+              </div>
             </div>
           </div>
-
-          <UsageChart
-            data={visibleData}
-          />
         </div>
 
-        {/* Right: Apps & Project Configuration */}
-        <div className={`xl:col-span-4 ${cardSurface} flex flex-col justify-between`}>
-          <div className="p-5 sm:p-6 pb-4 border-b border-zinc-100 dark:border-white/[0.06] flex items-center justify-between gap-2">
-            <div>
-              <h2 className="text-sm font-semibold text-zinc-950 dark:text-white">
-                Apps & Credentials
-              </h2>
-              <p className="text-xs text-zinc-500 dark:text-zinc-400 mt-0.5">
-                Active project environment
-              </p>
+        {/* Right: apps & credentials */}
+        <div className="glass-panel flex flex-col justify-between rounded-2xl p-6 xl:col-span-4">
+          <div className="relative z-10">
+            <div className="flex items-start justify-between gap-2">
+              <div>
+                <h2 className="text-sm font-semibold text-zinc-950 dark:text-white">
+                  Apps &amp; Credentials
+                </h2>
+                <p className="mt-0.5 text-xs text-zinc-500 dark:text-zinc-400">
+                  Active project environment
+                </p>
+              </div>
+              <button
+                type="button"
+                onClick={() => onNavigate('api-keys')}
+                className={`${LINK_ACTION} shrink-0`}
+              >
+                Manage keys
+              </button>
             </div>
-            <button
-              type="button"
-              onClick={() => onNavigate('api-keys')}
-              className="text-xs font-medium text-blue-600 dark:text-blue-400 hover:underline whitespace-nowrap shrink-0"
-            >
-              Manage keys
-            </button>
-          </div>
 
-          <div className="px-5 sm:px-6 divide-y divide-zinc-100 dark:divide-white/[0.06] flex-1">
-            {/* Project Row */}
-            <div className="py-4 flex items-center justify-between gap-3">
+            {/* Project ID well */}
+            <div className="glass-well mt-5 flex items-center justify-between gap-3 rounded-xl px-4 py-3">
               <div className="min-w-0">
-                <p className="text-[13px] font-medium text-zinc-950 dark:text-white truncate">
+                <p className="truncate text-xs font-medium text-zinc-950 dark:text-white">
                   {projectName}
                 </p>
-                <p className="text-xs font-mono text-zinc-500 dark:text-zinc-500 truncate mt-0.5">
-                  {projectId}
+                <p className="mt-0.5 truncate font-mono text-[11px] text-zinc-500 dark:text-zinc-400">
+                  {projectId || '—'}
                 </p>
               </div>
               <button
                 type="button"
                 onClick={() => handleCopy('project', projectId)}
-                className="inline-flex items-center gap-1 px-2.5 py-1 rounded-md border border-zinc-200 dark:border-white/[0.1] text-[11px] font-medium text-zinc-600 dark:text-zinc-300 hover:bg-zinc-50 dark:hover:bg-[#141417] whitespace-nowrap shrink-0"
+                className="morph-socket inline-flex shrink-0 items-center gap-1.5 rounded-lg px-2.5 py-1.5 font-mono text-[11px] text-zinc-700 transition-colors hover:text-zinc-950 dark:text-zinc-200 dark:hover:text-white"
               >
                 {copiedKey === 'project' ? (
                   <>
                     <Check className="h-3 w-3 text-emerald-500" />
-                    <span>Copied</span>
+                    <span className="text-emerald-600 dark:text-emerald-400">Copied</span>
                   </>
                 ) : (
                   <>
-                    <Copy className="h-3 w-3" />
+                    <Copy className="h-3 w-3 text-zinc-500 dark:text-zinc-400" />
                     <span>Copy ID</span>
                   </>
                 )}
               </button>
             </div>
 
-            {/* API Keys Row */}
-            <div className="py-3.5 flex items-center justify-between gap-3">
-              <div className="flex items-center gap-2.5 min-w-0">
-                <KeyRound className="h-4 w-4 text-zinc-400 dark:text-zinc-500 shrink-0" />
+            {/* Credential rows */}
+            <div className="mt-5 divide-y divide-zinc-200 dark:divide-white/[0.06]">
+              <div className="flex items-center justify-between gap-3 py-3.5">
+                <div className="flex min-w-0 items-center gap-3">
+                  <KeyRound className="h-4 w-4 shrink-0 text-zinc-400 dark:text-zinc-500" />
+                  <div className="min-w-0">
+                    <p className="text-xs text-zinc-500 dark:text-zinc-400">API Keys</p>
+                    <p className="mt-0.5 font-mono text-xs text-zinc-950 dark:text-white">
+                      {activeKeysCount > 0
+                        ? `${activeKeysCount} active key${activeKeysCount > 1 ? 's' : ''}`
+                        : 'None generated'}
+                    </p>
+                  </div>
+                </div>
+                <button
+                  type="button"
+                  onClick={onOpenCreateKey}
+                  className={`${LINK_ACTION} shrink-0`}
+                >
+                  {activeKeysCount > 0 ? 'New key' : 'Create key'}
+                </button>
+              </div>
+
+              <div className="flex items-center justify-between gap-3 py-3.5">
+                <div className="flex min-w-0 items-center gap-3">
+                  <Webhook className="h-4 w-4 shrink-0 text-zinc-400 dark:text-zinc-500" />
+                  <div className="min-w-0">
+                    <p className="text-xs text-zinc-500 dark:text-zinc-400">Webhook</p>
+                    <p className="mt-0.5 truncate font-mono text-xs text-zinc-950 dark:text-white">
+                      {primaryWebhook ? primaryWebhook.url : 'Not set'}
+                    </p>
+                  </div>
+                </div>
+                <button
+                  type="button"
+                  onClick={onOpenConfigureWebhook}
+                  className={`${LINK_ACTION} shrink-0`}
+                >
+                  {primaryWebhook ? 'Edit' : 'Configure'}
+                </button>
+              </div>
+
+              <div className="flex items-center justify-between gap-3 py-3.5">
                 <div className="min-w-0">
-                  <p className="text-xs text-zinc-500 dark:text-zinc-400">API Keys</p>
-                  <p className="text-[13px] font-medium text-zinc-950 dark:text-zinc-100 tabular-nums truncate">
-                    {activeKeysCount > 0 ? `${activeKeysCount} active key${activeKeysCount > 1 ? 's' : ''}` : 'None generated'}
+                  <p className="text-xs text-zinc-500 dark:text-zinc-400">Billing tier</p>
+                  <p className="mt-0.5 text-xs font-medium text-zinc-950 dark:text-white">
+                    {activePlan ? `${activePlan.name} ($${activePlan.priceMonthly}/mo)` : 'Unassigned'}
                   </p>
                 </div>
+                <button
+                  type="button"
+                  onClick={() => onNavigate('plans')}
+                  className={`${LINK_ACTION} shrink-0`}
+                >
+                  {activePlan ? 'Upgrade' : 'Choose plan'}
+                </button>
               </div>
-              <button
-                type="button"
-                onClick={onOpenCreateKey}
-                className="text-xs font-medium text-blue-600 dark:text-blue-400 hover:underline whitespace-nowrap shrink-0"
-              >
-                {activeKeysCount > 0 ? 'New key' : 'Create key'}
-              </button>
-            </div>
-
-            {/* Webhook Row */}
-            <div className="py-3.5 flex items-center justify-between gap-3">
-              <div className="flex items-center gap-2.5 min-w-0">
-                <Webhook className="h-4 w-4 text-zinc-400 dark:text-zinc-500 shrink-0" />
-                <div className="min-w-0">
-                  <p className="text-xs text-zinc-500 dark:text-zinc-400">Webhook</p>
-                  <p className="text-[13px] font-medium text-zinc-950 dark:text-zinc-100 truncate">
-                    {primaryWebhook ? primaryWebhook.url : 'Not set'}
-                  </p>
-                </div>
-              </div>
-              <button
-                type="button"
-                onClick={onOpenConfigureWebhook}
-                className="text-xs font-medium text-blue-600 dark:text-blue-400 hover:underline whitespace-nowrap shrink-0"
-              >
-                {primaryWebhook ? 'Edit' : 'Configure'}
-              </button>
-            </div>
-
-            {/* Plan Row */}
-            <div className="py-3.5 flex items-center justify-between gap-3">
-              <div className="min-w-0">
-                <p className="text-xs text-zinc-500 dark:text-zinc-400">Billing tier</p>
-                <p className="text-[13px] font-medium text-zinc-950 dark:text-zinc-100 truncate">
-                  {activePlan ? `${activePlan.name} ($${activePlan.priceMonthly}/mo)` : 'Unassigned'}
-                </p>
-              </div>
-              <button
-                type="button"
-                onClick={() => onNavigate('plans')}
-                className="text-xs font-medium text-blue-600 dark:text-blue-400 hover:underline whitespace-nowrap shrink-0"
-              >
-                {activePlan ? 'Upgrade' : 'Choose plan'}
-              </button>
             </div>
           </div>
 
-          {/* Clean Anchored Team Action Row */}
-          <div className="p-5 sm:px-6 border-t border-zinc-100 dark:border-white/[0.06] bg-zinc-50/70 dark:bg-[#070709] rounded-b-xl flex items-center justify-between gap-3">
-            <div className="flex items-center gap-2.5 min-w-0">
-              <Users className="h-4 w-4 text-zinc-500 dark:text-zinc-400 shrink-0" />
+          {/* Invite teammate */}
+          <div className="relative z-10 mt-4 flex items-center justify-between gap-3 border-t border-zinc-200 pt-4 dark:border-white/[0.08]">
+            <div className="flex min-w-0 items-center gap-2.5">
+              <Users className="h-4 w-4 shrink-0 text-zinc-400 dark:text-zinc-500" />
               <div className="min-w-0">
-                <p className="text-[13px] font-medium text-zinc-950 dark:text-white truncate">
-                  Invite a teammate
-                </p>
-                <p className="text-xs text-zinc-500 dark:text-zinc-400 truncate tabular-nums">
+                <p className="text-xs font-medium text-zinc-950 dark:text-white">Invite a teammate</p>
+                <p className="text-[11px] tabular-nums text-zinc-500 dark:text-zinc-400">
                   {teamMembers.length} member{teamMembers.length > 1 ? 's' : ''} in project
                 </p>
               </div>
@@ -483,131 +492,122 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
               type="button"
               onClick={onOpenInviteTeam}
               aria-label="Invite teammate"
-              className="inline-flex items-center gap-1 px-3 py-1.5 rounded-lg border border-zinc-200 dark:border-white/[0.12] bg-white dark:bg-[#141417] hover:bg-zinc-50 dark:hover:bg-[#1D1D22] text-xs font-medium text-zinc-700 dark:text-zinc-200 transition-colors whitespace-nowrap shrink-0"
+              className="inline-flex shrink-0 items-center gap-1.5 rounded-xl bg-zinc-950 px-3.5 py-2 text-xs font-semibold text-white shadow-[0_0_18px_rgba(0,0,0,0.2)] transition-all hover:bg-zinc-800 dark:bg-white dark:text-black dark:shadow-[0_0_20px_rgba(255,255,255,0.14)] dark:hover:bg-emerald-400"
             >
               <span>Invite</span>
-              <ArrowRight className="h-3 w-3" />
+              <ArrowRight className="h-3.5 w-3.5" />
             </button>
           </div>
         </div>
-      </section>
+      </motion.section>
 
-      {/* 5. Developer Quickstart & Integration Readiness */}
-      <section
+      {/* 5. Integration checklist + quickstart */}
+      <motion.section
         aria-label="Developer integration quickstart"
-        className={`${cardSurface} p-5 sm:p-6 grid grid-cols-1 lg:grid-cols-12 gap-6 items-start`}
+        initial={{ opacity: 0, y: 16 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.5, delay: 0.15, ease: [0.16, 1, 0.3, 1] }}
+        className="glass-panel grid grid-cols-1 items-start gap-6 rounded-2xl p-6 lg:grid-cols-12"
       >
-        <div className="lg:col-span-5 space-y-4">
+        <div className="relative z-10 space-y-4 lg:col-span-5">
           <div>
             <h2 className="text-sm font-semibold text-zinc-950 dark:text-white">
               Integration checklist
             </h2>
-            <p className="text-xs text-zinc-500 dark:text-zinc-400 mt-1">
+            <p className="mt-1 text-xs text-zinc-500 dark:text-zinc-400">
               Complete these three steps to verify your first signature payload.
             </p>
           </div>
 
-          <ul className="divide-y divide-zinc-100 dark:divide-white/[0.06]">
-            <li className="py-3 flex items-center justify-between gap-3">
-              <div className="flex items-center gap-2.5 min-w-0">
+          <ul className="divide-y divide-zinc-200 dark:divide-white/[0.06]">
+            <li className="flex items-center justify-between gap-3 py-3">
+              <div className="flex min-w-0 items-center gap-2.5">
                 {!sessionExpired ? (
-                  <CheckCircle2 className="h-4 w-4 text-emerald-500 shrink-0" />
+                  <CheckCircle2 className="h-4 w-4 shrink-0 text-emerald-500" />
                 ) : (
-                  <Circle className="h-4 w-4 text-zinc-300 dark:text-zinc-700 shrink-0" />
+                  <Circle className="h-4 w-4 shrink-0 text-zinc-300 dark:text-zinc-700" />
                 )}
-                <span className="text-[13px] font-medium text-zinc-800 dark:text-zinc-200 truncate">
+                <span className="truncate text-[13px] font-medium text-zinc-800 dark:text-zinc-200">
                   1. Verify developer session
                 </span>
               </div>
               {sessionExpired ? (
-                <button
-                  type="button"
-                  onClick={onOpenSignIn}
-                  className="text-xs font-medium text-blue-600 dark:text-blue-400 hover:underline whitespace-nowrap shrink-0"
-                >
+                <button type="button" onClick={onOpenSignIn} className={`${LINK_ACTION} shrink-0`}>
                   Sign in
                 </button>
               ) : (
-                <span className="text-xs text-emerald-600 dark:text-emerald-400 whitespace-nowrap shrink-0">
-                  Done
-                </span>
+                <span className="shrink-0 text-xs text-emerald-600 dark:text-emerald-400">Done</span>
               )}
             </li>
 
-            <li className="py-3 flex items-center justify-between gap-3">
-              <div className="flex items-center gap-2.5 min-w-0">
+            <li className="flex items-center justify-between gap-3 py-3">
+              <div className="flex min-w-0 items-center gap-2.5">
                 {activeKeysCount > 0 ? (
-                  <CheckCircle2 className="h-4 w-4 text-emerald-500 shrink-0" />
+                  <CheckCircle2 className="h-4 w-4 shrink-0 text-emerald-500" />
                 ) : (
-                  <Circle className="h-4 w-4 text-zinc-300 dark:text-zinc-700 shrink-0" />
+                  <Circle className="h-4 w-4 shrink-0 text-zinc-300 dark:text-zinc-700" />
                 )}
-                <span className="text-[13px] font-medium text-zinc-800 dark:text-zinc-200 truncate">
+                <span className="truncate text-[13px] font-medium text-zinc-800 dark:text-zinc-200">
                   2. Generate an API key
                 </span>
               </div>
-              <button
-                type="button"
-                onClick={onOpenCreateKey}
-                className="text-xs font-medium text-blue-600 dark:text-blue-400 hover:underline whitespace-nowrap shrink-0"
-              >
+              <button type="button" onClick={onOpenCreateKey} className={`${LINK_ACTION} shrink-0`}>
                 {activeKeysCount > 0 ? 'Add key' : 'Create key'}
               </button>
             </li>
 
-            <li className="py-3 flex items-center justify-between gap-3">
-              <div className="flex items-center gap-2.5 min-w-0">
+            <li className="flex items-center justify-between gap-3 py-3">
+              <div className="flex min-w-0 items-center gap-2.5">
                 {totalVerifications > 0 ? (
-                  <CheckCircle2 className="h-4 w-4 text-emerald-500 shrink-0" />
+                  <CheckCircle2 className="h-4 w-4 shrink-0 text-emerald-500" />
                 ) : (
-                  <Circle className="h-4 w-4 text-zinc-300 dark:text-zinc-700 shrink-0" />
+                  <Circle className="h-4 w-4 shrink-0 text-zinc-300 dark:text-zinc-700" />
                 )}
-                <span className="text-[13px] font-medium text-zinc-800 dark:text-zinc-200 truncate">
+                <span className="truncate text-[13px] font-medium text-zinc-800 dark:text-zinc-200">
                   3. Send first verification request
                 </span>
               </div>
-
+              <button
+                type="button"
+                onClick={onRunTestVerification}
+                className={`${LINK_ACTION} shrink-0`}
+              >
+                {totalVerifications > 0 ? 'Send again' : 'Send test'}
+              </button>
             </li>
           </ul>
         </div>
 
-        {/* Right: Quickstart Snippet */}
-        <div className="lg:col-span-7">
-          <div className="rounded-lg border border-zinc-200 dark:border-white/[0.08] bg-[#050506] text-zinc-100 overflow-hidden">
-            <div className="flex items-center justify-between px-3.5 py-2 border-b border-white/[0.08] bg-white/[0.02]">
+        {/* Quickstart snippet */}
+        <div className="relative z-10 lg:col-span-7">
+          <div className="glass-well overflow-hidden rounded-xl">
+            <div className="flex items-center justify-between border-b border-zinc-200 px-3.5 py-2 dark:border-white/[0.08]">
               <div className="flex items-center gap-1">
-                <button
-                  type="button"
-                  onClick={() => setSnippetTab('curl')}
-                  className={`px-2.5 py-1 rounded text-xs font-medium transition-colors ${
-                    snippetTab === 'curl'
-                      ? 'bg-white/[0.12] text-white'
-                      : 'text-zinc-400 hover:text-zinc-200'
-                  }`}
-                >
-                  cURL
-                </button>
-                <button
-                  type="button"
-                  onClick={() => setSnippetTab('typescript')}
-                  className={`px-2.5 py-1 rounded text-xs font-medium transition-colors ${
-                    snippetTab === 'typescript'
-                      ? 'bg-white/[0.12] text-white'
-                      : 'text-zinc-400 hover:text-zinc-200'
-                  }`}
-                >
-                  TypeScript SDK
-                </button>
+                {(['curl', 'typescript'] as const).map((tab) => (
+                  <button
+                    key={tab}
+                    type="button"
+                    onClick={() => setSnippetTab(tab)}
+                    className={`rounded-lg px-2.5 py-1 text-xs font-medium transition-colors ${
+                      snippetTab === tab
+                        ? 'bg-white text-zinc-950 shadow-[0_2px_10px_rgba(9,9,11,0.12)] dark:bg-white/[0.12] dark:text-white dark:shadow-none'
+                        : 'text-zinc-500 hover:text-zinc-900 dark:text-zinc-400 dark:hover:text-zinc-200'
+                    }`}
+                  >
+                    {tab === 'curl' ? 'cURL' : 'TypeScript SDK'}
+                  </button>
+                ))}
               </div>
 
               <button
                 type="button"
                 onClick={() => handleCopy('snippet', QUICKSTART_SNIPPETS[snippetTab])}
-                className="inline-flex items-center gap-1.5 text-xs text-zinc-300 hover:text-white transition-colors whitespace-nowrap"
+                className="morph-socket inline-flex shrink-0 items-center gap-1.5 rounded-lg px-2 py-1 text-xs text-zinc-700 transition-colors hover:text-zinc-950 dark:text-zinc-300 dark:hover:text-white"
               >
                 {copiedKey === 'snippet' ? (
                   <>
-                    <Check className="h-3.5 w-3.5 text-emerald-400" />
-                    <span>Copied</span>
+                    <Check className="h-3.5 w-3.5 text-emerald-500" />
+                    <span className="text-emerald-600 dark:text-emerald-400">Copied</span>
                   </>
                 ) : (
                   <>
@@ -617,12 +617,25 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
                 )}
               </button>
             </div>
-            <pre className="p-4 text-[12px] leading-relaxed font-mono text-zinc-200 overflow-x-auto">
+            <pre className="overflow-x-auto p-4 font-mono text-[12px] leading-relaxed text-zinc-800 dark:text-zinc-200">
               <code>{QUICKSTART_SNIPPETS[snippetTab]}</code>
             </pre>
           </div>
         </div>
-      </section>
+      </motion.section>
+
+      {/* Sample data helpers remain reachable for empty workspaces */}
+      {isSampleData && (
+        <div className="flex flex-wrap items-center gap-3 text-xs text-zinc-500 dark:text-zinc-400">
+          <span>Showing sample traffic.</span>
+          <button type="button" onClick={onResetUsageData} className={LINK_ACTION}>
+            Reset sample data
+          </button>
+          <button type="button" onClick={onLoadSampleData} className={LINK_ACTION}>
+            Reload sample
+          </button>
+        </div>
+      )}
     </div>
   );
 };

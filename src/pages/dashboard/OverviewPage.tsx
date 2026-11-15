@@ -1,7 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { DashboardView } from '@/components/DashboardView';
-import { AlertStack } from '@/components/AlertStack';
 import {
   fetchConsoleOverview,
   fetchConsoleBilling,
@@ -10,8 +9,14 @@ import {
   fetchConsoleWebhooks,
   fetchConsoleTeam,
 } from '@/data/consoleAdapter';
-import type { PlanOption } from '@/types/console';
-import type { TimeRange } from '@/types/console';
+import type {
+  ApiKeyItem,
+  DailyUsagePoint,
+  PlanOption,
+  TeamMember,
+  TimeRange,
+  WebhookItem,
+} from '@/types/console';
 
 export default function OverviewPage() {
   const navigate = useNavigate();
@@ -21,12 +26,12 @@ export default function OverviewPage() {
   const [sessionExpired, setSessionExpired] = useState(false);
   const [showAllowanceBanner, setShowAllowanceBanner] = useState(true);
   const [activePlan, setActivePlan] = useState<PlanOption | null>(null);
-  const [usageData, setUsageData] = useState<any[]>([]);
+  const [usageData, setUsageData] = useState<DailyUsagePoint[]>([]);
   const [timeRange, setTimeRange] = useState<TimeRange>('30d');
-  const [apiKeys, setApiKeys] = useState<any[]>([]);
-  const [webhooks, setWebhooks] = useState<any[]>([]);
-  const [teamMembers, setTeamMembers] = useState<any[]>([]);
-  const [isSampleData, setIsSampleData] = useState(false);
+  const [apiKeys, setApiKeys] = useState<ApiKeyItem[]>([]);
+  const [webhooks, setWebhooks] = useState<WebhookItem[]>([]);
+  const [teamMembers, setTeamMembers] = useState<TeamMember[]>([]);
+  const [isSampleData] = useState(false);
 
   useEffect(() => {
     (async () => {

@@ -537,3 +537,80 @@ body.cv-auth-route .cv-privacy-control {
     animation: none;
   }
 }
+
+/* ─────────────────────────────────────────────────────────────────────────
+ * Obsidian console surface layer
+ *
+ * The dashboard shell opts into these overrides with `.cv-console`, so the
+ * auth screens (which are always obsidian regardless of theme) keep their
+ * single dark treatment. Default (dark) is the refracted obsidian glass;
+ * light mode repaints the same components as clean white panels so the theme
+ * toggle stays honest instead of leaving dark glass on a light canvas.
+ * ───────────────────────────────────────────────────────────────────────── */
+
+/* Light-theme glass equivalents. Scoped to the console shell only. */
+html.light .cv-console .glass-panel {
+  background: linear-gradient(160deg, #ffffff 0%, #ffffff 60%, #fafafa 100%);
+  border-color: #e4e4e7;
+  box-shadow:
+    inset 0 1px 0 #ffffff,
+    0 1px 2px rgba(9, 9, 11, 0.05),
+    0 14px 32px rgba(9, 9, 11, 0.06);
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
+}
+
+html.light .cv-console .glass-panel-soft {
+  background: #ffffff;
+  border-color: #e4e4e7;
+  box-shadow: 0 1px 2px rgba(9, 9, 11, 0.05);
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
+}
+
+html.light .cv-console .glass-panel-featured {
+  background: linear-gradient(145deg, #ecfdf5 0%, #eef2ff 55%, #ffffff 100%);
+  border-color: #a7f3d0;
+  box-shadow:
+    inset 0 1px 0 #ffffff,
+    0 1px 2px rgba(9, 9, 11, 0.05),
+    0 14px 32px rgba(16, 185, 129, 0.08);
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
+}
+
+/* The pointer-tracked radial reflection is a dark-glass effect only. */
+html.light .cv-console .glass-panel::before,
+html.light .cv-console .glass-panel::after,
+html.light .cv-console .glass-panel-soft::before,
+html.light .cv-console .glass-panel-soft::after,
+html.light .cv-console .glass-panel-featured::before,
+html.light .cv-console .glass-panel-featured::after {
+  opacity: 0;
+}
+
+html.light .cv-console .glass-well {
+  background: #fafafa;
+  border-color: #e4e4e7;
+  box-shadow: inset 0 1px 3px rgba(9, 9, 11, 0.06);
+}
+
+html.light .cv-console .morph-socket {
+  background: #ffffff;
+  border-color: #e4e4e7;
+  box-shadow: 0 1px 2px rgba(9, 9, 11, 0.06);
+}
+
+/* Console scrollbars follow the active theme (auth routes keep the dark one). */
+html.light body:not(.cv-auth-route)::-webkit-scrollbar-track,
+html.light body:not(.cv-auth-route) ::-webkit-scrollbar-track {
+  background: #f4f4f5;
+}
+html.light body:not(.cv-auth-route)::-webkit-scrollbar-thumb,
+html.light body:not(.cv-auth-route) ::-webkit-scrollbar-thumb {
+  background: #d4d4d8;
+}
+html.light body:not(.cv-auth-route)::-webkit-scrollbar-thumb:hover,
+html.light body:not(.cv-auth-route) ::-webkit-scrollbar-thumb:hover {
+  background: #a1a1aa;
+}

@@ -5,7 +5,7 @@ import { TopBar } from '@/components/TopBar';
 import { useAuth } from '@/context/AuthContext';
 import { getNotifications } from '@/lib/dashboard';
 import type { NavSectionId } from '@/types/console';
-import { InfoResourceModal } from '@/components/Modals';
+import { CommandSearchModal, InfoResourceModal } from '@/components/Modals';
 
 const SECTION_TO_PATH: Record<NavSectionId, string> = {
   dashboard: '/dashboard',
@@ -57,6 +57,19 @@ export default function DashboardLayout() {
     document.documentElement.classList.toggle('dark', theme === 'dark');
     document.documentElement.classList.toggle('light', theme === 'light');
   }, [theme]);
+
+  // ⌘K / Ctrl+K opens command search from anywhere in the console.
+  useEffect(() => {
+    const onKeyDown = (event: KeyboardEvent) => {
+      if ((event.metaKey || event.ctrlKey) && event.key.toLowerCase() === 'k') {
+        event.preventDefault();
+        setActiveModal((current) => (current === 'search' ? null : 'search'));
+      }
+      if (event.key === 'Escape') setActiveModal(null);
+    };
+    window.addEventListener('keydown', onKeyDown);
+    return () => window.removeEventListener('keydown', onKeyDown);
+  }, []);
 
   const applyTheme = (next: 'dark' | 'light') => {
     setTheme(next);
@@ -116,7 +129,21 @@ export default function DashboardLayout() {
   };
 
   return (
-    <div className="min-h-screen flex bg-zinc-50 dark:bg-black">
+    <div className="cv-console relative flex min-h-screen overflow-x-hidden bg-zinc-50 text-zinc-900 dark:bg-[#020305] dark:text-zinc-100">
+      {/* Fixed ambient obsidian backdrop: hairline grid + two morphing orbs */}
+      <div
+        aria-hidden="true"
+        className="bg-obsidian-grid pointer-events-none fixed inset-0 hidden opacity-45 dark:block"
+      />
+      <div
+        aria-hidden="true"
+        className="animate-morph-a pointer-events-none fixed -top-32 left-[22%] hidden h-[420px] w-[520px] bg-[#3B5BFF]/[0.12] blur-[140px] dark:block"
+      />
+      <div
+        aria-hidden="true"
+        className="animate-morph-b pointer-events-none fixed bottom-0 right-[8%] hidden h-[380px] w-[460px] bg-emerald-500/[0.10] blur-[140px] dark:block"
+      />
+
       <Sidebar
         activeSection={activeSection}
         onSelectSection={onSelectSection}
@@ -130,7 +157,8 @@ export default function DashboardLayout() {
         onLogout={() => void handleLogout()}
         loggingOut={loggingOut}
       />
-      <div className="flex-1 min-w-0 flex flex-col">
+
+      <div className="relative z-10 flex min-w-0 flex-1 flex-col">
         <TopBar
           activeSection={activeSection}
           projectName={projectName}
@@ -145,11 +173,11 @@ export default function DashboardLayout() {
           onLogout={() => void handleLogout()}
           loggingOut={loggingOut}
         />
-        <main className="flex-1 w-full max-w-[1220px] mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8">
+        <main className="mx-auto w-full max-w-[1220px] flex-1 px-5 py-7 sm:px-8 lg:py-9">
           {logoutError && (
             <div
               role="alert"
-              className="mb-5 flex items-start justify-between gap-4 rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700 dark:border-red-500/30 dark:bg-red-500/10 dark:text-red-300"
+              className="mb-5 flex items-start justify-between gap-4 rounded-xl border border-rose-500/30 bg-rose-500/10 px-4 py-3 text-sm text-rose-700 dark:text-rose-300"
             >
               <p>{logoutError}</p>
               <button
@@ -166,58 +194,20 @@ export default function DashboardLayout() {
       </div>
 
       {activeModal === 'search' && (
-        <div className="fixed inset-0 z-50 flex items-start justify-center bg-black/80 backdrop-blur-[2px] p-4 pt-24" onClick={() => setActiveModal(null)}>
-          <div className="w-full max-w-md rounded-xl border border-zinc-200 dark:border-white/[0.12] bg-white dark:bg-[#0B0B0D] p-6">
-            <h2 className="font-display text-lg font-semibold text-zinc-950 dark:text-white">Command search</h2>
-            <div className="mt-4 space-y-1">
-              {Object.keys(SECTION_TO_PATH).map((s) => (
-                <button key={s} onClick={() => { onSelectSection(s as NavSectionId); setActiveModal(null); }} className="block w-full text-left rounded-md px-3 py-2 text-sm text-zinc-600 hover:bg-zinc-100 hover:text-zinc-950 dark:text-zinc-400 dark:hover:bg-white/[0.06] dark:hover:text-white">
-                  {s}
-                </button>
-              ))}
-            </div>
-          </div>
-        </div>
+        <CommandSearchModal
+          onClose={() => setActiveModal(null)}
+          onNavigate={(section) => onSelectSection(section)}
+          onCreateKey={() => onSelectSection('api-keys')}
+        />
       )}
 
       {activeModal === 'docs' && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-[2px] p-4" onClick={() => setActiveModal(null)}>
-          <div className="w-full max-w-md rounded-xl border border-zinc-200 dark:border-white/[0.12] bg-white dark:bg-[#0B0B0D] p-6">
-            <h2 className="font-display text-lg font-semibold text-zinc-950 dark:text-white">Documentation</h2>
-            <p className="mt-2 text-sm text-zinc-600 dark:text-zinc-300">Chirograph Verify documentation covers authentication, verification flows, webhooks, and billing.</p>
-            <div className="mt-4 flex justify-end">
-              <button onClick={() => setActiveModal(null)} className="px-4 py-2 rounded-lg bg-zinc-950 hover:bg-zinc-800 dark:bg-white dark:hover:bg-zinc-200 text-white dark:text-black text-xs font-semibold transition-colors whitespace-nowrap shrink-0">Close</button>
-            </div>
-          </div>
-        </div>
+        <InfoResourceModal kind="docs" onClose={() => setActiveModal(null)} />
       )}
 
       {activeModal === 'support' && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-[2px] p-4" onClick={() => setActiveModal(null)}>
-          <div className="w-full max-w-md rounded-xl border border-zinc-200 dark:border-white/[0.12] bg-white dark:bg-[#0B0B0D] p-6">
-            <h2 className="font-display text-lg font-semibold text-zinc-950 dark:text-white">Support</h2>
-            <p className="mt-2 text-sm text-zinc-600 dark:text-zinc-300">Contact support for account, billing, and integration help.</p>
-            <div className="mt-4 flex justify-end">
-              <button onClick={() => setActiveModal(null)} className="px-4 py-2 rounded-lg bg-zinc-950 hover:bg-zinc-800 dark:bg-white dark:hover:bg-zinc-200 text-white dark:text-black text-xs font-semibold transition-colors whitespace-nowrap shrink-0">Close</button>
-            </div>
-          </div>
-        </div>
+        <InfoResourceModal kind="support" onClose={() => setActiveModal(null)} />
       )}
-    </div>
-  );
-}
-
-export function DashboardPageHeader({ title, description, action, soon }: { title: string; description?: string; action?: React.ReactNode; soon?: boolean }) {
-  return (
-    <div className="mb-6 flex flex-col gap-3 border-b border-zinc-100 dark:border-white/[0.06] pb-5 sm:flex-row sm:items-end sm:justify-between">
-      <div>
-        <h1 className="font-display text-2xl sm:text-[28px] font-semibold tracking-tight text-zinc-950 dark:text-white">
-          {title}
-          {soon && <span className="ml-2 inline-flex items-center rounded-full bg-zinc-100 dark:bg-white/[0.06] px-2 py-0.5 text-xs text-zinc-500 dark:text-zinc-400">Soon</span>}
-        </h1>
-        {description && <p className="mt-1 text-sm text-zinc-600 dark:text-zinc-300">{description}</p>}
-      </div>
-      {action && <div className="flex-shrink-0">{action}</div>}
     </div>
   );
 }

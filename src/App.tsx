@@ -1,4 +1,5 @@
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
+import { MotionConfig } from 'motion/react';
 import { AuthProvider } from '@/context/AuthContext';
 import { useGlassReflection } from '@/hooks/useGlassReflection';
 import ProtectedRoute from '@/components/ProtectedRoute';
@@ -13,7 +14,6 @@ import ForgotPasswordPage from '@/pages/ForgotPasswordPage';
 import ResetPasswordPage from '@/pages/ResetPasswordPage';
 import OverviewPage from '@/pages/dashboard/OverviewPage';
 import ApiKeysPage from '@/pages/dashboard/ApiKeysPage';
-import UsagePage from '@/pages/dashboard/UsagePage';
 import AnalyticsPage from '@/pages/dashboard/AnalyticsPage';
 import WebhooksPage from '@/pages/dashboard/WebhooksPage';
 import BillingPage from '@/pages/dashboard/BillingPage';
@@ -30,45 +30,49 @@ function App() {
   useGlassReflection();
 
   return (
-    <AuthProvider>
-      <BrowserRouter basename={import.meta.env.BASE_URL.replace(/\/$/, '')}>
-        <AnalyticsPageviews />
-        <Routes>
-          <Route path="/" element={<Navigate to="/dashboard" replace />} />
-          <Route path="/login" element={<LoginPage />} />
-          <Route path="/signup" element={<SignupPage />} />
-          <Route path="/forgot-password" element={<ForgotPasswordPage />} />
-          <Route path="/reset-password" element={<ResetPasswordPage />} />
-          <Route
-            path="/dashboard"
-            element={
-              <ProtectedRoute>
-                <ErrorBoundary>
-                  <DashboardLayout />
-                </ErrorBoundary>
-              </ProtectedRoute>
-            }
-          >
-            <Route index element={<OverviewPage />} />
-            <Route path="api-keys" element={<ApiKeysPage />} />
-            <Route path="usage" element={<Navigate to="/dashboard/analytics" replace />} />
-            <Route path="analytics" element={<AnalyticsPage />} />
-            <Route path="webhooks" element={<WebhooksPage />} />
-            <Route path="billing" element={<BillingPage />} />
-            <Route path="billing/payments" element={<Navigate to="/dashboard/billing" replace />} />
-            <Route path="settings" element={<SettingsPage />} />
-            <Route path="account" element={<AccountPage />} />
-            <Route path="team" element={<TeamPage />} />
-            <Route path="activity-log" element={<ActivityLogPage />} />
-            <Route path="notifications" element={<NotificationsPage />} />
-            <Route path="api-logs" element={<ApiLogsPage />} />
-          </Route>
-          <Route path="*" element={<Navigate to="/dashboard" replace />} />
-        </Routes>
-      </BrowserRouter>
-      <AnalyticsConsentBanner />
-      <AnalyticsPrivacySettings />
-    </AuthProvider>
+    // reducedMotion="user" makes every Framer Motion transition in the app
+    // (console entrances, layout pills, auth cards) respect the OS setting.
+    <MotionConfig reducedMotion="user">
+      <AuthProvider>
+        <BrowserRouter basename={import.meta.env.BASE_URL.replace(/\/$/, '')}>
+          <AnalyticsPageviews />
+          <Routes>
+            <Route path="/" element={<Navigate to="/dashboard" replace />} />
+            <Route path="/login" element={<LoginPage />} />
+            <Route path="/signup" element={<SignupPage />} />
+            <Route path="/forgot-password" element={<ForgotPasswordPage />} />
+            <Route path="/reset-password" element={<ResetPasswordPage />} />
+            <Route
+              path="/dashboard"
+              element={
+                <ProtectedRoute>
+                  <ErrorBoundary>
+                    <DashboardLayout />
+                  </ErrorBoundary>
+                </ProtectedRoute>
+              }
+            >
+              <Route index element={<OverviewPage />} />
+              <Route path="api-keys" element={<ApiKeysPage />} />
+              <Route path="usage" element={<Navigate to="/dashboard/analytics" replace />} />
+              <Route path="analytics" element={<AnalyticsPage />} />
+              <Route path="webhooks" element={<WebhooksPage />} />
+              <Route path="billing" element={<BillingPage />} />
+              <Route path="billing/payments" element={<Navigate to="/dashboard/billing" replace />} />
+              <Route path="settings" element={<SettingsPage />} />
+              <Route path="account" element={<AccountPage />} />
+              <Route path="team" element={<TeamPage />} />
+              <Route path="activity-log" element={<ActivityLogPage />} />
+              <Route path="notifications" element={<NotificationsPage />} />
+              <Route path="api-logs" element={<ApiLogsPage />} />
+            </Route>
+            <Route path="*" element={<Navigate to="/dashboard" replace />} />
+          </Routes>
+        </BrowserRouter>
+        <AnalyticsConsentBanner />
+        <AnalyticsPrivacySettings />
+      </AuthProvider>
+    </MotionConfig>
   );
 }
 
