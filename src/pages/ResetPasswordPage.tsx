@@ -5,6 +5,7 @@ import AuthLayout from '@/layouts/AuthLayout';
 import { useSignIn } from '@clerk/react';
 import { ErrorBanner } from '@/components/Feedback';
 import { useAuth } from '@/context/AuthContext';
+import { resetCodeSentByEmail } from '@/lib/passwordReset';
 import { markAuthIntent } from '@/lib/analytics';
 import Spinner from '@/components/Spinner';
 
@@ -24,8 +25,9 @@ import Spinner from '@/components/Spinner';
 // Module-level guard that survives component remounts. A useRef would reset to
 // false on every remount, causing the mount effect to fire requestCode again
 // and mail a brand-new code — invalidating the code the user had just typed.
-// Keyed by email so a fresh identifier always gets exactly one code.
-const codeSentByEmail = new Set<string>();
+// Keyed by email so a fresh identifier always gets exactly one code. It is
+// shared with the login page's inline reset flow, which has already sent one.
+const codeSentByEmail = resetCodeSentByEmail;
 
 export default function ResetPasswordPage() {
   const { signIn } = useSignIn();

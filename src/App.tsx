@@ -1,5 +1,6 @@
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { AuthProvider } from '@/context/AuthContext';
+import { useGlassReflection } from '@/hooks/useGlassReflection';
 import ProtectedRoute from '@/components/ProtectedRoute';
 import DashboardLayout from '@/layouts/DashboardLayout';
 import ErrorBoundary from '@/components/ErrorBoundary';
@@ -24,6 +25,10 @@ import NotificationsPage from '@/pages/dashboard/NotificationsPage';
 import ApiLogsPage from '@/pages/dashboard/ApiLogsPage';
 
 function App() {
+  // One pointer listener for the whole app: the auth cards publish their
+  // --mouse-x / --mouse-y / --reflection-opacity custom properties from it.
+  useGlassReflection();
+
   return (
     <AuthProvider>
       <BrowserRouter basename={import.meta.env.BASE_URL.replace(/\/$/, '')}>

@@ -1,12 +1,13 @@
+import { Eye, EyeOff, Lock, Mail, User } from 'lucide-react';
+import { AnimatePresence, motion } from 'motion/react';
 import { useState, type FormEvent } from 'react';
 import { Link, Navigate, useNavigate } from 'react-router-dom';
-import { Mail, Lock, Eye, EyeOff, User } from 'lucide-react';
-import AuthLayout from '@/layouts/AuthLayout';
 import { useSignUp, useAuth as useClerkAuth } from '@clerk/react';
-import { ErrorBanner } from '@/components/Feedback';
+import { AuthShell } from '@/components/AuthShell';
 import { useAuth } from '@/context/AuthContext';
-import Spinner from '@/components/Spinner';
+import { MARKETING_URLS } from '@/lib/siteLinks';
 import { markAuthIntent, trackAuthFailed } from '@/lib/analytics';
+import Spinner from '@/components/Spinner';
 
 export default function SignupPage() {
   const { signUp } = useSignUp();
@@ -14,15 +15,15 @@ export default function SignupPage() {
   const { signOutPhase, resetSignOutPhase } = useAuth();
   const navigate = useNavigate();
 
-  const [name, setName] = useState('');
+  const [fullName, setFullName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
+  const [showConfirm, setShowConfirm] = useState(false);
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState('');
+  const [errorMsg, setErrorMsg] = useState<string | null>(null);
   const [success, setSuccess] = useState(false);
-  const [fieldErrors, setFieldErrors] = useState<{ name?: string; email?: string; password?: string; confirm?: string }>({});
   const [verificationCode, setVerificationCode] = useState('');
   const [verifying, setVerifying] = useState(false);
   const [resending, setResending] = useState(false);
@@ -38,42 +39,42 @@ export default function SignupPage() {
     return <Navigate to="/dashboard" replace />;
   }
 
-  const handleSubmit = async (e: FormEvent) => {
+  const handleSignupSubmit = async (e: FormEvent) => {
     e.preventDefault();
-    setError('');
-    const form = e.currentTarget as HTMLFormElement;
-    const nameValue = (form.elements.namedItem('name') as HTMLInputElement).value;
-    const emailValue = (form.elements.namedItem('email') as HTMLInputElement).value;
-    const passwordValue = (form.elements.namedItem('password') as HTMLInputElement).value;
-    const confirmValue = (form.elements.namedItem('confirm-password') as HTMLInputElement).value;
-    setName(nameValue);
-    setEmail(emailValue);
-    setPassword(passwordValue);
-    setConfirmPassword(confirmValue);
-    const errs: typeof fieldErrors = {};
-    if (!emailValue) errs.email = 'Email is required';
-    else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(emailValue)) errs.email = 'Enter a valid email address';
-    if (!passwordValue) errs.password = 'Password is required';
-    else if (passwordValue.length < 8) errs.password = 'Password must be at least 8 characters';
-    if (passwordValue !== confirmValue) errs.confirm = 'Passwords do not match';
-    setFieldErrors(errs);
-    if (Object.keys(errs).length > 0) return;
+    if (loading) return;
+    const nameValue = fullName.trim();
+    const emailValue = email.trim();
+    if (!emailValue || !emailValue.includes('@')) {
+      setErrorMsg('Enter a valid email address.');
+      return;
+    }
+    if (password.length < 8) {
+      setErrorMsg('Password must be at least 8 characters.');
+      return;
+    }
+    if (password !== confirmPassword) {
+      setErrorMsg('Passwords do not match.');
+      return;
+    }
+    setErrorMsg(null);
     setLoading(true);
     try {
       const result = await signUp.password({
         emailAddress: emailValue,
-        password: passwordValue,
+        password,
         ...(nameValue ? { firstName: nameValue } : {}),
       });
       if (result.error) {
-        setError(result.error.longMessage || result.error.message || 'Something went wrong. Please try again.');
+        setErrorMsg(
+          result.error.longMessage || result.error.message || 'Something went wrong. Please try again.',
+        );
         trackAuthFailed({ stage: 'signup', reason: 'clerk_rejected' });
       } else {
         await signUp.verifications.sendEmailCode();
         setSuccess(true);
       }
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Something went wrong. Please try again.');
+      setErrorMsg(err instanceof Error ? err.message : 'Something went wrong. Please try again.');
       trackAuthFailed({ stage: 'signup', reason: 'unexpected_error' });
     } finally {
       setLoading(false);
@@ -97,7 +98,7 @@ export default function SignupPage() {
         setVerifyError(
           result.error.longMessage ||
             result.error.message ||
-            'That verification code is invalid or has expired. Please try again or request a new code.'
+            'That verification code is invalid or has expired. Please try again or request a new code.',
         );
         trackAuthFailed({ stage: 'signup', reason: 'email_verification_failed' });
         return;
@@ -108,7 +109,7 @@ export default function SignupPage() {
           setVerifyError(
             finalizeResult.error.longMessage ||
               finalizeResult.error.message ||
-              'Something went wrong while finishing your account. Please try again.'
+              'Something went wrong while finishing your account. Please try again.',
           );
           trackAuthFailed({ stage: 'signup', reason: 'finalize_failed' });
           return;
@@ -117,14 +118,12 @@ export default function SignupPage() {
         resetSignOutPhase();
         navigate('/dashboard', { replace: true });
       } else {
-        setVerifyError(
-          'Your email could not be verified. Please check the code or request a new one.'
-        );
+        setVerifyError('Your email could not be verified. Please check the code or request a new one.');
         trackAuthFailed({ stage: 'signup', reason: 'email_verification_failed' });
       }
     } catch (err) {
       setVerifyError(
-        err instanceof Error ? err.message : 'Something went wrong while verifying your code. Please try again.'
+        err instanceof Error ? err.message : 'Something went wrong while verifying your code. Please try again.',
       );
       trackAuthFailed({ stage: 'signup', reason: 'unexpected_error' });
     } finally {
@@ -142,189 +141,287 @@ export default function SignupPage() {
       const result = await signUp.verifications.sendEmailCode();
       if (result.error) {
         setVerifyError(
-          result.error.longMessage || result.error.message || 'We couldn\u2019t resend the code. Please try again.'
+          result.error.longMessage || result.error.message || 'We couldn\u2019t resend the code. Please try again.',
         );
       } else {
         setResendMessage('A new verification code has been sent to your email.');
       }
     } catch (err) {
       setVerifyError(
-        err instanceof Error ? err.message : 'We couldn\u2019t resend the code. Please try again.'
+        err instanceof Error ? err.message : 'We couldn\u2019t resend the code. Please try again.',
       );
     } finally {
       setResending(false);
     }
   };
 
-  if (success) {
-    return (
-      <AuthLayout
-        title="Check your email"
-        subtitle="We've sent a verification code to your inbox"
-        footer={
-          <>
-            Already verified?{' '}
-            <Link to="/login" className="font-semibold text-brand-400 hover:text-brand-300">
-              Sign in
-            </Link>
-          </>
-        }
-      >
-        <div className="w-full max-w-sm text-center">
-          <div className="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-full border border-line bg-white/[0.06]">
-            <Mail size={28} className="text-brand-400" />
-          </div>
-          <p className="text-sm text-muted">
-            We've sent a verification code to <span className="font-medium text-primary">{email}</span>. Enter it below to verify your account and finish signing up.
-          </p>
-
-          <div className="mt-5">
-            {verifyError && <ErrorBanner message={verifyError} />}
-            {resendMessage && <p className="text-sm text-accent-400">{resendMessage}</p>}
-          </div>
-
-          <form onSubmit={handleVerifyCode} noValidate className="mt-4 space-y-4">
-            <input
-              id="verification-code"
-              type="text"
-              inputMode="numeric"
-              autoComplete="one-time-code"
-              autoFocus
-              value={verificationCode}
-              onChange={(e) => setVerificationCode(e.target.value.replace(/[^\d]/g, '').slice(0, 6))}
-              className="input-field text-center tracking-[0.35em]"
-              placeholder="123456"
-              maxLength={6}
-              aria-label="Email verification code"
-              aria-invalid={!!verifyError}
-            />
-            <button type="submit" disabled={verifying} className="btn-primary w-full">
-              {verifying ? <Spinner size={18} /> : 'Verify Email'}
-            </button>
-          </form>
-
-          <button
-            type="button"
-            onClick={handleResendCode}
-            disabled={resending}
-            className="mt-4 text-sm font-semibold text-brand-400 hover:text-brand-300 disabled:opacity-60"
-          >
-            {resending ? 'Resending…' : 'Resend code'}
-          </button>
-
-          <p className="mt-4 text-xs text-muted">
-            Didn't get a code? Check your spam folder.
-          </p>
-        </div>
-      </AuthLayout>
-    );
-  }
-
   return (
-    <AuthLayout
-      title="Create your account"
-      subtitle="Start verifying devices with Chirograph Verify"
-      footer={
-        <>
-          Already have an account?{' '}
-          <Link to="/login" className="font-semibold text-brand-400 hover:text-brand-300">
-            Sign in
-          </Link>
-        </>
-      }
-    >
-      <form onSubmit={handleSubmit} noValidate className="space-y-5">
-        {error && <ErrorBanner message={error} />}
+    <AuthShell>
+      <motion.div
+        initial={{ opacity: 0, y: 18 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.48, ease: [0.16, 1, 0.3, 1] }}
+        className="w-full max-w-[440px]"
+      >
+        <div className="glass-panel rounded-2xl p-7 sm:p-9">
+          <AnimatePresence mode="wait">
+            {success ? (
+              <motion.div
+                key="verify-view"
+                initial={{ opacity: 0, y: 6 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -6 }}
+                transition={{ duration: 0.2 }}
+              >
+                <div className="text-center">
+                  <div className="glass-well mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-full">
+                    <Mail size={26} className="text-emerald-400" />
+                  </div>
+                  <h1 className="font-display text-2xl font-semibold tracking-tight text-white sm:text-[1.75rem]">
+                    Check your email
+                  </h1>
+                  <p className="mt-2 text-sm text-zinc-400">
+                    We&apos;ve sent a verification code to your inbox
+                  </p>
+                </div>
 
-        <div>
-          <label htmlFor="name" className="label-text">Full name <span className="text-muted">(optional)</span></label>
-          <div className="relative">
-            <User size={18} className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-muted" />
-            <input
-              id="name"
-              type="text"
-              autoComplete="name"
-              value={name}
-              onChange={(e) => setName(e.target.value)}
-              className="input-field pl-10"
-              placeholder="Jane Doe"
-            />
-          </div>
+                <p className="mt-5 text-xs leading-relaxed text-zinc-400">
+                  We&apos;ve sent a verification code to{' '}
+                  <span className="text-white">{email}</span>. Enter it below to verify your
+                  account and finish signing up.
+                </p>
+
+                <div className="mt-4 space-y-2">
+                  {verifyError && (
+                    <p role="alert" className="text-xs text-rose-400">
+                      {verifyError}
+                    </p>
+                  )}
+                  {resendMessage && <p className="text-xs text-emerald-400">{resendMessage}</p>}
+                </div>
+
+                <form onSubmit={handleVerifyCode} noValidate className="mt-5 space-y-4">
+                  <div>
+                    <label htmlFor="verification-code" className="block text-xs font-medium text-zinc-300">
+                      Verification code
+                    </label>
+                    <div className="glass-well mt-2 flex items-center gap-3 rounded-xl px-4 py-3 transition-all focus-within:border-emerald-500/60 focus-within:shadow-[inset_0_3px_10px_rgba(0,0,0,0.85),0_0_0_3px_rgba(16,185,129,0.14)]">
+                      <input
+                        id="verification-code"
+                        type="text"
+                        inputMode="numeric"
+                        autoComplete="one-time-code"
+                        autoFocus
+                        value={verificationCode}
+                        onChange={(e) =>
+                          setVerificationCode(e.target.value.replace(/[^\d]/g, '').slice(0, 6))
+                        }
+                        placeholder="123456"
+                        maxLength={6}
+                        aria-label="Email verification code"
+                        aria-invalid={!!verifyError}
+                        className="w-full bg-transparent text-center text-sm tracking-[0.35em] text-white placeholder:text-zinc-500 focus:outline-none"
+                      />
+                    </div>
+                  </div>
+                  <button
+                    type="submit"
+                    disabled={verifying}
+                    className="inline-flex w-full items-center justify-center gap-2 rounded-xl bg-white py-3 text-sm font-semibold text-black shadow-[0_0_28px_rgba(255,255,255,0.18)] transition-all duration-150 hover:bg-emerald-400 hover:shadow-[0_0_30px_rgba(16,185,129,0.4)] cursor-pointer disabled:cursor-wait disabled:opacity-70"
+                  >
+                    {verifying ? <Spinner size={16} /> : <span>Verify Email</span>}
+                  </button>
+                </form>
+
+                <button
+                  type="button"
+                  onClick={handleResendCode}
+                  disabled={resending}
+                  className="mt-4 w-full text-center text-sm font-semibold text-white transition-colors hover:text-emerald-400 disabled:opacity-60"
+                >
+                  {resending ? 'Resending…' : 'Resend code'}
+                </button>
+
+                <p className="mt-4 text-center text-xs text-zinc-500">
+                  Didn&apos;t get a code? Check your spam folder.
+                </p>
+
+                <p className="mt-6 text-center text-sm text-zinc-400">
+                  Already verified?{' '}
+                  <Link to="/login" className="font-medium text-white transition-colors hover:text-emerald-400">
+                    Sign in
+                  </Link>
+                </p>
+              </motion.div>
+            ) : (
+              <motion.div
+                key="signup-view"
+                initial={{ opacity: 0, y: 6 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -6 }}
+                transition={{ duration: 0.2 }}
+              >
+                <div className="text-center">
+                  <h1 className="font-display text-2xl font-semibold tracking-tight text-white sm:text-[1.75rem]">
+                    Create your account
+                  </h1>
+                  <p className="mt-2 text-sm text-zinc-400">
+                    Start verifying devices with Chirograph Verify
+                  </p>
+                </div>
+
+                <form onSubmit={handleSignupSubmit} noValidate className="mt-8 space-y-4">
+                  {/* Full Name (optional) */}
+                  <div>
+                    <label htmlFor="signup-name" className="block text-xs font-medium text-zinc-300">
+                      Full name <span className="text-zinc-500">(optional)</span>
+                    </label>
+                    <div className="glass-well mt-2 flex items-center gap-3 rounded-xl px-4 py-3 transition-all focus-within:border-[#3B5BFF]/65 focus-within:shadow-[inset_0_3px_10px_rgba(0,0,0,0.85),0_0_0_3px_rgba(59,91,255,0.16)]">
+                      <User className="h-4 w-4 shrink-0 text-zinc-500" />
+                      <input
+                        id="signup-name"
+                        type="text"
+                        autoComplete="name"
+                        value={fullName}
+                        onChange={(e) => setFullName(e.target.value)}
+                        placeholder="Jane Doe"
+                        className="w-full bg-transparent text-sm text-white placeholder:text-zinc-500 focus:outline-none"
+                      />
+                    </div>
+                  </div>
+
+                  {/* Email */}
+                  <div>
+                    <label htmlFor="signup-email" className="block text-xs font-medium text-zinc-300">
+                      Email
+                    </label>
+                    <div className="glass-well mt-2 flex items-center gap-3 rounded-xl px-4 py-3 transition-all focus-within:border-[#3B5BFF]/65 focus-within:shadow-[inset_0_3px_10px_rgba(0,0,0,0.85),0_0_0_3px_rgba(59,91,255,0.16)]">
+                      <Mail className="h-4 w-4 shrink-0 text-zinc-500" />
+                      <input
+                        id="signup-email"
+                        type="email"
+                        autoComplete="email"
+                        autoFocus
+                        value={email}
+                        onChange={(e) => {
+                          setEmail(e.target.value);
+                          if (errorMsg) setErrorMsg(null);
+                        }}
+                        placeholder="you@company.com"
+                        className="w-full bg-transparent text-sm text-white placeholder:text-zinc-500 focus:outline-none"
+                      />
+                    </div>
+                  </div>
+
+                  {/* Password */}
+                  <div>
+                    <label htmlFor="signup-password" className="block text-xs font-medium text-zinc-300">
+                      Password
+                    </label>
+                    <div className="glass-well mt-2 flex items-center gap-3 rounded-xl px-4 py-3 transition-all focus-within:border-emerald-500/60 focus-within:shadow-[inset_0_3px_10px_rgba(0,0,0,0.85),0_0_0_3px_rgba(16,185,129,0.14)]">
+                      <Lock className="h-4 w-4 shrink-0 text-zinc-500" />
+                      <input
+                        id="signup-password"
+                        type={showPassword ? 'text' : 'password'}
+                        autoComplete="new-password"
+                        value={password}
+                        onChange={(e) => {
+                          setPassword(e.target.value);
+                          if (errorMsg) setErrorMsg(null);
+                        }}
+                        placeholder="At least 8 characters"
+                        className="w-full bg-transparent text-sm text-white placeholder:text-zinc-500 focus:outline-none"
+                      />
+                      <button
+                        type="button"
+                        onClick={() => setShowPassword((prev) => !prev)}
+                        aria-label={showPassword ? 'Hide password' : 'Show password'}
+                        className="text-zinc-500 transition-colors hover:text-zinc-200 cursor-pointer"
+                      >
+                        {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                      </button>
+                    </div>
+                  </div>
+
+                  {/* Confirm Password */}
+                  <div>
+                    <label htmlFor="signup-confirm" className="block text-xs font-medium text-zinc-300">
+                      Confirm password
+                    </label>
+                    <div className="glass-well mt-2 flex items-center gap-3 rounded-xl px-4 py-3 transition-all focus-within:border-emerald-500/60 focus-within:shadow-[inset_0_3px_10px_rgba(0,0,0,0.85),0_0_0_3px_rgba(16,185,129,0.14)]">
+                      <Lock className="h-4 w-4 shrink-0 text-zinc-500" />
+                      <input
+                        id="signup-confirm"
+                        type={showConfirm ? 'text' : 'password'}
+                        autoComplete="new-password"
+                        value={confirmPassword}
+                        onChange={(e) => {
+                          setConfirmPassword(e.target.value);
+                          if (errorMsg) setErrorMsg(null);
+                        }}
+                        placeholder="Re-enter your password"
+                        className="w-full bg-transparent text-sm text-white placeholder:text-zinc-500 focus:outline-none"
+                      />
+                      <button
+                        type="button"
+                        onClick={() => setShowConfirm((prev) => !prev)}
+                        aria-label={showConfirm ? 'Hide confirm password' : 'Show confirm password'}
+                        className="text-zinc-500 transition-colors hover:text-zinc-200 cursor-pointer"
+                      >
+                        {showConfirm ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                      </button>
+                    </div>
+                  </div>
+
+                  {errorMsg && (
+                    <p role="alert" className="text-xs text-rose-400">
+                      {errorMsg}
+                    </p>
+                  )}
+
+                  {/* Primary CTA */}
+                  <div className="pt-2">
+                    <button
+                      type="submit"
+                      disabled={loading}
+                      className="inline-flex w-full items-center justify-center gap-2 rounded-xl bg-white py-3 text-sm font-semibold text-black shadow-[0_0_28px_rgba(255,255,255,0.18)] transition-all duration-150 hover:bg-emerald-400 hover:shadow-[0_0_30px_rgba(16,185,129,0.4)] cursor-pointer disabled:cursor-wait disabled:opacity-70"
+                    >
+                      {loading ? <Spinner size={16} /> : <span>Create Account</span>}
+                    </button>
+                  </div>
+                </form>
+
+                {/* Legal Notice */}
+                <p className="mt-5 text-center text-xs leading-relaxed text-zinc-500">
+                  By signing up, you agree to our{' '}
+                  <a
+                    href={MARKETING_URLS.terms}
+                    className="text-zinc-300 transition-colors hover:text-white"
+                  >
+                    Terms of Service
+                  </a>{' '}
+                  and{' '}
+                  <a
+                    href={MARKETING_URLS.privacy}
+                    className="text-zinc-300 transition-colors hover:text-white"
+                  >
+                    Privacy Policy
+                  </a>
+                  .
+                </p>
+
+                {/* Sign In Prompt */}
+                <p className="mt-6 text-center text-sm text-zinc-400">
+                  Already have an account?{' '}
+                  <Link to="/login" className="font-medium text-white transition-colors hover:text-emerald-400">
+                    Sign in
+                  </Link>
+                </p>
+              </motion.div>
+            )}
+          </AnimatePresence>
         </div>
-
-        <div>
-          <label htmlFor="email" className="label-text">Email</label>
-          <div className="relative">
-            <Mail size={18} className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-muted" />
-            <input
-              id="email"
-              type="email"
-              autoComplete="email"
-              autoFocus
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              className="input-field pl-10"
-              placeholder="you@company.com"
-              aria-invalid={!!fieldErrors.email}
-              aria-describedby={fieldErrors.email ? 'email-error' : undefined}
-            />
-          </div>
-          {fieldErrors.email && <p id="email-error" className="mt-1.5 text-sm text-danger">{fieldErrors.email}</p>}
-        </div>
-
-        <div>
-          <label htmlFor="password" className="label-text">Password</label>
-          <div className="relative">
-            <Lock size={18} className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-muted" />
-            <input
-              id="password"
-              type={showPassword ? 'text' : 'password'}
-              autoComplete="new-password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              className="input-field pl-10 pr-10"
-              placeholder="At least 8 characters"
-              aria-invalid={!!fieldErrors.password}
-              aria-describedby={fieldErrors.password ? 'password-error' : undefined}
-            />
-            <button
-              type="button"
-              onClick={() => setShowPassword(!showPassword)}
-              className="absolute right-3 top-1/2 -translate-y-1/2 text-muted hover:text-muted"
-              aria-label={showPassword ? 'Hide password' : 'Show password'}
-            >
-              {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
-            </button>
-          </div>
-          {fieldErrors.password && <p id="password-error" className="mt-1.5 text-sm text-danger">{fieldErrors.password}</p>}
-        </div>
-
-        <div>
-          <label htmlFor="confirm-password" className="label-text">Confirm password</label>
-          <div className="relative">
-            <Lock size={18} className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-muted" />
-            <input
-              id="confirm-password"
-              type={showPassword ? 'text' : 'password'}
-              autoComplete="new-password"
-              value={confirmPassword}
-              onChange={(e) => setConfirmPassword(e.target.value)}
-              className="input-field pl-10"
-              placeholder="Re-enter your password"
-              aria-invalid={!!fieldErrors.confirm}
-              aria-describedby={fieldErrors.confirm ? 'confirm-error' : undefined}
-            />
-          </div>
-          {fieldErrors.confirm && <p id="confirm-error" className="mt-1.5 text-sm text-danger">{fieldErrors.confirm}</p>}
-        </div>
-
-        <button type="submit" disabled={loading} className="btn-primary w-full">
-          {loading ? <Spinner size={18} /> : 'Create Account'}
-        </button>
-        <p className="text-center text-xs text-muted">
-          By signing up, you agree to our Terms of Service and Privacy Policy.
-        </p>
-      </form>
-    </AuthLayout>
+      </motion.div>
+    </AuthShell>
   );
 }

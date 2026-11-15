@@ -1,12 +1,35 @@
+import { ArrowLeft, ArrowRight, Eye, EyeOff, Lock, Mail } from 'lucide-react';
+import { AnimatePresence, motion } from 'motion/react';
 import { useState, type FormEvent } from 'react';
-import { Link, Navigate, useNavigate, useLocation } from 'react-router-dom';
-import { Mail, Lock, Eye, EyeOff } from 'lucide-react';
+import { Link, Navigate, useLocation, useNavigate } from 'react-router-dom';
 import { useSignIn, useAuth as useClerkAuth } from '@clerk/react';
-import { ErrorBanner } from '@/components/Feedback';
-import { markAuthIntent, trackAuthFailed } from '@/lib/analytics';
+import { AuthShell } from '@/components/AuthShell';
 import { useAuth } from '@/context/AuthContext';
+import { resetCodeSentByEmail } from '@/lib/passwordReset';
+import { markAuthIntent, trackAuthFailed } from '@/lib/analytics';
 import Spinner from '@/components/Spinner';
-import Logo from '@/components/Logo';
+
+function GoogleIcon() {
+  return (
+    <svg className="h-4 w-4 shrink-0" viewBox="0 0 24 24" aria-hidden="true">
+      <path
+        fill="currentColor"
+        d="M21.35 11.1h-9.17v2.73h6.51c-.33 3.81-3.5 5.44-6.5 5.44C8.36 19.27 5 16.25 5 12c0-4.1 3.2-7.27 7.2-7.27c3.09 0 4.9 1.97 4.9 1.97L19 4.72S16.56 2 12.1 2C6.42 2 2.03 6.8 2.03 12c0 5.05 4.13 10 10.22 10c5.35 0 9.25-3.67 9.25-9.09c0-1.15-.15-1.81-.15-1.81Z"
+      />
+    </svg>
+  );
+}
+
+function GitHubIcon() {
+  return (
+    <svg className="h-4 w-4 shrink-0" viewBox="0 0 24 24" aria-hidden="true">
+      <path
+        fill="currentColor"
+        d="M12 2C6.475 2 2 6.475 2 12a9.994 9.994 0 0 0 6.838 9.488c.5.087.687-.213.687-.476c0-.237-.013-1.024-.013-1.862c-2.512.463-3.162-.612-3.362-1.175c-.113-.288-.6-1.175-1.025-1.413c-.35-.187-.85-.65-.013-.662c.788-.013 1.35.725 1.538 1.025c.9 1.512 2.338 1.087 2.912.825c.088-.65.35-1.087.638-1.337c-2.225-.25-4.55-1.113-4.55-4.938c0-1.088.387-1.987 1.025-2.688c-.1-.25-.45-1.275.1-2.65c0 0 .837-.262 2.75 1.026a9.28 9.28 0 0 1 2.5-.338c.85 0 1.7.112 2.5.337c1.912-1.3 2.75-1.024 2.75-1.024c.55 1.375.2 2.4.1 2.65c.637.7 1.025 1.587 1.025 2.687c0 3.838-2.337 4.688-4.562 4.938c.362.312.675.912.675 1.85c0 1.337-.013 2.412-.013 2.75c0 .262.188.574.688.474A10.016 10.016 0 0 0 22 12c0-5.525-4.475-10-10-10Z"
+      />
+    </svg>
+  );
+}
 
 export default function LoginPage() {
   const { signIn } = useSignIn();
@@ -16,46 +39,46 @@ export default function LoginPage() {
   const location = useLocation();
   const from = (location.state as { from?: string })?.from || '/dashboard';
 
+  const [view, setView] = useState<'login' | 'forgot'>('login');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState('');
-  const [fieldErrors, setFieldErrors] = useState<{ email?: string; password?: string }>({});
+  const [errorMsg, setErrorMsg] = useState<string | null>(null);
+  const [resetSent, setResetSent] = useState(false);
 
   // If Clerk has loaded and confirms an active session, the user is already
   // authenticated. Send them straight to the dashboard instead of showing the
   // login form (which would otherwise surface Clerk's "already signed in" error).
   // Never redirect while Clerk auth state is still loading, and never do it
-  // while a sign-out is finishing or complete — otherwise the just-signed-out
-  // user would be bounced back into the dashboard by a stale session snapshot.
+  // while a sign-out is finishing or complete.
   if (isClerkLoaded && isSignedIn && signOutPhase === 'idle') {
     return <Navigate to="/dashboard" replace />;
   }
 
-
-  const handleSubmit = async (e: FormEvent) => {
+  const handleLoginSubmit = async (e: FormEvent) => {
     e.preventDefault();
-    setError('');
-    const form = e.currentTarget as HTMLFormElement;
-    const emailValue = (form.elements.namedItem('email') as HTMLInputElement).value;
-    const passwordValue = (form.elements.namedItem('password') as HTMLInputElement).value;
-    setEmail(emailValue);
-    setPassword(passwordValue);
-    const errs: { email?: string; password?: string } = {};
-    if (!emailValue) errs.email = 'Email is required';
-    else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(emailValue)) errs.email = 'Enter a valid email address';
-    if (!passwordValue) errs.password = 'Password is required';
-    setFieldErrors(errs);
-    if (Object.keys(errs).length > 0) return;
+    if (loading) return;
+    const emailValue = email.trim();
+    if (!emailValue || !emailValue.includes('@')) {
+      setErrorMsg('Enter a valid email address.');
+      return;
+    }
+    if (!password) {
+      setErrorMsg('Enter your password.');
+      return;
+    }
+    setErrorMsg(null);
     setLoading(true);
     try {
       const result = await signIn.password({
         identifier: emailValue,
-        password: passwordValue,
+        password,
       });
       if (result.error) {
-        setError(result.error.longMessage || result.error.message || 'Something went wrong. Please try again.');
+        setErrorMsg(
+          result.error.longMessage || result.error.message || 'Something went wrong. Please try again.',
+        );
         trackAuthFailed({ stage: 'login', reason: 'clerk_rejected' });
       } else if (signIn.status === 'complete') {
         await signIn.finalize();
@@ -65,137 +88,316 @@ export default function LoginPage() {
         resetSignOutPhase();
         navigate(from, { replace: true });
       } else {
-        setError(`Clerk sign-in is not complete. Status: ${signIn.status}`);
+        setErrorMsg(`Clerk sign-in is not complete. Status: ${signIn.status}`);
         trackAuthFailed({ stage: 'login', reason: 'incomplete' });
       }
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Something went wrong. Please try again.');
+      setErrorMsg(err instanceof Error ? err.message : 'Something went wrong. Please try again.');
       trackAuthFailed({ stage: 'login', reason: 'unexpected_error' });
     } finally {
       setLoading(false);
     }
   };
 
+  /**
+   * Step 1 of Clerk's password-reset flow, kept inline so the obsidian card
+   * never leaves the screen. Step 2 (code + new password) continues on the
+   * existing /reset-password route, which shares this Clerk sign-in attempt.
+   */
+  const handleResetSubmit = async (e: FormEvent) => {
+    e.preventDefault();
+    if (loading) return;
+    const emailValue = email.trim();
+    if (!emailValue || !emailValue.includes('@')) {
+      setErrorMsg('Enter the email address associated with your account.');
+      return;
+    }
+    setErrorMsg(null);
+    setLoading(true);
+    try {
+      const createResult = await signIn.create({ identifier: emailValue });
+      if (createResult.error) {
+        setErrorMsg(
+          createResult.error.longMessage ||
+            createResult.error.message ||
+            'Something went wrong. Please try again.',
+        );
+        return;
+      }
+      const sendResult = await signIn.resetPasswordEmailCode.sendCode();
+      if (sendResult.error) {
+        setErrorMsg(
+          sendResult.error.longMessage ||
+            sendResult.error.message ||
+            'Something went wrong. Please try again.',
+        );
+        return;
+      }
+      // Mark the address so /reset-password does not immediately send a second
+      // code and invalidate the one we just mailed.
+      resetCodeSentByEmail.add(emailValue);
+      setResetSent(true);
+    } catch (err) {
+      setErrorMsg(err instanceof Error ? err.message : 'Something went wrong. Please try again.');
+    } finally {
+      setLoading(false);
+    }
+  };
+
   return (
-    <div className="flex min-h-screen flex-col bg-canvas">
-      <header className="px-6 py-6 lg:px-12">
-        <Logo size="md" to="/" />
-      </header>
-
-      {/* Spec: two-panel — form column left-of-centre, oversized mark right */}
-      <main className="flex flex-1 items-center justify-center px-6 pb-16">
-        <div className="flex w-full max-w-5xl items-center justify-center gap-16">
-          <div className="w-full max-w-[400px]">
-            <h1 className="text-headline-lg font-semibold text-primary">Welcome back</h1>
-            <p className="mt-2 text-body-md text-secondary">
-              Sign in to your Chirograph Verify account
-            </p>
-
-            <form onSubmit={handleSubmit} noValidate className="mt-8 space-y-4">
-              {error && <ErrorBanner message={error} />}
-
-              <div>
-                <label htmlFor="email" className="label-text">Email</label>
-                <div className="relative">
-                  <Mail size={18} className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-muted" />
-                  <input
-                    id="email"
-                    type="email"
-                    autoComplete="email"
-                    autoFocus
-                    value={email}
-                    onChange={(e) => setEmail(e.target.value)}
-                    className="input-field pl-10"
-                    placeholder="you@company.com"
-                    aria-invalid={!!fieldErrors.email}
-                    aria-describedby={fieldErrors.email ? 'email-error' : undefined}
-                  />
+    <AuthShell>
+      <motion.div
+        initial={{ opacity: 0, y: 18 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.48, ease: [0.16, 1, 0.3, 1] }}
+        className="w-full max-w-[440px]"
+      >
+        <div className="glass-panel rounded-2xl p-7 sm:p-9">
+          <AnimatePresence mode="wait">
+            {view === 'login' ? (
+              <motion.div
+                key="login-view"
+                initial={{ opacity: 0, y: 6 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -6 }}
+                transition={{ duration: 0.2 }}
+              >
+                <div className="text-center">
+                  <h1 className="font-display text-2xl font-semibold tracking-tight text-white sm:text-[1.75rem]">
+                    Welcome back
+                  </h1>
+                  <p className="mt-2 text-sm text-zinc-400">
+                    Sign in to your Chirograph Verify account
+                  </p>
                 </div>
-                {fieldErrors.email && (
-                  <p id="email-error" className="mt-1.5 text-sm text-danger">{fieldErrors.email}</p>
-                )}
-              </div>
 
-              <div>
-                <div className="flex items-center justify-between">
-                  <label htmlFor="password" className="label-text">Password</label>
-                  <Link to="/forgot-password" className="text-xs font-medium text-brand-400 hover:text-brand-300">
-                    Forgot password?
-                  </Link>
+                <form onSubmit={handleLoginSubmit} noValidate className="mt-8 space-y-5">
+                  {/* Email Field */}
+                  <div>
+                    <label htmlFor="login-email" className="block text-xs font-medium text-zinc-300">
+                      Email
+                    </label>
+                    <div className="glass-well mt-2 flex items-center gap-3 rounded-xl px-4 py-3 transition-all focus-within:border-[#3B5BFF]/65 focus-within:shadow-[inset_0_3px_10px_rgba(0,0,0,0.85),0_0_0_3px_rgba(59,91,255,0.16)]">
+                      <Mail className="h-4 w-4 shrink-0 text-zinc-500" />
+                      <input
+                        id="login-email"
+                        type="email"
+                        autoComplete="email"
+                        autoFocus
+                        value={email}
+                        onChange={(e) => {
+                          setEmail(e.target.value);
+                          if (errorMsg) setErrorMsg(null);
+                        }}
+                        placeholder="you@company.com"
+                        className="w-full bg-transparent text-sm text-white placeholder:text-zinc-500 focus:outline-none"
+                      />
+                    </div>
+                  </div>
+
+                  {/* Password Field */}
+                  <div>
+                    <div className="flex items-center justify-between gap-2">
+                      <label htmlFor="login-password" className="block text-xs font-medium text-zinc-300">
+                        Password
+                      </label>
+                      <button
+                        type="button"
+                        onClick={() => {
+                          setErrorMsg(null);
+                          setResetSent(false);
+                          setView('forgot');
+                        }}
+                        className="text-xs text-zinc-400 transition-colors hover:text-emerald-400 cursor-pointer"
+                      >
+                        Forgot password?
+                      </button>
+                    </div>
+
+                    <div className="glass-well mt-2 flex items-center gap-3 rounded-xl px-4 py-3 transition-all focus-within:border-emerald-500/60 focus-within:shadow-[inset_0_3px_10px_rgba(0,0,0,0.85),0_0_0_3px_rgba(16,185,129,0.14)]">
+                      <Lock className="h-4 w-4 shrink-0 text-zinc-500" />
+                      <input
+                        id="login-password"
+                        type={showPassword ? 'text' : 'password'}
+                        autoComplete="current-password"
+                        value={password}
+                        onChange={(e) => {
+                          setPassword(e.target.value);
+                          if (errorMsg) setErrorMsg(null);
+                        }}
+                        placeholder="Enter your password"
+                        className="w-full bg-transparent text-sm text-white placeholder:text-zinc-500 focus:outline-none"
+                      />
+                      <button
+                        type="button"
+                        onClick={() => setShowPassword((prev) => !prev)}
+                        aria-label={showPassword ? 'Hide password' : 'Show password'}
+                        className="text-zinc-500 transition-colors hover:text-zinc-200 cursor-pointer"
+                      >
+                        {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                      </button>
+                    </div>
+                  </div>
+
+                  {errorMsg && (
+                    <p role="alert" className="text-xs text-rose-400">
+                      {errorMsg}
+                    </p>
+                  )}
+
+                  {/* Primary Sign In CTA */}
+                  <button
+                    type="submit"
+                    disabled={loading}
+                    className="inline-flex w-full items-center justify-center gap-2 rounded-xl bg-white py-3 text-sm font-semibold text-black shadow-[0_0_28px_rgba(255,255,255,0.18)] transition-all duration-150 hover:bg-emerald-400 hover:shadow-[0_0_30px_rgba(16,185,129,0.4)] cursor-pointer disabled:cursor-wait disabled:opacity-70"
+                  >
+                    {loading ? <Spinner size={16} /> : <span>Sign in</span>}
+                  </button>
+                </form>
+
+                {/* Divider */}
+                <div className="my-6 flex items-center gap-3">
+                  <div className="h-px flex-1 bg-white/[0.08]" />
+                  <div className="flex items-center gap-2 font-mono text-[10px] tracking-wider text-zinc-500 uppercase">
+                    <span>Or continue with</span>
+                    <span className="morph-socket rounded-md px-1.5 py-0.5 text-[9px] text-zinc-400">
+                      Soon
+                    </span>
+                  </div>
+                  <div className="h-px flex-1 bg-white/[0.08]" />
                 </div>
-                <div className="relative">
-                  <Lock size={18} className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-muted" />
-                  <input
-                    id="password"
-                    type={showPassword ? 'text' : 'password'}
-                    autoComplete="current-password"
-                    value={password}
-                    onChange={(e) => setPassword(e.target.value)}
-                    className="input-field pl-10 pr-10"
-                    placeholder="Enter your password"
-                    aria-invalid={!!fieldErrors.password}
-                    aria-describedby={fieldErrors.password ? 'password-error' : undefined}
-                  />
+
+                {/* Upcoming OAuth Providers */}
+                <div className="grid grid-cols-2 gap-3">
                   <button
                     type="button"
-                    onClick={() => setShowPassword(!showPassword)}
-                    className="absolute right-3 top-1/2 -translate-y-1/2 text-muted hover:text-secondary"
-                    aria-label={showPassword ? 'Hide password' : 'Show password'}
+                    disabled
+                    aria-disabled="true"
+                    className="glass-panel-soft inline-flex items-center justify-center gap-2 rounded-xl px-4 py-2.5 text-sm font-medium text-zinc-300 opacity-70 cursor-not-allowed"
                   >
-                    {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+                    <GoogleIcon />
+                    <span>Google</span>
+                    <span className="rounded-md border border-white/[0.08] bg-white/[0.04] px-1.5 py-0.5 font-mono text-[10px] text-zinc-500">
+                      Soon
+                    </span>
+                  </button>
+
+                  <button
+                    type="button"
+                    disabled
+                    aria-disabled="true"
+                    className="glass-panel-soft inline-flex items-center justify-center gap-2 rounded-xl px-4 py-2.5 text-sm font-medium text-zinc-300 opacity-70 cursor-not-allowed"
+                  >
+                    <GitHubIcon />
+                    <span>GitHub</span>
+                    <span className="rounded-md border border-white/[0.08] bg-white/[0.04] px-1.5 py-0.5 font-mono text-[10px] text-zinc-500">
+                      Soon
+                    </span>
                   </button>
                 </div>
-                {fieldErrors.password && (
-                  <p id="password-error" className="mt-1.5 text-sm text-danger">{fieldErrors.password}</p>
+
+                {/* Sign Up Prompt */}
+                <p className="mt-7 text-center text-sm text-zinc-400">
+                  Don&apos;t have an account?{' '}
+                  <Link
+                    to="/signup"
+                    className="font-medium text-white transition-colors hover:text-emerald-400"
+                  >
+                    Sign up
+                  </Link>
+                </p>
+              </motion.div>
+            ) : (
+              <motion.div
+                key="forgot-view"
+                initial={{ opacity: 0, y: 6 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -6 }}
+                transition={{ duration: 0.2 }}
+              >
+                <button
+                  type="button"
+                  onClick={() => {
+                    setErrorMsg(null);
+                    setView('login');
+                  }}
+                  className="inline-flex items-center gap-1.5 text-xs font-medium text-zinc-400 transition-colors hover:text-white cursor-pointer"
+                >
+                  <ArrowLeft className="h-3.5 w-3.5" />
+                  <span>Back to sign in</span>
+                </button>
+
+                <h1 className="mt-5 font-display text-2xl font-semibold tracking-tight text-white">
+                  Reset password
+                </h1>
+                <p className="mt-2 text-sm text-zinc-400">
+                  Enter your account email and we&apos;ll send password recovery instructions.
+                </p>
+
+                {resetSent ? (
+                  <div className="glass-well mt-6 rounded-xl border-emerald-500/30 p-4 text-sm text-zinc-300">
+                    <div className="font-mono text-xs text-emerald-400">Request submitted</div>
+                    <p className="mt-1.5 text-xs leading-relaxed text-zinc-400">
+                      If an account exists for <span className="text-white">{email}</span>, recovery instructions have been sent.
+                    </p>
+                    <Link
+                      to={`/reset-password?email=${encodeURIComponent(email)}`}
+                      className="mt-4 inline-flex w-full items-center justify-center gap-2 rounded-xl bg-white py-2.5 text-xs font-semibold text-black transition-all duration-150 hover:bg-emerald-400 cursor-pointer"
+                    >
+                      <span>Enter reset code</span>
+                      <ArrowRight className="h-3.5 w-3.5" />
+                    </Link>
+                  </div>
+                ) : (
+                  <form onSubmit={handleResetSubmit} noValidate className="mt-6 space-y-5">
+                    <div>
+                      <label htmlFor="reset-email" className="block text-xs font-medium text-zinc-300">
+                        Email
+                      </label>
+                      <div className="glass-well mt-2 flex items-center gap-3 rounded-xl px-4 py-3 transition-all focus-within:border-[#3B5BFF]/65 focus-within:shadow-[inset_0_3px_10px_rgba(0,0,0,0.85),0_0_0_3px_rgba(59,91,255,0.16)]">
+                        <Mail className="h-4 w-4 shrink-0 text-zinc-500" />
+                        <input
+                          id="reset-email"
+                          type="email"
+                          autoComplete="email"
+                          value={email}
+                          onChange={(e) => {
+                            setEmail(e.target.value);
+                            if (errorMsg) setErrorMsg(null);
+                          }}
+                          placeholder="you@company.com"
+                          className="w-full bg-transparent text-sm text-white placeholder:text-zinc-500 focus:outline-none"
+                        />
+                      </div>
+                    </div>
+
+                    {errorMsg && (
+                      <p role="alert" className="text-xs text-rose-400">
+                        {errorMsg}
+                      </p>
+                    )}
+
+                    <button
+                      type="submit"
+                      disabled={loading}
+                      className="inline-flex w-full items-center justify-center gap-2 rounded-xl bg-white py-3 text-sm font-semibold text-black shadow-[0_0_26px_rgba(255,255,255,0.18)] transition-all duration-150 hover:bg-emerald-400 cursor-pointer disabled:cursor-wait disabled:opacity-70"
+                    >
+                      {loading ? (
+                        <Spinner size={16} />
+                      ) : (
+                        <>
+                          <span>Send reset link</span>
+                          <ArrowRight className="h-4 w-4" />
+                        </>
+                      )}
+                    </button>
+                  </form>
                 )}
-              </div>
-
-              <button type="submit" disabled={loading} className="btn-primary w-full">
-                {loading ? <Spinner size={16} /> : 'Sign in'}
-              </button>
-
-              <div className="flex items-center gap-3 pt-1">
-                <div className="h-px flex-1 bg-line" />
-                <span className="inline-flex items-center gap-1.5 text-2xs uppercase tracking-micro text-muted">
-                  Or continue with
-                  <span className="pill-soon">Soon</span>
-                </span>
-                <div className="h-px flex-1 bg-line" />
-              </div>
-
-              <div className="grid grid-cols-2 gap-2">
-                <button type="button" className="btn-secondary cursor-not-allowed" disabled>
-                  <svg className="h-4 w-4" viewBox="0 0 24 24"><path fill="currentColor" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92a5.06 5.06 0 0 1-2.2 3.32v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.1z" /><path fill="currentColor" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84A11 11 0 0 0 12 23z" /><path fill="currentColor" d="M5.84 14.1a6.6 6.6 0 0 1 0-4.2V7.07H2.18a11 11 0 0 0 0 9.86l3.66-2.84z" /><path fill="currentColor" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15A11 11 0 0 0 2.18 7.07l3.66 2.84C6.71 7.31 9.14 5.38 12 5.38z" /></svg>
-                  <span className="flex items-center gap-1">
-                    <span>Google</span>
-                    <span className="pill-soon">Soon</span>
-                  </span>
-                </button>
-                <button type="button" className="btn-secondary cursor-not-allowed" disabled>
-                  <svg className="h-4 w-4" viewBox="0 0 24 24"><path fill="currentColor" d="M12 2A10 10 0 0 0 8.84 21.5c.5.08.66-.23.66-.5v-1.69c-2.77.6-3.36-1.34-3.36-1.34a2.65 2.65 0 0 0-1.11-1.46c-.91-.62.07-.6.07-.6a2.1 2.1 0 0 1 1.53 1 2.15 2.15 0 0 0 2.91.83 2.16 2.16 0 0 1 .63-1.34c-2.22-.25-4.55-1.11-4.55-4.94a3.86 3.86 0 0 1 1-2.71 3.59 3.59 0 0 1 .1-2.64s.84-.27 2.75 1a9.63 9.63 0 0 1 5 0c1.91-1.29 2.75-1 2.75-1a3.59 3.59 0 0 1 .1 2.64 3.86 3.86 0 0 1 1 2.71c0 3.84-2.34 4.68-4.57 4.93a2.39 2.39 0 0 1 .69 1.85V21c0 .27.16.59.67.5A10 10 0 0 0 12 2" /></svg>
-                  <span className="flex items-center gap-1">
-                    <span>GitHub</span>
-                    <span className="pill-soon">Soon</span>
-                  </span>
-                </button>
-              </div>
-            </form>
-
-            <p className="mt-6 text-body-md text-muted">
-              Don't have an account?{' '}
-              <Link to="/signup" className="text-primary hover:text-accent">
-                Sign up
-              </Link>
-            </p>
-          </div>
+              </motion.div>
+            )}
+          </AnimatePresence>
         </div>
-      </main>
-
-      <footer className="px-6 py-6 lg:px-12">
-        <p className="text-label-md text-muted">
-          &copy; {new Date().getFullYear()} Chirograph Verify. All rights reserved.
-        </p>
-      </footer>
-    </div>
+      </motion.div>
+    </AuthShell>
   );
 }
