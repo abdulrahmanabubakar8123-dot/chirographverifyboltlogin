@@ -7,21 +7,17 @@ import Logo from '@/components/Logo';
 import { resolveAuthGate } from '@/components/authGate';
 
 /**
- * Full-screen auth transition: the branded state shown while Clerk boots and
- * while a sign-out completes.
- *
- * Replaces the bare spinner + "Loading..." text. Announced politely so assistive
- * tech is told the state, and the copy states what is actually happening rather
- * than a generic spinner label.
+ * Full-screen sign-out state. This is an intentional, user-initiated
+ * transition, so it keeps a visible label while Clerk and the backend
+ * complete the sign-out.
  */
-function AuthTransitionScreen({ phase }: { phase: 'loading' | 'signing-out' }) {
-  const signingOut = phase === 'signing-out';
+function SignOutScreen() {
   return (
     <div
       className="flex min-h-screen flex-col items-center justify-center gap-6 bg-canvas px-6"
       role="status"
       aria-live="polite"
-      data-testid={`auth-transition-${phase}`}
+      data-testid="auth-transition-signing-out"
     >
       <Logo size="md" showText={false} to="" />
       <div className="h-1 w-24 overflow-hidden rounded-full bg-line">
@@ -29,9 +25,7 @@ function AuthTransitionScreen({ phase }: { phase: 'loading' | 'signing-out' }) {
           className="h-full w-1/2 rounded-full bg-primary animate-[sweep_1.3s_ease-in-out_infinite_alternate]"
         />
       </div>
-      <p className="text-body-md text-secondary">
-        {signingOut ? 'Signing you out…' : 'Restoring your session…'}
-      </p>
+      <p className="text-body-md text-secondary">Signing you out…</p>
     </div>
   );
 }
@@ -61,15 +55,16 @@ export default function ProtectedRoute({ children }: { children: ReactNode }) {
   //    an explicit, branded state. We do NOT navigate here: the real Clerk and
   //    backend sign-out continue to decide when the app moves on.
   if (gate === 'signing-out') {
-    return <AuthTransitionScreen phase="signing-out" />;
+    return <SignOutScreen />;
   }
 
   // 2. Still resolving: Clerk state unknown, or the backend session exchange
-  //    is in flight. Render the branded transition rather than the dashboard
-  //    shell — protected content must never mount before authentication has
-  //    been resolved.
+  //    is in flight. Render nothing at all — the body already paints the
+  //    canvas colour, so the user sees the app background, not a message.
+  //    Protected content must never mount before authentication is resolved,
+  //    so we deliberately return null instead of mounting `children`.
   if (gate === 'loading') {
-    return <AuthTransitionScreen phase="loading" />;
+    return null;
   }
 
   // 3. Unauthenticated: Clerk confirms there is no active session.
