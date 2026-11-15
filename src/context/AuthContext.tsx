@@ -3,11 +3,12 @@ import {
   useCallback,
   useContext,
   useEffect,
+  useMemo,
   useState,
   type ReactNode,
 } from 'react';
-import { useAuth as useClerkAuth, useUser } from '@clerk/react';
-import { ApiError, apiRequest, setCsrfToken, clearCsrfToken } from '@/lib/apiClient';
+import { useAuth as useClerkAuth } from '@clerk/react';
+import { apiRequest, setCsrfToken, clearCsrfToken } from '@/lib/apiClient';
 import {
   identifyUser,
   resetAnalytics,
@@ -16,6 +17,7 @@ import {
 } from '@/lib/analytics';
 import type { SignOutPhase } from '@/components/authGate';
 import type { User } from '@/lib/types';
+import { createSessionLifecycle, type SessionTransport } from '@/context/sessionLifecycle';
 
 interface AuthContextValue {
   user: User | null;
@@ -43,118 +45,88 @@ interface AuthContextValue {
 const AuthContext = createContext<AuthContextValue | undefined>(undefined);
 
 export function AuthProvider({ children }: { children: ReactNode }) {
-  const { getToken, signOut } = useClerkAuth();
-  const { user: clerkUser, isLoaded: clerkLoaded } = useUser();
+  const { getToken, signOut, isLoaded: clerkLoaded, userId } = useClerkAuth();
+  /**
+   * The STABLE Clerk identity. Clerk re-emits its client resources on page
+   * focus and other refreshes, which replaces the `User` object returned by
+   * `useUser()` even though the account is unchanged. Depending on that
+   * object (or on a callback built from it) re-ran session establishment and
+   * unmounted the whole dashboard. The id is a string: re-emits cannot change
+   * it, so nothing downstream re-runs unless the user actually changes.
+   */
+  const clerkUserId = userId ?? null;
 
   const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(false);
   const [signOutPhase, setSignOutPhase] = useState<SignOutPhase>('idle');
   const [authError, setAuthError] = useState<string | null>(null);
 
-  const establishBackendSession = useCallback(async () => {
-    if (!clerkUser) {
-      clearCsrfToken();
-      setUser(null);
-      setAuthError(null);
-      setLoading(false);
-      return;
-    }
+  /**
+   * One lifecycle instance for the lifetime of the provider. It holds the
+   * "which identity is already established" state, so it must never be
+   * recreated by a re-render — recreating it would forget the guard and mint
+   * a new backend session on the next Clerk notification.
+   */
+  const [lifecycle] = useState(() =>
+    createSessionLifecycle({
+      setLoading,
+      setUser,
+      setAuthError,
+      setSignOutPhaseIdle: () => setSignOutPhase('idle'),
+      setCsrfToken,
+      clearCsrfToken,
+      identify: identifyUser,
+      trackFailure: (reason) => trackAuthFailed({ stage: 'session', reason }),
+    })
+  );
 
-    // The backend session exchange is in flight. Marking loading here (not
-    // only clearing it afterwards) lets ProtectedRoute distinguish "still
-    // establishing" from "established" and from "failed".
-    // A genuine signed-in user also means any earlier sign-out has finished.
-    setSignOutPhase('idle');
-    setLoading(true);
-    setAuthError(null);
+  /**
+   * `getToken` is stable today (Clerk wraps it in `useCallback` keyed on its
+   * isomorphic instance), but the lifecycle does not rely on that: if it is
+   * ever recreated, the effect re-runs and the identity guard answers "reuse",
+   * so no exchange is issued and nothing remounts.
+   */
+  const transport = useMemo<SessionTransport>(
+    () => ({
+      getToken: () => getToken(),
+      exchange: (token) =>
+        apiRequest<{
+          status: string;
+          csrf_token?: string;
+          email?: string;
+          tenant?: { id: string };
+        }>('/api/auth/clerk/session', {
+          method: 'POST',
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }),
+      readSession: () =>
+        apiRequest<{
+          authenticated: boolean;
+          user?: User;
+        }>('/api/auth/session'),
+    }),
+    [getToken]
+  );
 
-    try {
-      const token = await getToken();
-
-      if (!token) {
-        clearCsrfToken();
-        setUser(null);
-        setAuthError('Your session could not be verified. Please try again.');
-        setLoading(false);
-        trackAuthFailed({ stage: 'session', reason: 'missing_token' });
-        return;
-      }
-
-      // SEQUENTIAL, and it must stay that way.
-      //
-      // GET /api/auth/session authenticates from the session cookie, and that
-      // cookie is issued by the exchange below. Firing the read concurrently
-      // sent it before the Set-Cookie had landed, so it resolved
-      // resolveSession() -> null -> 401, and every login landed on the
-      // "Request failed (401)" screen. These two calls have a genuine data
-      // dependency; there is no parallelism to exploit here.
-      const exchange = await apiRequest<{
-        status: string;
-        csrf_token?: string;
-        email?: string;
-        tenant?: { id: string };
-      }>('/api/auth/clerk/session', {
-        method: 'POST',
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
-
-      if (exchange.csrf_token) {
-        setCsrfToken(exchange.csrf_token);
-      }
-
-      // Only now does the session cookie exist.
-      const session = await apiRequest<{
-        authenticated: boolean;
-        user?: User;
-      }>('/api/auth/session');
-
-      setUser(session.authenticated ? (session.user ?? null) : null);
-
-      if (session.authenticated && clerkUser?.id) {
-        // Identify only after the backend session exchange has succeeded.
-        identifyUser(clerkUser.id);
-      }
-
-      if (!session.authenticated) {
-        setAuthError(
-          'We could not link your account to an application session. Please try again or sign in.'
-        );
-        trackAuthFailed({ stage: 'session', reason: 'session_not_established' });
-      }
-    } catch (err) {
-      clearCsrfToken();
-      setUser(null);
-      // Surface the actual failure (backend rejected the session exchange,
-      // network error, etc.) instead of swallowing it and spinning forever.
-      setAuthError(
-        err instanceof ApiError
-          ? err.message
-          : 'Unable to establish your session. Please check your connection and try again.'
-      );
-      trackAuthFailed({ stage: 'session', reason: 'session_exchange_failed' });
-    } finally {
-      setLoading(false);
-    }
-  }, [clerkUser, getToken]);
-
+  // Reconcile only when Clerk's identity — not its object identity — changes.
   useEffect(() => {
     if (!clerkLoaded) return;
-    void establishBackendSession();
-  }, [clerkLoaded, establishBackendSession]);
+    void lifecycle.sync(clerkUserId, { transport });
+  }, [clerkLoaded, clerkUserId, lifecycle, transport]);
 
   const refresh = useCallback(async () => {
-    await establishBackendSession();
-  }, [establishBackendSession]);
+    await lifecycle.sync(clerkUserId, { transport, force: true });
+  }, [lifecycle, clerkUserId, transport]);
 
   const login = useCallback(async () => {
-    await establishBackendSession();
-  }, [establishBackendSession]);
+    await lifecycle.sync(clerkUserId, { transport });
+  }, [lifecycle, clerkUserId, transport]);
 
   const signup = useCallback(async () => {
-    await establishBackendSession();
-  }, [establishBackendSession]);
+    await lifecycle.sync(clerkUserId, { transport });
+  }, [lifecycle, clerkUserId, transport]);
 
   const resetSignOutPhase = useCallback(() => {
     setSignOutPhase('idle');
@@ -174,9 +146,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         // Clerk sign-out must still happen even if the backend session
         // has already expired.
       }
-      clearCsrfToken();
-      setUser(null);
-      setAuthError(null);
+      // Drop the established identity and invalidate any exchange still in
+      // flight, so a late response cannot sign the user back in.
+      lifecycle.clear();
       await signOut();
       // Track the completed sign-out, then reset PostHog identity and session
       // recording state so the next account cannot inherit the previous one.
@@ -193,7 +165,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       setSignOutPhase('idle');
       throw err;
     }
-  }, [signOut]);
+  }, [signOut, lifecycle]);
 
   return (
     <AuthContext.Provider
